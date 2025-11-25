@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI ChatWorks - Your Smart Layer for AI Chatbots</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            purple: '#8b5cf6',
+                            purpleDark: '#7c3aed',
+                            purpleLight: '#ddd6fe',
+                            dark: '#111827',
+                            gray: '#374151',
+                            slate: '#64748b',
+                            bg: '#ffffff',
+                            surface: '#f9fafb',
+                            border: '#e5e7eb',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Open Sans', 'sans-serif'],
+                        display: ['Open Sans', 'sans-serif'], 
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                        'shimmer': 'shimmer 2s linear infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        shimmer: {
+                            '0%': { transform: 'translateX(-100%)' },
+                            '100%': { transform: 'translateX(100%)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(229, 231, 235, 0.5);
+        }
+        
+        .bento-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .bento-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -15px rgba(139, 92, 246, 0.15);
+            border-color: #8b5cf6;
+        }
+
+        .view-section {
+            display: none;
+            animation: fadeIn 0.4s ease-out;
+        }
+        .view-section.active {
+            display: block;
+        }
+        
+        details > summary { list-style: none; }
+        details > summary::-webkit-details-marker { display: none; }
+    </style>
+</head>
+<body class="bg-brand-bg text-brand-dark antialiased overflow-x-hidden font-sans">
+
+    <div class="fixed top-0 left-0 w-full h-full overflow-hidden pointer-events-none -z-10">
+        <div class="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-brand-purple/5 rounded-full blur-[100px]"></div>
+        <div class="absolute bottom-[-10%] left-[-5%] w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[120px]"></div>
+    </div>
+
+    <nav class="fixed w-full z-50 glass-panel">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="switchView('home')">
+                <img src="images/AI ChatWorks.svg" alt="AI ChatWorks" class="w-10 h-10" onerror="this.style.display='none'">
+                <span class="font-bold text-2xl tracking-tight">AI ChatWorks</span>
+            </div>
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-brand-gray">
+                <button onclick="switchView('home')" class="hover:text-brand-purple transition-colors nav-link" data-target="home">Home</button>
+                <button onclick="switchView('contact')" class="hover:text-brand-purple transition-colors nav-link" data-target="contact">Contact us</button>
+                <div class="h-4 w-px bg-gray-200"></div>
+                <a href="https://chromewebstore.google.com/detail/ai-chatworks/legmkjenpjbcgmmifpdhehgbmbkofmmc" target="_blank" class="flex items-center gap-2 px-5 py-2.5 bg-brand-purple text-white rounded-lg font-semibold hover:bg-brand-purpleDark hover:scale-105 transition-all duration-300 shadow-lg shadow-brand-purple/25">
+                    <svg class="w-5 h-5" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" version="1.1">
+                        <ellipse cx="50" cy="50" rx="20" ry="20" style="fill:#188FD1"/>
+                        <path d="M 8.5,26 A 48,48 0 0 1 91.5,26 L 62,29.5 A 24,24 0 0 0 26,50 z" style="fill:#EA3939"/>
+                        <path d="M 50,98 A 48,48 0 0 1 8.5,26 L 26,50 A 24,24 0 0 0 62,70.5 z" style="fill:#4AAE48"/>
+                        <path d="M 91.5,26 A 48,48 0 0 1 50,98 L 62,70.5 A 24,24 0 0 0 62,29.5 z" style="fill:#FED14B"/>
+                    </svg>
+                    Add to Chrome
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main id="view-home" class="view-section active">
+        
+        <section class="pt-40 pb-20 px-6 relative">
+            <div class="max-w-5xl mx-auto text-center mb-16 relative z-10">
+                <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-purple/5 border border-brand-purple/10 text-brand-purple font-medium text-sm mb-8 animate-float">
+                    <span class="relative flex h-2 w-2">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-purple opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-purple"></span>
+                    </span>
+                    New in v1.1.1: Ghost Text Autocomplete & Prompt Enhancer
+                </div>
+                
+                <p class="text-sm font-semibold tracking-wide text-brand-slate uppercase mb-4 hidden">
+                    AI ChatWorks · Your smart layer for AI chatbots
+                </p>
+                <h1 class="text-5xl md:text-7xl font-bold leading-[1.1] mb-6 tracking-tight">
+                    Turn your AI chats into one clean system,<br class="hidden md:block">
+                    without losing prompts or repeating yourself.
+                </h1>
+                <p class="text-xl text-brand-slate mb-10 max-w-2xl mx-auto leading-relaxed">
+                    AI ChatWorks adds a smart, unified layer on top of ChatGPT, Claude, and Gemini
+                    so you stay organized, move faster, and stop fighting messy, scattered chat windows.
+                </p>
+
+                <div class="flex flex-wrap justify-center gap-4 md:gap-6 text-brand-dark font-semibold mb-12">
+                    <div class="px-5 py-3 bg-white/80 backdrop-blur-md rounded-xl border border-brand-border shadow-sm flex items-center gap-2">
+                        <svg class="w-5 h-5 text-brand-purple" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                        Works on ChatGPT, Claude & Gemini
+                    </div>
+                    <div class="px-5 py-3 bg-white/80 backdrop-blur-md rounded-xl border border-brand-border shadow-sm flex items-center gap-2">
+                        <svg class="w-4 h-4 text-brand-purple" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        100% Local & Private Storage
+                    </div>
+                    <div class="px-5 py-3 bg-white/80 backdrop-blur-md rounded-xl border border-brand-border shadow-sm flex items-center gap-2">
+                        <span class="text-brand-purple font-bold text-lg">∞</span> Unlimited Prompts & Folders
+                    </div>
+                </div>
+                
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+                    <a href="https://chromewebstore.google.com/detail/ai-chatworks/legmkjenpjbcgmmifpdhehgbmbkofmmc" target="_blank" class="group relative px-8 py-4 bg-brand-purple text-white rounded-xl font-bold text-lg overflow-hidden shadow-xl shadow-brand-purple/30 transition-all hover:scale-105 flex items-center gap-3">
+                        <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:animate-[shimmer_1.5s_infinite]"></div>
+                        <svg class="w-6 h-6" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" version="1.1">
+                            <ellipse cx="50" cy="50" rx="20" ry="20" style="fill:#188FD1"/>
+                            <path d="M 8.5,26 A 48,48 0 0 1 91.5,26 L 62,29.5 A 24,24 0 0 0 26,50 z" style="fill:#EA3939"/>
+                            <path d="M 50,98 A 48,48 0 0 1 8.5,26 L 26,50 A 24,24 0 0 0 62,70.5 z" style="fill:#4AAE48"/>
+                            <path d="M 91.5,26 A 48,48 0 0 1 50,98 L 62,70.5 A 24,24 0 0 0 62,29.5 z" style="fill:#FED14B"/>
+                        </svg>
+                        <span class="relative">Add AI ChatWorks to Chrome</span>
+                    </a>
+                    <button onclick="document.getElementById('features').scrollIntoView({behavior: 'smooth'})" class="px-8 py-4 bg-white text-brand-dark border border-brand-border rounded-xl font-bold text-lg hover:bg-brand-surface hover:border-brand-purple/30 transition-all">
+                        See how it works
+                    </button>
+                </div>
+
+                <div class="max-w-3xl mx-auto text-left space-y-6 bg-white/70 backdrop-blur-sm p-8 rounded-2xl border border-brand-border shadow-sm">
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 mt-1">
+                            <svg class="w-6 h-6 text-brand-dark" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-brand-dark">One prompt library instead of 100 messy chats</h3>
+                            <p class="text-brand-slate text-sm">Keep every prompt, framework, and system in one organized place, instead of hunting through endless chat history.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 mt-1">
+                            <svg class="w-6 h-6 text-brand-dark" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-brand-dark">Command palette for your AI work</h3>
+                            <p class="text-brand-slate text-sm">Open AI ChatWorks Flow (Cmd/Ctrl + Shift + F), search once, and jump straight to the right prompt or action in seconds.</p>
+                        </div>
+                    </div>
+                    <div class="flex gap-4">
+                        <div class="flex-shrink-0 mt-1">
+                            <svg class="w-6 h-6 text-brand-dark" fill="none" stroke="currentColor" stroke-width="3" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"></path></svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-brand-dark">Turn any response into a reusable asset</h3>
+                            <p class="text-brand-slate text-sm">Right-click any text and instantly save it as a ready-to-use prompt, instead of recreating the same instructions over and over.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="max-w-4xl mx-auto mt-20 relative z-10">
+                <div class="flex flex-col md:flex-row items-center justify-center gap-6 mb-10 text-center">
+                    <h3 class="text-2xl md:text-3xl font-bold text-gray-400 line-through decoration-red-400/60 decoration-4">The Old Way</h3>
+                    <div class="hidden md:block bg-brand-purple/10 text-brand-purple px-3 py-1 rounded-full font-black text-sm">VS</div>
+                    <h3 class="text-3xl md:text-4xl font-black text-brand-purple">The New System</h3>
+                </div>
+                
+                <div class="bg-white p-8 rounded-2xl border border-brand-border shadow-lg">
+                    <div class="grid md:grid-cols-2 gap-10 text-brand-slate text-sm">
+                        <div class="space-y-4">
+                            <div class="flex items-center gap-2 text-red-500 font-bold text-xs uppercase tracking-wider mb-2">
+                                <span class="w-2 h-2 rounded-full bg-red-500"></span> Before AI ChatWorks
+                            </div>
+                            <ul class="space-y-3">
+                                <li class="flex gap-3 opacity-80"><span class="text-red-400">✕</span> Messy chats spread across multiple tabs</li>
+                                <li class="flex gap-3 opacity-80"><span class="text-red-400">✕</span> Lost prompts and repeated instructions</li>
+                                <li class="flex gap-3 opacity-80"><span class="text-red-400">✕</span> Endless scrolling to find past answers</li>
+                                <li class="flex gap-3 opacity-80"><span class="text-red-400">✕</span> Manual copy/paste between chatbots</li>
+                            </ul>
+                        </div>
+                        <div class="relative">
+                            <div class="absolute md:hidden top-[-20px] left-0 w-full h-px bg-gray-100"></div>
+                            <div class="absolute hidden md:block left-[-20px] top-0 w-px h-full bg-gray-100"></div>
+                            
+                            <div class="flex items-center gap-2 text-green-600 font-bold text-xs uppercase tracking-wider mb-4 mt-4 md:mt-0">
+                                <span class="w-2 h-2 rounded-full bg-green-600"></span> After AI ChatWorks
+                            </div>
+                            <ul class="space-y-3 font-medium text-brand-dark">
+                                <li class="flex gap-3"><span class="text-green-500">✓</span> One clean, searchable prompt library</li>
+                                <li class="flex gap-3"><span class="text-green-500">✓</span> One shortcut to everything (Cmd + Shift + F)</li>
+                                <li class="flex gap-3"><span class="text-green-500">✓</span> Organized workflows you can actually reuse</li>
+                                <li class="flex gap-3"><span class="text-green-500">✓</span> Faster execution, no lost prompts</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-container max-w-4xl mx-auto mt-12 relative z-10">
+                <div class="relative rounded-xl bg-white border border-brand-border shadow-2xl shadow-brand-purple/10 overflow-hidden">
+                    <div class="aspect-video bg-gray-100 flex items-center justify-center">
+                         <video autoplay loop muted playsinline controls class="w-full h-full object-contain">
+                            <source src="images/ai-chatworks (1).mp4" type="video/mp4">
+                            <div class="flex items-center justify-center h-full text-gray-400 text-sm">
+                                Video loading...
+                            </div>
+                        </video>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="py-24 px-6 bg-brand-surface border-y border-brand-border">
+            <div class="max-w-5xl mx-auto text-center">
+                <h2 class="text-4xl font-bold text-brand-dark mb-4">Stop letting your best ideas vanish.</h2>
+                <p class="text-lg text-brand-slate max-w-2xl mx-auto mb-16">
+                    You don't need another subscription. You need a system. 
+                    AI ChatWorks is built for the "early adopters" who are tired of copy-pasting from Apple Notes.
+                </p>
+
+                <div class="grid md:grid-cols-2 gap-8 text-left">
+                    <div class="p-8 bg-white rounded-2xl border border-brand-border shadow-sm hover:border-brand-purple/30 transition-colors">
+                        <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg>
+                        </div>
+                        <p class="text-brand-dark font-bold text-lg mb-2">For Developers</p>
+                        <p class="text-brand-slate text-sm leading-relaxed">Store your best code refactoring prompts and debugging frameworks. Stop typing "act as a senior react developer" fifty times a day.</p>
+                    </div>
+                    <div class="p-8 bg-white rounded-2xl border border-brand-border shadow-sm hover:border-brand-purple/30 transition-colors">
+                        <div class="w-10 h-10 bg-purple-50 text-brand-purple rounded-lg flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                        </div>
+                        <p class="text-brand-dark font-bold text-lg mb-2">For Writers & Marketers</p>
+                        <p class="text-brand-slate text-sm leading-relaxed">Keep your brand voice guidelines and article structures one click away. Never let the AI drift off-brand again.</p>
+                    </div>
+                    <div class="p-8 bg-white rounded-2xl border border-brand-border shadow-sm hover:border-brand-purple/30 transition-colors">
+                        <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-lg flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                        </div>
+                        <p class="text-brand-dark font-bold text-lg mb-2">Zero Friction Setup</p>
+                        <p class="text-brand-slate text-sm leading-relaxed">No account required. No login. No "cloud sync" delays. Install the extension and it works instantly on your existing tabs.</p>
+                    </div>
+                    <div class="p-8 bg-white rounded-2xl border border-brand-border shadow-sm hover:border-brand-purple/30 transition-colors">
+                        <div class="w-10 h-10 bg-orange-50 text-orange-600 rounded-lg flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                        </div>
+                        <p class="text-brand-dark font-bold text-lg mb-2">Privacy First</p>
+                        <p class="text-brand-slate text-sm leading-relaxed">Your prompts are your IP. We store everything locally in your browser. We don't see your data, ever.</p>
+                    </div>
+                </div>
+
+                <div class="flex flex-col items-center gap-6 mt-16">
+                    <p class="text-sm font-bold text-brand-slate uppercase tracking-widest">Seamlessly Integrated With</p>
+                    <div class="flex flex-wrap justify-center gap-10 opacity-80">
+                        <div class="flex items-center gap-2 text-lg font-semibold text-[#10A37F]">ChatGPT</div>
+                        <div class="flex items-center gap-2 text-lg font-semibold text-[#CC785C]">Claude</div>
+                        <div class="flex items-center gap-2 text-lg font-semibold text-[#4285F4]">Gemini</div>
+                    </div>
+                    <div class="mt-4">
+                        <a href="https://chromewebstore.google.com/detail/ai-chatworks/legmkjenpjbcgmmifpdhehgbmbkofmmc" target="_blank" class="inline-flex items-center gap-2 px-6 py-3 bg-brand-purple text-white rounded-lg font-semibold hover:bg-brand-purpleDark hover:scale-105 transition-all shadow-md shadow-brand-purple/30">
+                            Add to Chrome - It's Free
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="py-24 px-6 bg-brand-surface border-t border-brand-border relative">
+            <div class="max-w-7xl mx-auto">
+                <div class="mb-20 max-w-3xl">
+                    <h2 class="text-4xl md:text-5xl font-bold text-brand-dark mb-6">From scattered chats,<br>to a workflow you can trust.</h2>
+                    <p class="text-lg text-brand-slate">AI ChatWorks is built for people who use AI every day and are tired of losing their best work inside chaotic chat histories.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 grid-rows-2 gap-6 h-auto md:min-h-[600px]">
+                    <div class="col-span-1 md:col-span-2 row-span-2 bg-white rounded-3xl border border-brand-border ring-1 ring-brand-purple/10 p-8 relative overflow-hidden bento-card group shadow-lg hover:shadow-2xl hover:shadow-brand-purple/10 hover:border-brand-purple/40">
+                        <div class="relative z-10">
+                            <div class="w-12 h-12 bg-brand-purple rounded-xl flex items-center justify-center text-white mb-6 shadow-lg shadow-brand-purple/30">
+                                <svg class="view-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 6 4 14"></path><path d="M12 6v14"></path><path d="M8 8v12"></path><path d="M4 4v16"></path></svg>
+                            </div>
+                            <h3 class="text-2xl font-bold mb-2">Centralized Prompt Library</h3>
+                            <p class="text-brand-slate max-w-md">Instead of “that one chat from last week”, you get a structured library: folders, colors, and tags for every prompt you actually want to reuse.</p>
+                        </div>
+                        <div class="absolute bottom-0 right-0 w-[80%] h-[60%] overflow-hidden rounded-tl-2xl border-t border-l border-brand-border shadow-xl group-hover:-translate-y-2 group-hover:-translate-x-2 transition-transform bg-purple-50">
+                             <!-- UPDATED IMAGE PATH - Removed Fallback Text -->
+                             <img src="images/Prompt_library.svg" class="w-full h-full object-cover object-left-top" alt="Prompt Library Interface">
+                        </div>
+                    </div>
+
+                    <div class="col-span-1 bg-gradient-to-br from-[#0f1116] to-[#5b21b6] text-white rounded-3xl p-8 relative overflow-hidden bento-card group shadow-xl border border-white/5">
+                        <div class="relative z-10 h-full flex flex-col justify-between">
+                            <div>
+                                <div class="w-16 h-16 bg-[#1f2937] rounded-3xl flex items-center justify-center text-white mb-6 border border-white/5 shadow-lg">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="text-white">
+                                        <path d="M3 12C3 12 5.5 7 9 7C12.5 7 12.5 17 16 17C19.5 17 22 12 22 12" stroke="currentColor" stroke-width="3" stroke-linecap="round"></path>
+                                    </svg>
+                                </div>
+                                
+                                <h3 class="text-3xl font-bold mb-3 tracking-tight text-white">Flow Command</h3>
+                                <p class="text-gray-300 text-base font-medium leading-relaxed">Open a command palette for your AI work. Search your library, trigger actions, and move on without touching the mouse.</p>
+                            </div>
+                            
+                            <div class="mt-8">
+                                <div class="inline-flex items-center justify-center px-4 py-2 rounded-lg bg-white/15 border border-white/20 text-sm font-mono font-bold text-white tracking-wider shadow-sm backdrop-blur-sm">
+                                    Cmd + Shift + F
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="absolute top-[-20%] right-[-20%] w-64 h-64 bg-brand-purple/20 rounded-full blur-[80px] pointer-events-none"></div>
+                        <div class="absolute bottom-[-10%] left-[-10%] w-full h-32 bg-gradient-to-t from-brand-purple/30 to-transparent pointer-events-none"></div>
+                    </div>
+
+                    <div class="col-span-1 bg-white rounded-3xl border border-brand-border p-8 bento-card relative overflow-hidden group">
+                        <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-lg flex items-center justify-center mb-4">
+                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/></svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-2">Right-Click Capture</h3>
+                        <p class="text-sm text-brand-slate">See something useful in ChatGPT, Claude, or Gemini? Right-click, save as a prompt, and it’s in your system forever.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq" class="py-24 px-6 max-w-3xl mx-auto">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl font-bold text-brand-dark mb-2">Frequently Asked Questions</h2>
+                <p class="text-brand-slate">Everything you wanted to know</p>
+            </div>
+            <div class="space-y-4">
+                <details class="group bg-white rounded-xl border border-brand-border overflow-hidden">
+                    <summary class="flex items-center justify-between p-6 font-bold text-brand-dark cursor-pointer hover:bg-brand-surface transition select-none">
+                        Is my information secure?
+                        <svg class="w-5 h-5 transition-transform group-open:rotate-180 text-brand-slate" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </summary>
+                    <div class="px-6 pb-6 text-brand-slate leading-relaxed">Absolutely. Security and privacy are core to our design. Your entire prompt library is stored 100% locally on your computer using secure browser storage (chrome.storage.local). Nothing is ever sent to an external server, ensuring your data remains private and secure.</div>
+                </details>
+                <details class="group bg-white rounded-xl border border-brand-border overflow-hidden">
+                    <summary class="flex items-center justify-between p-6 font-bold text-brand-dark cursor-pointer hover:bg-brand-surface transition select-none">
+                        Is there a backup for the prompt library?
+                        <svg class="w-5 h-5 transition-transform group-open:rotate-180 text-brand-slate" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </summary>
+                    <div class="px-6 pb-6 text-brand-slate leading-relaxed">Yes. The "Data Management" tab in Settings features a robust Import/Export tool. You can create a full backup of your prompts, folders, and settings as a single .zip file, allowing you to restore your library or move it to a new computer at any time.</div>
+                </details>
+                <details class="group bg-white rounded-xl border border-brand-border overflow-hidden">
+                    <summary class="flex items-center justify-between p-6 font-bold text-brand-dark cursor-pointer hover:bg-brand-surface transition select-none">
+                        How do I get started?
+                        <svg class="w-5 h-5 transition-transform group-open:rotate-180 text-brand-slate" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </summary>
+                    <div class="px-6 pb-6 text-brand-slate leading-relaxed">After installing, the extension will automatically activate on supported sites (ChatGPT, Claude, Gemini). You can either follow the quick onboarding tour or start immediately. Open the main window by clicking the floating icon, or press Cmd+Shift+F (Mac) / Ctrl+Shift+F (Windows) to launch the "Flow" command palette.</div>
+                </details>
+                <details class="group bg-white rounded-xl border border-brand-border overflow-hidden">
+                    <summary class="flex items-center justify-between p-6 font-bold text-brand-dark cursor-pointer hover:bg-brand-surface transition select-none">
+                        Is there technical support?
+                        <svg class="w-5 h-5 transition-transform group-open:rotate-180 text-brand-slate" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </summary>
+                    <div class="px-6 pb-6 text-brand-slate leading-relaxed">Yes. We offer community and direct support. You can access support links, join our Facebook group, or find our contact email directly from the "Help & Support" section within the extension's settings panel.</div>
+                </details>
+                <details class="group bg-white rounded-xl border border-brand-border overflow-hidden">
+                    <summary class="flex items-center justify-between p-6 font-bold text-brand-dark cursor-pointer hover:bg-brand-surface transition select-none">
+                        What is "Flow"?
+                        <svg class="w-5 h-5 transition-transform group-open:rotate-180 text-brand-slate" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </summary>
+                    <div class="px-6 pb-6 text-brand-slate leading-relaxed">Flow is your productivity command palette. Press Cmd+Shift+F (Mac) or Ctrl+Shift+F (Windows) to open it. From there, you can instantly search your entire prompt library or execute smart actions,like "Summarize Chat" or "Open Settings". All without using your mouse.</div>
+                </details>
+                <details class="group bg-white rounded-xl border border-brand-border overflow-hidden">
+                    <summary class="flex items-center justify-between p-6 font-bold text-brand-dark cursor-pointer hover:bg-brand-surface transition select-none">
+                        How does the "Summarize Chat" action work?
+                        <svg class="w-5 h-5 transition-transform group-open:rotate-180 text-brand-slate" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </summary>
+                    <div class="px-6 pb-6 text-brand-slate leading-relaxed">The "Summarize Chat" action (available in Flow) is an intelligent tool that reads the current conversation, detects the dominant language (e.g., English, Hebrew, etc.), and then instructs the AI to generate a "full fidelity" summary. This summary is automatically copied to your clipboard, allowing you to seamlessly start a new chat with full context.</div>
+                </details>
+            </div>
+        </section>
+    </main>
+
+    <main id="view-about" class="view-section">
+        <section class="pt-32 pb-20 px-6">
+            <div class="max-w-5xl mx-auto text-center mb-20 animate-fade-in">
+                <h1 class="text-5xl md:text-6xl font-bold mb-6 text-brand-dark">About AI ChatWorks</h1>
+                <p class="text-xl text-brand-slate max-w-3xl mx-auto">Transforming how people work with AI chatbots.</p>
+            </div>
+
+            <div class="max-w-5xl mx-auto space-y-8 animate-fade-in" style="animation-delay: 0.1s;">
+                <!-- Mission -->
+                <div class="bg-white rounded-3xl border border-brand-border p-12 shadow-sm">
+                    <div class="flex flex-col md:flex-row items-start gap-8">
+                        <div class="w-16 h-16 rounded-2xl bg-brand-purple/10 flex items-center justify-center flex-shrink-0 text-brand-purple">
+                            <!-- CORRECTED MISSION ICON: Capa_1 SVG -->
+                            <svg class="w-8 h-8 text-brand-purple" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 494.914 494.914" style="enable-background:new 0 0 494.914 494.914;" xml:space="preserve" fill="currentColor">
+                                <g>
+                                    <path d="M285.813,266.034v36.483c91.16,9.032,145.408,40.674,145.408,64.427c0,27.993-75.088,67.024-197.362,67.024 S36.514,394.937,36.514,366.944c0-23.93,54.996-55.856,147.32-64.635v-36.466C87.701,274.843,0,309.59,0,366.944 c0,67.247,120.488,103.54,233.858,103.54c113.369,0,233.877-36.293,233.877-103.54 C467.735,309.972,381.194,275.321,285.813,266.034z"/>
+                                    <path d="M486.869,40.363c-2.789-1.752-5.959-2.63-9.145-2.63c-2.551,0-5.098,0.558-7.472,1.704l-30.271,14.689 c-14.084,6.836-29.346,10.245-44.593,10.245c-16.123,0-32.214-3.808-46.919-11.392c-14.673-7.568-30.699-11.327-46.695-11.327 c-16.728,0-33.441,4.095-48.592,12.252V42.8c0-10.149-8.236-18.37-18.369-18.37c-10.133,0-18.354,8.221-18.354,18.37v328.94 c0,10.133,8.221,18.354,18.354,18.354c10.133,0,18.369-8.221,18.369-18.354V203.853c15.15-8.157,31.88-12.268,48.607-12.268 c15.996,0,32.007,3.76,46.68,11.326c14.705,7.584,30.796,11.393,46.902,11.393c15.247,0,30.51-3.41,44.609-10.244l45.245-21.953 c5.927-2.868,9.686-8.859,9.686-15.438V54.908C494.914,48.981,491.855,43.485,486.869,40.363z"/>
+                                </g>
+                            </svg>
+                        </div>
+                        <div>
+                            <h2 class="text-2xl font-bold mb-4 text-brand-dark">Our Mission</h2>
+                            <p class="text-lg text-brand-slate leading-relaxed">
+                                AI ChatWorks was created from a deep understanding of the everyday challenges of working with AI tools. 
+                                We saw how users struggled with organizing prompts, switching between platforms, and managing their workflow efficiently.
+                                <br /><br />
+                                We decided to create a solution that combines all the essential tools in one place - simple, elegant, and effective.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Values Grid -->
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="bg-white rounded-3xl border border-brand-border p-10 shadow-sm hover:border-brand-purple/30 transition-colors">
+                        <div class="w-14 h-14 rounded-xl bg-blue-50 flex items-center justify-center mb-6 text-blue-600">
+                            <!-- CORRECTED SIMPLICITY ICON: Puzzle/Gear SVG -->
+                            <svg class="w-7 h-7" width="800px" height="800px" viewBox="0 0 16 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="currentColor">
+                                <path d="M10.3 8.2l-0.9 0.9 0.9 0.9-1.2 1.2 4.3 4.3c0.6 0.6 1.5 0.6 2.1 0s0.6-1.5 0-2.1l-5.2-5.2zM14.2 15c-0.4 0-0.8-0.3-0.8-0.8 0-0.4 0.3-0.8 0.8-0.8s0.8 0.3 0.8 0.8c0 0.5-0.3 0.8-0.8 0.8z"></path>
+                                <path d="M3.6 8l0.9-0.6 1.5-1.7 0.9 0.9 0.9-0.9-0.1-0.1c0.2-0.5 0.3-1 0.3-1.6 0-2.2-1.8-4-4-4-0.6 0-1.1 0.1-1.6 0.3l2.9 2.9-2.1 2.1-2.9-2.9c-0.2 0.5-0.3 1-0.3 1.6 0 2.1 1.6 3.7 3.6 4z"></path>
+                                <path d="M8 10.8l0.9-0.8-0.9-0.9 5.7-5.7 1.2-0.4 1.1-2.2-0.7-0.7-2.3 1-0.5 1.2-5.6 5.7-0.9-0.9-0.8 0.9c0 0 0.8 0.6-0.1 1.5-0.5 0.5-1.3-0.1-2.8 1.4-0.5 0.5-2.1 2.1-2.1 2.1s-0.6 1 0.6 2.2 2.2 0.6 2.2 0.6 1.6-1.6 2.1-2.1c1.4-1.4 0.9-2.3 1.3-2.7 0.9-0.9 1.6-0.2 1.6-0.2zM4.9 10.4l0.7 0.7-3.8 3.8-0.7-0.7z"></path>
+                            </svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3 text-brand-dark">Simplicity and Efficiency</h3>
+                        <p class="text-brand-slate leading-relaxed">
+                            We believe that good tools should be simple to use and intuitive. 
+                            Every feature in AI ChatWorks is designed to save you time and help you work smarter.
+                        </p>
+                    </div>
+
+                    <div class="bg-white rounded-3xl border border-brand-border p-10 shadow-sm hover:border-brand-purple/30 transition-colors">
+                        <div class="w-14 h-14 rounded-xl bg-emerald-50 flex items-center justify-center mb-6 text-emerald-600">
+                            <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3 text-brand-dark">Community and Support</h3>
+                        <p class="text-brand-slate leading-relaxed mb-6">
+                            We're not just building tools, we're building a community of users who help each other.
+                            Your feedback is important to us.
+                        </p>
+                        <a href="https://www.facebook.com/groups/1208608001123842/" target="_blank" class="inline-flex items-center gap-2 text-blue-600 font-bold hover:underline">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                            Join our Facebook Community
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Story (REVERTED TO TEXT ONLY) -->
+                <div class="rounded-3xl p-12 text-white bg-gradient-to-br from-brand-purple to-blue-600 shadow-xl">
+                    <h2 class="text-3xl font-bold mb-6">Our Story</h2>
+                    <p class="text-lg leading-relaxed opacity-90 mb-6">
+                        AI ChatWorks started as a personal project by a team of developers who worked daily with ChatGPT, Claude, and Gemini.
+                        We were frustrated with the need to switch between tools, copy and paste prompts, and manage our workflow across multiple platforms.
+                    </p>
+                    <p class="text-lg leading-relaxed opacity-90">
+                        So we built a solution for ourselves, and to our surprise, we discovered that thousands of other users faced the same problems.
+                        Today, AI ChatWorks serves a growing community of people looking for a better way to work with AI.
+                    </p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <main id="view-changelog" class="view-section">
+        <section class="pt-32 pb-20 px-6">
+            <div class="max-w-4xl mx-auto text-center mb-16 animate-fade-in">
+                <h1 class="text-5xl font-bold mb-4 text-brand-dark">Changelog</h1>
+                <p class="text-xl text-brand-slate">Stay up to date with the latest features and improvements.</p>
+            </div>
+
+            <div class="max-w-4xl mx-auto space-y-6 animate-fade-in" style="animation-delay: 0.1s;">
+                <div class="bg-white rounded-2xl border border-brand-border overflow-hidden transition-all hover:shadow-lg group">
+                    <div class="p-6 cursor-pointer hover:bg-brand-surface transition-colors" onclick="toggleChangelog(this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <h2 class="text-2xl font-bold text-brand-dark">Version 1.1.0</h2>
+                                <span class="bg-brand-purple text-white text-xs font-bold px-2 py-1 rounded">LATEST</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-brand-slate">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                <span class="text-sm">November 2025</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-6 pb-6 border-t border-brand-border bg-gray-50/50 pt-6">
+                        <div class="space-y-4">
+                            <div class="flex gap-4">
+                                <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded text-xs font-bold h-fit border border-emerald-200 flex items-center justify-center w-24 gap-1 flex-shrink-0"><span>✨</span> New</span>
+                                <p class="text-brand-gray text-sm flex-1">Chat summaries with auto-copy and progress feedback.</p>
+                            </div>
+                            <div class="flex gap-4">
+                                <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded text-xs font-bold h-fit border border-emerald-200 flex items-center justify-center w-24 gap-1 flex-shrink-0"><span>✨</span> New</span>
+                                <p class="text-brand-gray text-sm flex-1">Language detection for summaries with localized sections.</p>
+                            </div>
+                            <div class="flex gap-4">
+                                <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded text-xs font-bold h-fit border border-emerald-200 flex items-center justify-center w-24 gap-1 flex-shrink-0"><span>✨</span> New</span>
+                                <p class="text-brand-gray text-sm flex-1">Full-fidelity summaries for clearer context.</p>
+                            </div>
+                            <div class="flex gap-4">
+                                <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded text-xs font-bold h-fit border border-blue-200 flex items-center justify-center w-24 gap-1 flex-shrink-0"><span>🔧</span> Improved</span>
+                                <p class="text-brand-gray text-sm flex-1">Favorite animations feel smoother and more responsive.</p>
+                            </div>
+                            <div class="flex gap-4">
+                                <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded text-xs font-bold h-fit border border-blue-200 flex items-center justify-center w-24 gap-1 flex-shrink-0"><span>🔧</span> Improved</span>
+                                <p class="text-brand-gray text-sm flex-1">Flow icons and spacing feel more balanced.</p>
+                            </div>
+                            <div class="flex gap-4">
+                                <span class="bg-orange-100 text-orange-700 px-3 py-1 rounded text-xs font-bold h-fit border border-orange-200 flex items-center justify-center w-24 gap-1 flex-shrink-0"><span>🐛</span> Fixed</span>
+                                <p class="text-brand-gray text-sm flex-1">Sort dropdown now displays correctly in dark mode.</p>
+                            </div>
+                            <div class="flex gap-4">
+                                <span class="bg-orange-100 text-orange-700 px-3 py-1 rounded text-xs font-bold h-fit border border-orange-200 flex items-center justify-center w-24 gap-1 flex-shrink-0"><span>🐛</span> Fixed</span>
+                                <p class="text-brand-gray text-sm flex-1">Sidebar and folder animations are smoother and slower for easier reading.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white rounded-2xl border border-brand-border overflow-hidden transition-all hover:shadow-lg group">
+                    <div class="p-6 cursor-pointer hover:bg-brand-surface transition-colors" onclick="toggleChangelog(this)">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-4">
+                                <h2 class="text-2xl font-bold text-brand-dark">Version 1.0.0</h2>
+                            </div>
+                            <div class="flex items-center gap-2 text-brand-slate">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                <span class="text-sm">October 2025</span>
+                            </div>
+                        </div>
+                    </div>
+                      <!-- NEW CONTENT ADDED HERE -->
+    <div class="px-6 pb-6 border-t border-brand-border bg-gray-50/50 pt-6">
+        <div class="space-y-4">
+
+            <div class="flex gap-4">
+                <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded text-xs font-bold h-fit border border-emerald-200 flex items-center justify-center w-24 gap-1 flex-shrink-0">
+                    <span>✨</span> New
+                </span>
+                <p class="text-brand-gray text-sm flex-1">
+                    Initial Public Release - AI ChatWorks launches with comprehensive prompt management for ChatGPT, Claude, and Gemini.
+                </p>
+            </div>
+
+        </div>
+    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <main id="view-contact" class="view-section">
+         <section class="pt-32 pb-20 px-6 text-center">
+            <h1 class="text-4xl font-bold mb-4 text-brand-dark">Contact Us</h1>
+             <p class="text-brand-slate mb-12">We'd love to hear from you.</p>
+             <div class="max-w-xl mx-auto bg-white p-10 rounded-2xl border border-brand-border shadow-lg">
+                 <div class="flex flex-col items-center gap-4">
+                     <div class="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center text-brand-purple mb-2">
+                         <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                     </div>
+                     <h2 class="text-2xl font-bold text-brand-dark">Get in touch via Email</h2>
+                     <p class="text-brand-slate mb-6">For support, feedback, or just to say hi.</p>
+                     <a href="mailto:info@ai-chatworks.com" class="px-8 py-3 bg-brand-purple text-white rounded-lg font-bold hover:bg-brand-purpleDark transition-all">info@ai-chatworks.com</a>
+                 </div>
+             </div>
+        </section>
+    </main>
+    
+    <footer class="bg-white border-t border-brand-border">
+        <div class="max-w-5xl mx-auto py-12 px-6 flex flex-wrap justify-between gap-16">
+            <div class="min-w-[220px]">
+                <div class="flex items-center gap-3 mb-3">
+                     <img src="images/AI ChatWorks.svg" alt="AI ChatWorks" class="w-8 h-8" onerror="this.style.display='none'">
+                    <span class="font-bold text-xl">AI ChatWorks</span>
+                </div>
+                <p class="text-sm text-brand-slate leading-relaxed">© 2025 AI ChatWorks. All rights reserved.</p>
+            </div>
+            
+            <div class="min-w-[160px]">
+                <h3 class="text-sm font-medium tracking-wide text-brand-slate uppercase mb-4 text-left">Product</h3>
+                <ul class="space-y-3 text-left">
+                    <li><button onclick="switchView('changelog')" class="text-sm text-brand-gray hover:text-brand-purple transition-colors">Changelog</button></li>
+                    <li><button onclick="switchView('home'); setTimeout(() => document.getElementById('faq').scrollIntoView({behavior: 'smooth'}), 100)" class="text-sm text-brand-gray hover:text-brand-purple transition-colors">FAQ</button></li>
+                </ul>
+            </div>
+
+             <div class="min-w-[160px]">
+                <h3 class="text-sm font-medium tracking-wide text-brand-slate uppercase mb-4 text-left">Company</h3>
+                <ul class="space-y-3 mb-6 text-left">
+                    <li><button onclick="switchView('about')" class="text-sm text-brand-gray hover:text-brand-purple transition-colors">About us</button></li>
+                    <li><button onclick="switchView('contact')" class="text-sm text-brand-gray hover:text-brand-purple transition-colors">Contact us</button></li>
+                </ul>
+                
+                <div class="flex items-center gap-4 justify-start">
+                    <a href="https://www.facebook.com/groups/1208608001123842/" target="_blank" class="text-gray-400 hover:text-[#1877F2] transition-colors" aria-label="Facebook Group">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z" clip-rule="evenodd" /></svg>
+                    </a>
+                    <a href="https://discord.gg/MGuuzxwP8" target="_blank" class="text-gray-400 hover:text-[#5865F2] transition-colors" aria-label="Discord Server">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.772-.6083 1.1588a18.2532 18.2532 0 00-5.4968 0C9.083 3.663 8.8495 3.2659 8.6385 2.8916a.0738.0738 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.069.069 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.419-2.1568 2.419zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.419-2.1568 2.419z"/></svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function switchView(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            const target = document.getElementById('view-' + viewId);
+            if(target) target.classList.add('active');
+            
+            document.querySelectorAll('.nav-link').forEach(el => {
+                if(el.dataset.target === viewId) el.classList.add('text-brand-purple');
+                else el.classList.remove('text-brand-purple');
+            });
+            window.scrollTo(0,0);
+        }
+
+        function toggleChangelog(header) {
+            const content = header.nextElementSibling;
+            content.classList.toggle('hidden');
+        }
+
+        document.querySelector('.nav-link[data-target="home"]')?.classList.add('text-brand-purple');
+    </script>
+</body>
+</html>
