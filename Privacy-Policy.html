@@ -1,176 +1,164 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy - AI ChatWorks</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 40px 20px;
-            background-color: #f9f9f9;
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            purple: '#8b5cf6',
+                            purpleDark: '#7c3aed',
+                            purpleLight: '#ddd6fe',
+                            dark: '#111827',
+                            gray: '#374151',
+                            slate: '#64748b',
+                            bg: '#ffffff',
+                            surface: '#f9fafb',
+                            border: '#e5e7eb',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Open Sans', 'sans-serif'],
+                        display: ['Open Sans', 'sans-serif'], 
+                    }
+                }
+            }
         }
-        .container {
-            background: #fff;
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        }
-        h1 {
-            color: #2c3e50;
-            border-bottom: 2px solid #eaeaea;
-            padding-bottom: 10px;
-            margin-bottom: 30px;
-        }
-        h2 {
-            color: #34495e;
-            margin-top: 30px;
-            font-size: 1.4em;
-        }
-        h3 {
-            color: #455a64;
-            font-size: 1.1em;
-            margin-top: 20px;
-        }
-        p {
-            margin-bottom: 15px;
-        }
-        ul {
-            margin-bottom: 15px;
-            padding-left: 20px;
-        }
-        li {
-            margin-bottom: 5px;
-        }
-        strong {
-            color: #2c3e50;
-        }
-        a {
-            color: #3498db;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-        .last-updated {
-            color: #7f8c8d;
-            font-style: italic;
-            margin-bottom: 30px;
-        }
-        .footer {
-            margin-top: 50px;
-            text-align: center;
-            font-size: 0.9em;
-            color: #7f8c8d;
-            border-top: 1px solid #eaeaea;
-            padding-top: 20px;
-        }
-    </style>
+    </script>
 </head>
-<body>
+<body class="font-sans antialiased text-brand-gray bg-brand-surface selection:bg-brand-purpleLight selection:text-brand-purpleDark py-12 px-4 sm:px-6 lg:px-8">
 
-<div class="container">
-    <h1>Privacy Policy for AI ChatWorks</h1>
-    <p class="last-updated"><strong>Last Updated:</strong> December 03, 2025</p>
+    <main class="max-w-4xl mx-auto bg-white shadow-xl shadow-brand-dark/5 rounded-2xl border border-brand-border overflow-hidden">
+        
+        <!-- Document Header -->
+        <div class="px-8 py-10 border-b border-brand-border bg-gradient-to-r from-brand-surface to-white">
+            <h1 class="text-3xl md:text-4xl font-bold text-brand-dark mb-2">Privacy Policy</h1>
+            <p class="text-brand-slate">Last Updated: <span class="font-semibold text-brand-purple">December 03, 2025</span></p>
+        </div>
 
-    <p>At <strong>AI ChatWorks</strong> ("we," "us," or "our"), we value your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and safeguard your data when you use the AI ChatWorks browser extension (the "Extension").</p>
+        <!-- Document Content -->
+        <div class="px-8 py-10 prose prose-lg prose-slate max-w-none prose-headings:text-brand-dark prose-a:text-brand-purple prose-a:no-underline hover:prose-a:text-brand-purpleDark prose-strong:text-brand-dark">
+            
+            <!-- Introduction Section -->
+            <div class="mb-10">
+                <p class="mb-4">At <strong>AI ChatWorks</strong> ("we," "us," or "our"), we value your privacy and are committed to protecting your personal information. This Privacy Policy explains how we collect, use, and safeguard your data when you use the AI ChatWorks browser extension (the "Extension").</p>
 
-    <p>By installing and using the Extension, you agree to the collection and use of information in accordance with this policy.</p>
+                <p>By installing and using the Extension, you agree to the collection and use of information in accordance with this policy.</p>
+            </div>
 
-    <h2>1. Information We Collect</h2>
-    <p>We prioritize a <strong>Local-First</strong> architecture. Most of your sensitive data, such as your actual conversation history with AI providers, remains on your device. However, to provide features like Cloud Sync, Marketplace, and Account Management, we collect specific types of data.</p>
+            <hr class="border-brand-border my-8" />
 
-    <h3>1.1. Personal Information</h3>
-    <p>When you create an account or sign in (via Supabase Auth), we may collect:</p>
-    <ul>
-        <li><strong>Email Address:</strong> Used for authentication, account management, and important service notifications.</li>
-        <li><strong>User ID:</strong> A unique identifier assigned to your account (e.g., 0cafb15d-95ba-484e-802d-02c31c314d39).</li>
-    </ul>
+            <h2 class="text-2xl font-bold mt-12 mb-6">1. Information We Collect</h2>
+            <p>We prioritize a <strong>Local-First</strong> architecture. Most of your sensitive data, such as your actual conversation history with AI providers, remains on your device. However, to provide features like Cloud Sync, Marketplace, and Account Management, we collect specific types of data.</p>
 
-    <h3>1.2. User Content (Cloud Data)</h3>
-    <p>To enable synchronization across devices, the following data is encrypted and stored on our secure servers (Supabase):</p>
-    <ul>
-        <li><strong>Prompts & Templates:</strong> The custom prompts you save in your Prompt Library.</li>
-        <li><strong>Extension Settings:</strong> Your configuration preferences (e.g., theme, language, keyboard shortcuts).</li>
-        <li><strong>Folder Structure:</strong> The names and organization of your folders.</li>
-        <li><strong>Marketplace Data:</strong> Content you explicitly downloaded from the Marketplace.</li>
-    </ul>
+            <h3 class="text-xl font-semibold mt-8 mb-4">1.1. Personal Information</h3>
+            <p>When you create an account or sign in (via Supabase Auth), we may collect:</p>
+            <ul class="list-disc pl-6 mb-6 space-y-2">
+                <li><strong>Email Address:</strong> Used for authentication, account management, and important service notifications.</li>
+                <li><strong>User ID:</strong> A unique identifier assigned to your account (e.g., 0cafb15d-95ba-484e-802d-02c31c314d39).</li>
+            </ul>
 
-    <h3>1.3. User Content (Local Data)</h3>
-    <p>The following data is <strong>stored locally on your device</strong>:</p>
-    <ul>
-        <li><strong>Chat Content:</strong> The actual text of your conversations with AI providers (e.g., ChatGPT, Claude). This data is <strong>never</strong> shared with us or synced to our servers, regardless of whether you have a cloud account. It remains strictly private on your device.</li>
-        <li><strong>Ghost Text Drafts:</strong> Temporary text generated during the ghost text/autocompletion process.</li>
-    </ul>
-    <p>If you do not create a cloud account (or are not signed in), <strong>all</strong> operations are processed and saved exclusively on your local computer. We do not sync any data to the cloud unless you explicitly choose to sign in.</p>
+            <h3 class="text-xl font-semibold mt-8 mb-4">1.2. User Content (Cloud Data)</h3>
+            <p>To enable synchronization across devices, the following data is encrypted and stored on our secure servers (Supabase):</p>
+            <ul class="list-disc pl-6 mb-6 space-y-2">
+                <li><strong>Prompts & Templates:</strong> The custom prompts you save in your Prompt Library.</li>
+                <li><strong>Extension Settings:</strong> Your configuration preferences (e.g., theme, language, keyboard shortcuts).</li>
+                <li><strong>Folder Structure:</strong> The names and organization of your folders.</li>
+                <li><strong>Marketplace Data:</strong> Content you explicitly downloaded from the Marketplace.</li>
+            </ul>
 
-    <h3>1.4. Usage Data & Analytics</h3>
-    <p>We may anonymous collect usage data to improve the Extension, such as:</p>
-    <ul>
-        <li>Frequency of feature usage (e.g., "Prompt Library used 5 times").</li>
-        <li>Performance metrics (e.g., load times, error rates).</li>
-    </ul>
-    <p>This data is aggregated and cannot be used to identify you personally.</p>
+            <h3 class="text-xl font-semibold mt-8 mb-4">1.3. User Content (Local Data)</h3>
+            <p>The following data is <strong>stored locally on your device</strong>:</p>
+            <ul class="list-disc pl-6 mb-6 space-y-2">
+                <li><strong>Chat Content:</strong> The actual text of your conversations with AI providers (e.g., ChatGPT, Claude). This data is <strong>never</strong> shared with us or synced to our servers, regardless of whether you have a cloud account. It remains strictly private on your device.</li>
+                <li><strong>Ghost Text Drafts:</strong> Temporary text generated during the ghost text/autocompletion process.</li>
+            </ul>
+            <div class="bg-brand-surface border-l-4 border-brand-purple p-4 my-6 rounded-r-lg">
+                <p class="m-0 text-sm text-brand-gray">If you do not create a cloud account (or are not signed in), <strong>all</strong> operations are processed and saved exclusively on your local computer. We do not sync any data to the cloud unless you explicitly choose to sign in.</p>
+            </div>
 
-    <h2>2. How We Use Your Information</h2>
-    <p>We use the collected data for the following purposes:</p>
-    <ul>
-        <li><strong>To Provide Service:</strong> Authenticating users and syncing your prompts/settings across your devices.</li>
-        <li><strong>To Improve the Extension:</strong> Analyzing usage patterns to identify popular features and fix bugs.</li>
-        <li><strong>To Communicate:</strong> Sending updates regarding your account or critical security notices.</li>
-        <li><strong>Marketplace Functionality:</strong> Enabling you to browse and download prompts or templates from the Marketplace.</li>
-    </ul>
+            <h3 class="text-xl font-semibold mt-8 mb-4">1.4. Usage Data & Analytics</h3>
+            <p>We may anonymous collect usage data to improve the Extension, such as:</p>
+            <ul class="list-disc pl-6 mb-6 space-y-2">
+                <li>Frequency of feature usage (e.g., "Prompt Library used 5 times").</li>
+                <li>Performance metrics (e.g., load times, error rates).</li>
+            </ul>
+            <p>This data is aggregated and cannot be used to identify you personally.</p>
 
-    <h2>3. Data Storage and Security</h2>
-    <h3>3.1. Storage</h3>
-    <ul>
-        <li><strong>Cloud Data:</strong> We use <strong>Supabase</strong>, a secure and industry-standard backend-as-a-service provider, to store your synced data.</li>
-        <li><strong>Local Data:</strong> Your chat history and temporary drafts are stored in your browser's local storage (<code>IndexedDB</code> / <code>chrome.storage</code>).</li>
-    </ul>
+            <h2 class="text-2xl font-bold mt-12 mb-6">2. How We Use Your Information</h2>
+            <p>We use the collected data for the following purposes:</p>
+            <ul class="list-disc pl-6 mb-6 space-y-2">
+                <li><strong>To Provide Service:</strong> Authenticating users and syncing your prompts/settings across your devices.</li>
+                <li><strong>To Improve the Extension:</strong> Analyzing usage patterns to identify popular features and fix bugs.</li>
+                <li><strong>To Communicate:</strong> Sending updates regarding your account or critical security notices.</li>
+                <li><strong>Marketplace Functionality:</strong> Enabling you to browse and download prompts or templates from the Marketplace.</li>
+            </ul>
 
-    <h3>3.2. Security</h3>
-    <ul>
-        <li><strong>Encryption:</strong> All data transmitted between your browser and our servers is encrypted using SSL/TLS protocols.</li>
-        <li><strong>Access Control:</strong> We implement strict access controls. Your private prompts and settings are accessible only by you (via your authenticated account).</li>
-    </ul>
+            <h2 class="text-2xl font-bold mt-12 mb-6">3. Data Storage and Security</h2>
+            <h3 class="text-xl font-semibold mt-6 mb-4">3.1. Storage</h3>
+            <ul class="list-disc pl-6 mb-6 space-y-2">
+                <li><strong>Cloud Data:</strong> We use <strong>Supabase</strong>, a secure and industry-standard backend-as-a-service provider, to store your synced data.</li>
+                <li><strong>Local Data:</strong> Your chat history and temporary drafts are stored in your browser's local storage (<code>IndexedDB</code> / <code>chrome.storage</code>).</li>
+            </ul>
 
-    <h2>4. Third-Party Sharing</h2>
-    <p>We do <strong>not</strong> sell, trade, or rent your personal identification information to others. We only share data with trusted third-party service providers necessary to operate the Extension:</p>
-    <ul>
-        <li><strong>Supabase:</strong> For authentication and database hosting.</li>
-        <li><strong>Payment Processors:</strong> If you subscribe to a paid plan, payment is processed by a third-party provider (e.g., Stripe or LemonSqueezy). We do not store your credit card details.</li>
-    </ul>
-    <p>We may disclose your information if required by law or in response to valid requests by public authorities.</p>
+            <h3 class="text-xl font-semibold mt-6 mb-4">3.2. Security</h3>
+            <ul class="list-disc pl-6 mb-6 space-y-2">
+                <li><strong>Encryption:</strong> All data transmitted between your browser and our servers is encrypted using SSL/TLS protocols.</li>
+                <li><strong>Access Control:</strong> We implement strict access controls. Your private prompts and settings are accessible only by you (via your authenticated account).</li>
+            </ul>
 
-    <h2>5. User Rights</h2>
-    <p>You have the following rights regarding your data:</p>
-    <ul>
-        <li><strong>Access:</strong> You can view your synced data directly within the Extension.</li>
-        <li><strong>Correction:</strong> You can update your settings and prompts at any time.</li>
-        <li><strong>Deletion:</strong> You can request the deletion of your account and all associated cloud data by using the account delete option within Settings (Cloud Data tab > Delete Account), or by contacting support. Local data can be deleted by uninstalling the Extension.</li>
-    </ul>
+            <h2 class="text-2xl font-bold mt-12 mb-6">4. Third-Party Sharing</h2>
+            <p>We do <strong>not</strong> sell, trade, or rent your personal identification information to others. We only share data with trusted third-party service providers necessary to operate the Extension:</p>
+            <ul class="list-disc pl-6 mb-6 space-y-2">
+                <li><strong>Supabase:</strong> For authentication and database hosting.</li>
+                <li><strong>Payment Processors:</strong> If you subscribe to a paid plan, payment is processed by a third-party provider (e.g., Stripe or LemonSqueezy). We do not store your credit card details.</li>
+            </ul>
+            <p>We may disclose your information if required by law or in response to valid requests by public authorities.</p>
 
-    <h2>6. Data Retention</h2>
-    <ul>
-        <li><strong>Account Data:</strong> We retain your account data as long as your account is active.</li>
-        <li><strong>Deleted Accounts:</strong> Upon request for deletion, your data is removed from our live databases within 24 hours.</li>
-    </ul>
+            <h2 class="text-2xl font-bold mt-12 mb-6">5. User Rights</h2>
+            <p>You have the following rights regarding your data:</p>
+            <ul class="list-disc pl-6 mb-6 space-y-2">
+                <li><strong>Access:</strong> You can view your synced data directly within the Extension.</li>
+                <li><strong>Correction:</strong> You can update your settings and prompts at any time.</li>
+                <li><strong>Deletion:</strong> You can request the deletion of your account and all associated cloud data by using the account delete option within Settings (Cloud Data tab > Delete Account), or by contacting support. Local data can be deleted by uninstalling the Extension.</li>
+            </ul>
 
-    <h2>7. Changes to This Privacy Policy</h2>
-    <p>We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last Updated" date.</p>
+            <h2 class="text-2xl font-bold mt-12 mb-6">6. Data Retention</h2>
+            <ul class="list-disc pl-6 mb-6 space-y-2">
+                <li><strong>Account Data:</strong> We retain your account data as long as your account is active.</li>
+                <li><strong>Deleted Accounts:</strong> Upon request for deletion, your data is removed from our live databases within 24 hours.</li>
+            </ul>
 
-    <h2>8. Contact Us</h2>
-    <p>If you have any questions about this Privacy Policy, please contact us at:</p>
-    <p><strong>Email:</strong> <a href="mailto:info@ai-chatworks.com">info@ai-chatworks.com</a></p>
-</div>
+            <h2 class="text-2xl font-bold mt-12 mb-6">7. Changes to This Privacy Policy</h2>
+            <p>We may update our Privacy Policy from time to time. We will notify you of any changes by posting the new Privacy Policy on this page and updating the "Last Updated" date.</p>
 
-<div class="footer">
-    <p>&copy; 2025 AI ChatWorks. All rights reserved.</p>
-</div>
+            <h2 class="text-2xl font-bold mt-12 mb-6">8. Contact Us</h2>
+            <p>If you have any questions about this Privacy Policy, please contact us at:</p>
+            <p class="mt-4">
+                <a href="mailto:info@ai-chatworks.com" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-surface border border-brand-border text-brand-purple font-semibold hover:bg-brand-purple hover:text-white transition-all duration-300">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                    info@ai-chatworks.com
+                </a>
+            </p>
+        </div>
+        
+        <!-- Document Footer -->
+        <div class="px-8 py-6 border-t border-brand-border bg-brand-surface text-center">
+            <p class="text-sm text-brand-slate">© 2025 AI ChatWorks. All rights reserved.</p>
+        </div>
+    </main>
 
 </body>
 </html>
