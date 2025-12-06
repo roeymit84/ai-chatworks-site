@@ -152,40 +152,31 @@
 
     async function loadTotalStats() {
         try {
+            // Use Postgres functions that bypass RLS for accurate counts
+
             // Total users
-            const { count: userCount } = await supabase
-                .from('user_profiles')
-                .select('*', { count: 'exact', head: true });
+            const { data: userData, error: userError } = await supabase.rpc('get_total_users');
+            if (!userError) {
+                document.getElementById('total-users').textContent = userData || 0;
+            }
 
-            document.getElementById('total-users').textContent = userCount || 0;
-
-            // Total prompts (metadata only, no encrypted content)
-            const { count: promptCount } = await supabase
-                .from('prompts')
-                .select('*', { count: 'exact', head: true });
-
-            document.getElementById('total-prompts').textContent = promptCount || 0;
+            // Total prompts
+            const { data: promptData, error: promptError } = await supabase.rpc('get_total_prompts');
+            if (!promptError) {
+                document.getElementById('total-prompts').textContent = promptData || 0;
+            }
 
             // Total folders
-            const { count: folderCount } = await supabase
-                .from('folders')
-                .select('*', { count: 'exact', head: true });
+            const { data: folderData, error: folderError } = await supabase.rpc('get_total_folders');
+            if (!folderError) {
+                document.getElementById('total-folders').textContent = folderData || 0;
+            }
 
-            document.getElementById('total-folders').textContent = folderCount || 0;
-
-            // Encrypted items (prompts + folders with encrypted data)
-            const { count: encryptedPrompts } = await supabase
-                .from('prompts')
-                .select('*', { count: 'exact', head: true })
-                .not('name_encrypted', 'is', null);
-
-            const { count: encryptedFolders } = await supabase
-                .from('folders')
-                .select('*', { count: 'exact', head: true })
-                .not('name_encrypted', 'is', null);
-
-            const totalEncrypted = (encryptedPrompts || 0) + (encryptedFolders || 0);
-            document.getElementById('encrypted-items').textContent = totalEncrypted;
+            // Encrypted items
+            const { data: encryptedData, error: encryptedError } = await supabase.rpc('get_encrypted_items_count');
+            if (!encryptedError) {
+                document.getElementById('encrypted-items').textContent = encryptedData || 0;
+            }
 
         } catch (error) {
             console.error('Error loading total stats:', error);
@@ -202,28 +193,22 @@
             weekStart.setDate(weekStart.getDate() - weekStart.getDay()); // Start of week (Sunday)
 
             // Users today
-            const { count: todayCount } = await supabase
-                .from('user_profiles')
-                .select('*', { count: 'exact', head: true })
-                .gte('created_at', today.toISOString());
-
+            const { data: todayCount } = await supabase.rpc('get_users_by_date', {
+                start_date: today.toISOString()
+            });
             document.getElementById('users-today').textContent = todayCount || 0;
 
             // Users yesterday
-            const { count: yesterdayCount } = await supabase
-                .from('user_profiles')
-                .select('*', { count: 'exact', head: true })
-                .gte('created_at', yesterday.toISOString())
-                .lt('created_at', today.toISOString());
-
+            const { data: yesterdayCount } = await supabase.rpc('get_users_by_date', {
+                start_date: yesterday.toISOString(),
+                end_date: today.toISOString()
+            });
             document.getElementById('users-yesterday').textContent = yesterdayCount || 0;
 
             // Users this week
-            const { count: weekCount } = await supabase
-                .from('user_profiles')
-                .select('*', { count: 'exact', head: true })
-                .gte('created_at', weekStart.toISOString());
-
+            const { data: weekCount } = await supabase.rpc('get_users_by_date', {
+                start_date: weekStart.toISOString()
+            });
             document.getElementById('users-week').textContent = weekCount || 0;
 
         } catch (error) {
@@ -233,28 +218,14 @@
 
     async function loadUserGrowthChart() {
         try {
-            // Get user signups for last 30 days
-            const thirtyDaysAgo = new Date();
-            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-            const { data, error } = await supabase
-                .from('user_profiles')
-                .select('created_at')
-                .gte('created_at', thirtyDaysAgo.toISOString())
-                .order('created_at', { ascending: true });
+            // Get user growth data from Postgres function
+            const { data, error } = await supabase.rpc('get_user_growth_data');
 
             if (error) throw error;
 
-            // Group by date
-            const dateCounts = {};
-            data.forEach(user => {
-                const date = new Date(user.created_at).toLocaleDateString();
-                dateCounts[date] = (dateCounts[date] || 0) + 1;
-            });
-
             // Prepare chart data
-            const labels = Object.keys(dateCounts);
-            const values = Object.values(dateCounts);
+            const labels = data.map(row => new Date(row.signup_date).toLocaleDateString());
+            const values = data.map(row => row.user_count);
 
             // Create chart
             const ctx = document.getElementById('user-growth-chart').getContext('2d');
@@ -302,28 +273,14 @@
 
     async function loadPromptActivityChart() {
         try {
-            // Get prompts created in last 30 days
-            const thirtyDaysAgo = new Date();
-            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-
-            const { data, error } = await supabase
-                .from('prompts')
-                .select('created_at')
-                .gte('created_at', thirtyDaysAgo.toISOString())
-                .order('created_at', { ascending: true });
+            // Get prompt activity data from Postgres function
+            const { data, error } = await supabase.rpc('get_prompt_activity_data');
 
             if (error) throw error;
 
-            // Group by date
-            const dateCounts = {};
-            data.forEach(prompt => {
-                const date = new Date(prompt.created_at).toLocaleDateString();
-                dateCounts[date] = (dateCounts[date] || 0) + 1;
-            });
-
             // Prepare chart data
-            const labels = Object.keys(dateCounts);
-            const values = Object.values(dateCounts);
+            const labels = data.map(row => new Date(row.creation_date).toLocaleDateString());
+            const values = data.map(row => row.prompt_count);
 
             // Create chart
             const ctx = document.getElementById('prompt-activity-chart').getContext('2d');
@@ -378,17 +335,8 @@
             document.getElementById('db-status').textContent = dbError ? '❌ Error' : '✅ Connected';
 
             // Encryption status
-            const { count: encryptedCount } = await supabase
-                .from('prompts')
-                .select('*', { count: 'exact', head: true })
-                .not('name_encrypted', 'is', null);
-
-            const { count: totalCount } = await supabase
-                .from('prompts')
-                .select('*', { count: 'exact', head: true });
-
-            const encryptionPercentage = totalCount > 0 ? Math.round((encryptedCount / totalCount) * 100) : 0;
-            document.getElementById('encryption-status').textContent = `✅ ${encryptionPercentage}% Encrypted`;
+            const { data: encryptionPercentage } = await supabase.rpc('get_encryption_percentage');
+            document.getElementById('encryption-status').textContent = `✅ ${encryptionPercentage || 0}% Encrypted`;
 
             // RLS policies (placeholder - would need admin access to query pg_policies)
             document.getElementById('rls-policies').textContent = '✅ Active';
