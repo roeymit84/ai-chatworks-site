@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terms and Conditions - AI ChatWorks</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            background-color: #f9f9f9;
+        }
+        .container {
+            background: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #eaeaea;
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+            font-size: 1.4em;
+        }
+        p {
+            margin-bottom: 15px;
+        }
+        ul {
+            margin-bottom: 15px;
+            padding-left: 20px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+        strong {
+            color: #2c3e50;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .last-updated {
+            color: #7f8c8d;
+            font-style: italic;
+            margin-bottom: 30px;
+        }
+        .footer {
+            margin-top: 50px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #7f8c8d;
+            border-top: 1px solid #eaeaea;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Terms and Conditions for AI ChatWorks</h1>
+    <p class="last-updated"><strong>Last Updated:</strong> December 03, 2025</p>
+
+    <p>Please read these Terms and Conditions ("Terms", "Terms of Service") carefully before using the <strong>AI ChatWorks</strong> browser extension (the "Service") operated by <strong>AI ChatWorks</strong> ("us", "we", or "our").</p>
+
+    <p>Your access to and use of the Service is conditioned on your acceptance of and compliance with these Terms. These Terms apply to all visitors, users, and others who access or use the Service.</p>
+
+    <p>By accessing or using the Service, you agree to be bound by these Terms. If you disagree with any part of the terms, then you may not access the Service.</p>
+
+    <h2>1. Description of Service</h2>
+    <p>AI ChatWorks is a browser extension designed to enhance your experience with AI platforms. Key features include a Prompt Library, Cloud Synchronization, Ghost Text (autocompletion), and a Marketplace for sharing resources.</p>
+    <p>The Service acts as an interface and utility layer over third-party AI providers (e.g., OpenAI, Anthropic). We are not affiliated with, endorsed by, or sponsored by these third-party providers.</p>
+
+    <h2>2. User Accounts</h2>
+    <ul>
+        <li><strong>Registration:</strong> You may need to create an account to access features like Cloud Sync and the Marketplace. You agree to provide accurate and complete information.</li>
+        <li><strong>Security:</strong> You are responsible for safeguarding the password and credentials used to access the Service. You agree not to disclose your password to any third party. You must notify us immediately upon becoming aware of any breach of security or unauthorized use of your account.</li>
+    </ul>
+
+    <h2>3. Subscriptions and Payments</h2>
+    <ul>
+        <li><strong>Free and Paid Tiers:</strong> The Service may offer both free and paid subscription tiers.</li>
+        <li><strong>Billing:</strong> If you choose a paid subscription, you agree to pay the fees indicated. Payments are processed by third-party payment processors.</li>
+        <li><strong>No Refunds:</strong> Except where required by law, payments are non-refundable. You may cancel your subscription at any time to prevent future billing, but previous payments will not be refunded.</li>
+    </ul>
+
+    <h2>4. User-Generated Content and Marketplace</h2>
+    <ul>
+        <li><strong>Your Content:</strong> You retain ownership of the prompts, templates, and text you create ("User Content"). We do not claim ownership of your private User Content.</li>
+        <li><strong>Marketplace Usage:</strong> The Marketplace allows you to browse and download content to your personal library. Currently, users cannot upload or publish content to the Marketplace.</li>
+        <li><strong>Downloaded Content:</strong> Once you download content from the Marketplace, you are free to modify and use it within your personal Prompt Library.</li>
+        <li><strong>Responsibility:</strong> You are solely responsible for the content you create or modify in your library. You agree not to use the Service to generate content that is illegal, offensive, or infringing on intellectual property rights.</li>
+    </ul>
+
+    <h2>5. Intellectual Property</h2>
+    <p>The Service (excluding User Content) and its original content, features, and functionality are and will remain the exclusive property of AI ChatWorks and its licensors. The Service is protected by copyright, trademark, and other laws.</p>
+
+    <h2>6. Data Backup and Loss</h2>
+    <ul>
+        <li><strong>User Responsibility:</strong> You are solely responsible for maintaining backups of your data. The Service allows you to export your prompts and settings to a file via <strong>Settings > Local data > Export</strong>.</li>
+        <li><strong>Accidental Deletion:</strong> We are not liable for any loss of data caused by accidental deletion, browser cache clearing, uninstallation of the Extension, or failure to sync.</li>
+        <li><strong>Local Data:</strong> Data stored locally on your device (such as chat history) is not backed up to our servers and is permanently lost if your local storage is cleared.</li>
+    </ul>
+
+    <h2>7. Prohibited Uses</h2>
+    <p>You agree not to use the Service:</p>
+    <ul>
+        <li>In any way that violates any applicable national or international law or regulation.</li>
+        <li>To reverse engineer, decompile, or disassemble any aspect of the Extension.</li>
+        <li>To attempt to access any service or data you are not authorized to access.</li>
+        <li>To disrupt or interfere with the security or performance of the Service.</li>
+    </ul>
+
+    <h2>8. Disclaimer of Warranties ("As Is")</h2>
+    <p>The Service is provided on an "AS IS" and "AS AVAILABLE" basis. We utilize third-party services (such as Supabase and AI Providers) and cannot guarantee their uptime or availability.</p>
+    <p>We make no representations or warranties of any kind, express or implied, regarding:</p>
+    <ul>
+        <li>The accuracy or reliability of AI-generated responses.</li>
+        <li>The availability of the Service at any specific time or location.</li>
+        <li>That the Service is free of viruses or other harmful components.</li>
+    </ul>
+    <p><strong>Use of the "Ghost Text" and AI features is at your own risk.</strong> You are responsible for verifying the accuracy of any text generated or suggested by the Service.</p>
+
+    <h2>9. Limitation of Liability</h2>
+    <p>In no event shall AI ChatWorks, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from:</p>
+    <ul>
+        <li>Your access to or use of or inability to access or use the Service;</li>
+        <li>Any conduct or content of any third party on the Service;</li>
+        <li>Any content obtained from the Service; and</li>
+        <li>Unauthorized access, use, or alteration of your transmissions or content.</li>
+    </ul>
+
+    <h2>10. Termination</h2>
+    <p>We may terminate or suspend your account immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms. Upon termination, your right to use the Service will immediately cease.</p>
+
+    <h2>11. Changes to Terms</h2>
+    <p>We reserve the right, at our sole discretion, to modify or replace these Terms at any time. We will try to provide at least 30 days' notice prior to any new material terms taking effect. By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms.</p>
+
+    <h2>12. Contact Us</h2>
+    <p>If you have any questions about these Terms, please contact us at:</p>
+    <p><strong>Email:</strong> <a href="mailto:info@ai-chatworks.com">info@ai-chatworks.com</a></p>
+</div>
+
+<div class="footer">
+    <p>&copy; 2025 AI ChatWorks. All rights reserved.</p>
+</div>
+
+</body>
+</html>
