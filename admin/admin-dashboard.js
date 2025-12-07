@@ -156,26 +156,8 @@
             return;
         }
 
-        const { data: { session } } = await supabase.auth.getSession();
-
-        if (session) {
-            const { data: profile } = await supabase
-                .from('user_profiles')
-                .select('role')
-                .eq('id', session.user.id)
-                .single();
-
-            if (profile?.role === ADMIN_ROLE) {
-                currentUser = session.user;
-                document.getElementById('admin-email').textContent = session.user.email;
-                showDashboard();
-                loadDashboardData();
-                return;
-            } else {
-                await supabase.auth.signOut();
-            }
-        }
-
+        // SECURITY: Always show login screen for admin dashboard
+        // Do not auto-login even if session exists
         showLogin();
     }
 
