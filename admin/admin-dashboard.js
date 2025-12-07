@@ -606,4 +606,20 @@
         init();
     }
 
+    // ============================================
+    // REFRESH FUNCTIONS
+    // ============================================
+
+    window.refreshOverview = async function () {
+        console.log('Refreshing overview data...');
+        await loadOverviewData();
+        alert('Overview data refreshed!');
+    };
+
+    window.refreshMarketplace = async function () {
+        console.log('Refreshing marketplace data...');
+        await loadMarketplaceData();
+        alert('Marketplace data refreshed!');
+    };
+
 })();

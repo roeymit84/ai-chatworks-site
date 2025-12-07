@@ -119,9 +119,23 @@
 
             <!-- OVERVIEW VIEW -->
             <div id="view-overview" class="view-container">
-                <header class="form-group" style="margin-bottom: 32px;">
-                    <h2 style="font-size: 24px;">Dashboard Overview</h2>
-                    <p style="color: var(--text-tertiary);">Real-time platform metrics</p>
+                <header class="form-group"
+                    style="margin-bottom: 32px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h2 style="font-size: 24px;">Dashboard Overview</h2>
+                        <p style="color: var(--text-tertiary);">Real-time platform metrics</p>
+                    </div>
+                    <button onclick="refreshOverview()" class="btn-secondary"
+                        style="display: flex; align-items: center; gap: 8px;" title="Refresh data">
+                        <svg viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-miterlimit="10">
+                            <path d="M25.7,10.9C23.9,7.4,20.2,5,16,5c-4.7,0-8.6,2.9-10.2,7" />
+                            <path d="M6.2,21c1.8,3.5,5.5,6,9.8,6c4.7,0,8.6-2.9,10.2-7" />
+                            <polyline points="26,5 26,11 20,11" />
+                            <polyline points="6,27 6,21 12,21" />
+                        </svg>
+                        Refresh
+                    </button>
                 </header>
 
                 <section class="stats-row">
@@ -241,9 +255,23 @@
 
             <!-- MARKETPLACE VIEW -->
             <div id="view-marketplace" class="view-container hidden">
-                <header class="form-group" style="margin-bottom: 32px;">
-                    <h2 style="font-size: 24px;">Marketplace Management</h2>
-                    <p style="color: var(--text-tertiary);">Manage public prompts and uploads</p>
+                <header class="form-group"
+                    style="margin-bottom: 32px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h2 style="font-size: 24px;">Marketplace Management</h2>
+                        <p style="color: var(--text-tertiary);">Manage public prompts and uploads</p>
+                    </div>
+                    <button onclick="refreshMarketplace()" class="btn-secondary"
+                        style="display: flex; align-items: center; gap: 8px;" title="Refresh marketplace data">
+                        <svg viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-miterlimit="10">
+                            <path d="M25.7,10.9C23.9,7.4,20.2,5,16,5c-4.7,0-8.6,2.9-10.2,7" />
+                            <path d="M6.2,21c1.8,3.5,5.5,6,9.8,6c4.7,0,8.6-2.9,10.2-7" />
+                            <polyline points="26,5 26,11 20,11" />
+                            <polyline points="6,27 6,21 12,21" />
+                        </svg>
+                        Refresh
+                    </button>
                 </header>
 
                 <div class="marketplace-grid">
