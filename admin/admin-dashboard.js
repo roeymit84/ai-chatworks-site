@@ -454,6 +454,7 @@
                             <th>Downloads</th>
                             <th>Tier</th>
                             <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -475,6 +476,15 @@
                         <td>${prompt.downloads}</td>
                         <td><span class="badge ${tierBadgeClass}">${prompt.tier.toUpperCase()}</span></td>
                         <td>${statusBadge}</td>
+                        <td>
+                            <button onclick="editMarketplacePrompt('${prompt.prompt_id}')" class="btn-secondary" style="padding: 6px 12px; font-size: 12px;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                </svg>
+                                Edit
+                            </button>
+                        </td>
                     </tr>
                 `;
             });
@@ -620,6 +630,114 @@
         console.log('Refreshing marketplace data...');
         await loadMarketplaceData();
         alert('Marketplace data refreshed!');
+    };
+
+    // ============================================
+    // EDIT MARKETPLACE PROMPT
+    // ============================================
+
+    window.editMarketplacePrompt = async function (promptId) {
+        try {
+            // Fetch prompt details
+            const { data, error } = await supabase
+                .from('marketplace_prompts')
+                .select('*')
+                .eq('id', promptId)
+                .single();
+
+            if (error) throw error;
+
+            // Create modal
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9999;';
+            modal.innerHTML = `
+                <div class="card" style="width: 600px; max-width: 90%; padding: 24px; max-height: 90vh; overflow-y: auto;">
+                    <h2 style="margin-bottom: 24px;">Edit Marketplace Prompt</h2>
+                    <form id="edit-prompt-form" onsubmit="updateMarketplacePrompt(event, '${promptId}'); return false;">
+                        <div class="form-group">
+                            <label>Title</label>
+                            <input type="text" id="edit-title" value="${data.title}" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select id="edit-category" required>
+                                <option value="Marketing" ${data.category === 'Marketing' ? 'selected' : ''}>Marketing</option>
+                                <option value="Coding" ${data.category === 'Coding' ? 'selected' : ''}>Coding</option>
+                                <option value="Business" ${data.category === 'Business' ? 'selected' : ''}>Business</option>
+                                <option value="Creative" ${data.category === 'Creative' ? 'selected' : ''}>Creative</option>
+                                <option value="Writing" ${data.category === 'Writing' ? 'selected' : ''}>Writing</option>
+                                <option value="Education" ${data.category === 'Education' ? 'selected' : ''}>Education</option>
+                                <option value="other" ${!['Marketing', 'Coding', 'Business', 'Creative', 'Writing', 'Education'].includes(data.category) ? 'selected' : ''}>Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="edit-description" rows="2" required>${data.description || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Content</label>
+                            <textarea id="edit-content" rows="5" required>${data.content || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Tier</label>
+                            <select id="edit-tier" required>
+                                <option value="free" ${data.tier === 'free' ? 'selected' : ''}>Free</option>
+                                <option value="pro" ${data.tier === 'pro' ? 'selected' : ''}>Pro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="edit-active" ${data.is_active ? 'checked' : ''}>
+                                Active
+                            </label>
+                        </div>
+                        <div style="display: flex; gap: 12px; margin-top: 24px;">
+                            <button type="submit" class="btn-primary" style="flex: 1;">Update Prompt</button>
+                            <button type="button" onclick="this.closest('[style*=\"position: fixed\"]').remove()" class="btn-secondary" style="flex: 1;">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        } catch (error) {
+            console.error('Error loading prompt:', error);
+            alert('Error loading prompt: ' + error.message);
+        }
+    };
+
+    window.updateMarketplacePrompt = async function (event, promptId) {
+        event.preventDefault();
+
+        const title = document.getElementById('edit-title').value;
+        const category = document.getElementById('edit-category').value;
+        const description = document.getElementById('edit-description').value;
+        const content = document.getElementById('edit-content').value;
+        const tier = document.getElementById('edit-tier').value;
+        const isActive = document.getElementById('edit-active').checked;
+
+        try {
+            const { error } = await supabase
+                .from('marketplace_prompts')
+                .update({
+                    title,
+                    category,
+                    description,
+                    content,
+                    tier,
+                    is_active: isActive,
+                    updated_at: new Date().toISOString()
+                })
+                .eq('id', promptId);
+
+            if (error) throw error;
+
+            alert('Prompt updated successfully!');
+            document.querySelector('[style*="position: fixed"]').remove();
+            await loadMarketplaceData();
+        } catch (error) {
+            console.error('Error updating prompt:', error);
+            alert('Error updating prompt: ' + error.message);
+        }
     };
 
 })();
