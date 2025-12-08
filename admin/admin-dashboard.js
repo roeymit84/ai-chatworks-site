@@ -334,11 +334,10 @@
 
     async function loadMarketplaceStats() {
         try {
-            // Get all marketplace prompts
+            // Get all marketplace prompts (removed is_active filter to show all prompts)
             const { data: allPrompts, error: allError } = await supabase
                 .from('marketplace_prompts')
-                .select('tier, downloads, title, category')
-                .eq('is_active', true);
+                .select('tier, downloads, title, category');
 
             if (allError) throw allError;
 
@@ -354,7 +353,6 @@
             const { data: topDownloads, error: topError } = await supabase
                 .from('marketplace_prompts')
                 .select('title, category, downloads, tier')
-                .eq('is_active', true)
                 .order('downloads', { ascending: false })
                 .limit(5);
 
