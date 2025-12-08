@@ -758,7 +758,7 @@
                     </div>
 
                     <div class="px-6 py-4 bg-gray-50 flex justify-end gap-3 border-t border-gray-100">
-                        <button onclick="this.closest('#editPromptModal').remove()" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors">Cancel</button>
+                        <button onclick="document.getElementById('editPromptModal').remove()" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors">Cancel</button>
                         <button onclick="updateMarketplacePrompt('${promptId}')" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium rounded-lg shadow-lg shadow-slate-900/10 transition-all">Update Prompt</button>
                     </div>
                 </div>
@@ -885,7 +885,7 @@
                 </div>
 
                 <div class="px-6 py-4 bg-gray-50 flex justify-end gap-3 border-t border-gray-100">
-                    <button onclick="this.closest('#promptModal').remove()" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors">Cancel</button>
+                    <button onclick="document.getElementById('promptModal').remove()" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors">Cancel</button>
                     <button onclick="uploadPromptFromModal()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium rounded-lg shadow-lg shadow-slate-900/10 transition-all">Save Changes</button>
                 </div>
             </div>
@@ -1043,6 +1043,12 @@
                         throw new Error('Missing required fields: title and content');
                     }
 
+                    // Normalize tier value to lowercase
+                    let tier = (prompt.tier || 'free').toString().toLowerCase();
+                    if (tier !== 'free' && tier !== 'pro') {
+                        tier = 'free'; // Default to free if invalid
+                    }
+
                     const { error } = await supabase
                         .from('marketplace_prompts')
                         .insert({
@@ -1050,7 +1056,7 @@
                             category: prompt.category || 'Uncategorized',
                             description: prompt.description || '',
                             content: prompt.content,
-                            tier: prompt.tier || 'free',
+                            tier: tier,
                             tags: prompt.tags || [],
                             user_id: currentUser.id
                         });
@@ -1134,7 +1140,7 @@
             <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-sm mx-4 transform transition-all overflow-hidden">
                 <div class="px-5 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
                     <h3 class="text-sm font-semibold text-slate-800">Manage Categories</h3>
-                    <button onclick="this.closest('#categoryModal').remove()" class="text-slate-400 hover:text-slate-600">
+                    <button onclick="document.getElementById('categoryModal').remove()" class="text-slate-400 hover:text-slate-600">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
                 </div>
@@ -1182,8 +1188,14 @@
 
         // Create a temporary/placeholder entry to make category available
         try {
+            // Check if user has permission
+            if (!currentUser || !currentUser.id) {
+                alert('You must be logged in to add categories');
+                return;
+            }
+
             // Insert a minimal placeholder prompt with this category
-            const { error } = await supabase
+            const { data, error } = await supabase
                 .from('marketplace_prompts')
                 .insert({
                     title: `_category_placeholder_${newCategory}`,
@@ -1193,9 +1205,13 @@
                     tier: 'free',
                     is_active: false,
                     user_id: currentUser.id
-                });
+                })
+                .select();
 
-            if (error) throw error;
+            if (error) {
+                console.error('Database error:', error);
+                throw new Error(`Database error: ${error.message}. Please check your permissions.`);
+            }
 
             input.value = '';
 
