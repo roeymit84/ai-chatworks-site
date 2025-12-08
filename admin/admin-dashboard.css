@@ -6,35 +6,70 @@
     /* BRAND COLORS */
     --accent-primary: #8b5cf6;
     --accent-primary-hover: #7c3aed;
+    --accent-light: rgba(139, 92, 246, 0.1);
+    --accent-glow: rgba(139, 92, 246, 0.15);
 
     /* LIGHT THEME SURFACES */
     --bg-primary: #ffffff;
     --bg-secondary: #f9fafb;
     --bg-tertiary: #f3f4f6;
+    --bg-quaternary: #e5e7eb;
 
     /* TEXT COLORS */
     --text-primary: #111827;
     --text-secondary: #374151;
     --text-tertiary: #6b7280;
-    --text-muted: #94a3b8;
+    --text-muted: #9ca3af;
 
     /* BORDERS */
     --border-color: #e5e7eb;
+    --border-hover: #d1d5db;
 
     /* STATUS COLORS */
     --success: #10b981;
-    --warning: #f97316;
+    --success-bg: rgba(16, 185, 129, 0.1);
+    --warning: #f59e0b;
+    --warning-bg: rgba(245, 158, 11, 0.1);
     --danger: #ef4444;
+    --danger-bg: rgba(239, 68, 68, 0.1);
 
     /* SPACING & RADIUS */
     --space-4: 16px;
     --space-6: 24px;
+    --radius-sm: 6px;
     --radius-md: 8px;
     --radius-lg: 12px;
+    --radius-xl: 16px;
 
     /* SHADOWS */
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-    --shadow-focus: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-focus: 0 0 0 3px rgba(139, 92, 246, 0.15);
+
+    /* TRANSITIONS */
+    --transition-fast: 150ms ease;
+    --transition-base: 200ms ease;
+}
+
+/* DARK THEME */
+[data-theme="dark"] {
+    --bg-primary: #0f0f14;
+    --bg-secondary: #16161d;
+    --bg-tertiary: #1e1e27;
+    --bg-quaternary: #2a2a36;
+
+    --text-primary: #f3f4f6;
+    --text-secondary: #d1d5db;
+    --text-tertiary: #9ca3af;
+    --text-muted: #6b7280;
+
+    --border-color: #2a2a36;
+    --border-hover: #3f3f4a;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
 }
 
 * {
@@ -50,6 +85,7 @@ body {
     line-height: 1.6;
     height: 100vh;
     overflow: hidden;
+    transition: background-color var(--transition-base), color var(--transition-base);
 }
 
 /* ============================================
@@ -57,7 +93,7 @@ body {
    ============================================ */
 
 .text-mono {
-    font-family: 'SF Mono', 'Monaco', 'Courier New', monospace;
+    font-family: 'JetBrains Mono', 'SF Mono', 'Monaco', 'Courier New', monospace;
 }
 
 .hidden {
@@ -97,6 +133,7 @@ body {
     border-radius: var(--radius-lg);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
     border: 1px solid var(--border-color);
+    transition: background-color var(--transition-base), border-color var(--transition-base);
 }
 
 .login-brand {
@@ -146,6 +183,7 @@ body {
     display: flex;
     flex-direction: column;
     padding: var(--space-4);
+    transition: background-color var(--transition-base), border-color var(--transition-base);
 }
 
 .sidebar-header-group {
@@ -234,6 +272,8 @@ body {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
+    background-color: var(--bg-secondary);
+    transition: background-color var(--transition-base);
 }
 
 .view-container {
@@ -254,6 +294,7 @@ body {
     box-shadow: var(--shadow-sm);
     display: flex;
     flex-direction: column;
+    transition: background-color var(--transition-base), border-color var(--transition-base), box-shadow var(--transition-base);
 }
 
 /* Form Elements */
