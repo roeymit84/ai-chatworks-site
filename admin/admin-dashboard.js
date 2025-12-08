@@ -337,7 +337,7 @@
             // Get all marketplace prompts (removed is_active filter to show all prompts)
             const { data: allPrompts, error: allError } = await supabase
                 .from('marketplace_prompts')
-                .select('tier, downloads, title, category');
+                .select('tier, downloads_count, title, category');
 
             if (allError) throw allError;
 
@@ -352,8 +352,8 @@
             // Get top 5 downloaded prompts
             const { data: topDownloads, error: topError } = await supabase
                 .from('marketplace_prompts')
-                .select('title, category, downloads, tier')
-                .order('downloads', { ascending: false })
+                .select('title, category, downloads_count, tier')
+                .order('downloads_count', { ascending: false })
                 .limit(5);
 
             if (topError) throw topError;
@@ -379,7 +379,7 @@
                         </div>
                         <div style="display: flex; align-items: center; gap: 12px;">
                             <span class="badge ${tierBadgeClass}" style="font-size: 11px;">${prompt.tier.toUpperCase()}</span>
-                            <div style="font-weight: 600; color: #8b5cf6;">${prompt.downloads} downloads</div>
+                            <div style="font-weight: 600; color: #8b5cf6;">${prompt.downloads_count} downloads</div>
                         </div>
                     </div>
                 `;
@@ -538,7 +538,7 @@
                             <span style="color:var(--text-tertiary); font-size:12px;">by ${prompt.uploader_email || 'Unknown'}</span>
                         </td>
                         <td>${prompt.category}</td>
-                        <td>${prompt.downloads}</td>
+                        <td>${prompt.downloads_count}</td>
                         <td><span class="badge ${tierBadgeClass}">${prompt.tier.toUpperCase()}</span></td>
                         <td>${statusBadge}</td>
                         <td>
