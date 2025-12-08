@@ -2562,11 +2562,26 @@
                     .filter(c => c && c.trim())  // Filter out null, undefined, empty strings
             )].sort();
 
-            console.log('Populating category filter with:', categories);
+            console.log('populateCategoryFilter called');
+            console.log('Extracted categories:', categories);
+            console.log('allMarketplaceData length:', allMarketplaceData.length);
 
             const select = document.getElementById('categoryFilter');
+            console.log('Category select element:', select);
+
             select.innerHTML = '<option value="">All Categories</option>' +
                 categories.map(c => `<option value="${c}">${c}</option>`).join('');
+
+            console.log('Category select innerHTML updated, option count:', select.options.length);
+
+            // Update custom dropdown if it exists
+            const wrapper = select.parentElement.querySelector('.custom-dropdown');
+            console.log('Custom dropdown wrapper:', wrapper);
+
+            if (wrapper && typeof updateDropdownOptions === 'function') {
+                console.log('Updating custom dropdown options');
+                updateDropdownOptions(wrapper);
+            }
         }
 
         function filterMarketplace() {
@@ -2607,7 +2622,7 @@
                 const avatar = title.split(' ').map(w => w[0] || '').slice(0, 2).join('').toUpperCase() || 'UN';
                 const category = p.category || 'Uncategorized';
                 const uploaderEmail = p.uploader_email || p.user_email || 'Unknown';
-                const downloads = p.downloads || p.downloads_count || 0;
+                const downloads = p.downloads || 0;
                 const tier = p.tier || 'free';
                 const isActive = p.is_active !== undefined ? p.is_active : true;
 
@@ -3099,7 +3114,7 @@
                                 content: p.content,
                                 tier: (p.tier === 'pro') ? 'pro' : 'free',
                                 is_active: true,
-                                downloads_count: 0,
+                                downloads: 0,
                                 uploader_email: currentUser.email
                             });
                             success++;
@@ -3316,7 +3331,7 @@
                 // Load marketplace stats
                 const { data: allPrompts } = await supabase
                     .from('marketplace_prompts')
-                    .select('tier, downloads_count, title, category, is_active');
+                    .select('tier, title, category, is_active');
 
                 if (allPrompts) {
                     const totalPrompts = allPrompts.length;
@@ -3331,14 +3346,14 @@
                     document.getElementById('marketplaceBadge').textContent = totalPrompts;
 
                     // Top prompts table
-                    const topPrompts = [...allPrompts].sort((a, b) => (b.downloads_count || 0) - (a.downloads_count || 0)).slice(0, 5);
+                    const topPrompts = [...allPrompts].sort((a, b) => (b.downloads || 0) - (a.downloads || 0)).slice(0, 5);
                     if (topPrompts.length > 0) {
                         document.getElementById('topPromptsTable').innerHTML = topPrompts.map(p => {
                             const title = p.title || 'Untitled';
                             const avatar = title.split(' ').map(w => w[0] || '').slice(0, 2).join('').toUpperCase() || 'UN';
                             const category = p.category || 'Uncategorized';
                             const tier = p.tier || 'free';
-                            const downloads = p.downloads_count || 0;
+                            const downloads = p.downloads || 0;
 
                             return `
                             <tr>
