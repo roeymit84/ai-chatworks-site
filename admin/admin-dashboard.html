@@ -1826,10 +1826,12 @@
                                     id="marketplaceSearch" oninput="filterMarketplace()">
                             </div>
                             <div style="display: flex; gap: 8px;">
-                                <select class="filter-select" id="categoryFilter" onchange="filterMarketplace()">
+                                <select class="filter-select" id="categoryFilter" onchange="filterMarketplace()"
+                                    style="min-width: 180px;">
                                     <option value="">All Categories</option>
                                 </select>
-                                <select class="filter-select" id="tierFilter" onchange="filterMarketplace()">
+                                <select class="filter-select" id="tierFilter" onchange="filterMarketplace()"
+                                    style="min-width: 140px;">
                                     <option value="">All Tiers</option>
                                     <option value="pro">Pro</option>
                                     <option value="free">Free</option>
@@ -2892,18 +2894,24 @@
         }
 
         async function deletePrompt(id, title) {
+            console.log('deletePrompt called with id:', id, 'title:', title);
             showConfirm(
                 `Delete "${title}"?`,
                 'This action cannot be undone.',
                 async () => {
+                    console.log('Delete confirmed, executing delete for id:', id);
                     try {
                         const { error } = await supabase
                             .from('marketplace_prompts')
                             .delete()
                             .eq('id', id);
 
-                        if (error) throw error;
+                        if (error) {
+                            console.error('Supabase delete error:', error);
+                            throw error;
+                        }
 
+                        console.log('Delete successful, reloading marketplace data');
                         // Reload marketplace data
                         await loadMarketplaceData();
 
@@ -2980,13 +2988,14 @@
                 return;
             }
 
-            // Category will be available when creating/editing prompts
-            // No need to store separately - it's derived from prompts
+            // Add to temporary categories list for immediate use
+            // It will be saved when a prompt is created with it
             input.value = '';
-            showAlert(`Category "${categoryName}" will be available when you create a prompt with it`);
 
-            // Refresh the list
-            await loadCategoriesList();
+            // Refresh dropdowns to include new category
+            await populateModalCategories();
+
+            showAlert(`Category "${categoryName}" added successfully`);
         }
 
         async function editCategory(oldName) {
@@ -3120,9 +3129,14 @@
             document.getElementById('confirmWarning').textContent = warning || '';
 
             const okBtn = document.getElementById('confirmOkBtn');
-            okBtn.onclick = () => {
+            okBtn.onclick = async () => {
                 closeModal('confirmModal');
-                onConfirm();
+                try {
+                    await onConfirm();
+                } catch (error) {
+                    console.error('Error in confirm callback:', error);
+                    showAlert('An error occurred: ' + error.message);
+                }
             };
 
             openModal('confirmModal');
