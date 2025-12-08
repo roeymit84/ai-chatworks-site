@@ -1135,7 +1135,7 @@
         modal.id = 'categoryModal';
         modal.className = 'fixed inset-0 z-50 flex items-center justify-center';
         modal.innerHTML = `
-            <div class="absolute inset-0 bg-slate-900/30 backdrop-blur-sm" onclick="this.parentElement.remove()"></div>
+            <div class="absolute inset-0 bg-slate-900/30 backdrop-blur-sm" onclick="document.getElementById('categoryModal').remove()"></div>
             
             <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-sm mx-4 transform transition-all overflow-hidden">
                 <div class="px-5 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
@@ -1153,11 +1153,16 @@
 
                     <div class="space-y-2 max-h-48 overflow-y-auto pr-2" id="categoryList">
                         ${categories.map(cat => `
-                            <div class="flex justify-between items-center p-2 hover:bg-gray-50 rounded border border-transparent hover:border-gray-100 group">
-                                <span class="text-sm text-slate-700">${cat}</span>
-                                <button onclick="deleteCategoryFromList('${cat}')" class="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"></path></svg>
-                                </button>
+                            <div class="flex justify-between items-center p-2 hover:bg-gray-50 rounded border border-transparent hover:border-gray-100 group" data-category="${cat}">
+                                <span class="text-sm text-slate-700 category-name">${cat}</span>
+                                <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <button onclick="editCategoryName('${cat.replace(/'/g, "\\'")}')\" class="text-slate-400 hover:text-blue-500 p-1" title="Rename">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                                    </button>
+                                    <button onclick="deleteCategoryFromList('${cat.replace(/'/g, "\\'")}')\" class="text-slate-400 hover:text-red-500 p-1" title="Delete">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+                                    </button>
+                                </div>
                             </div>
                         `).join('')}
                     </div>
@@ -1186,31 +1191,15 @@
             return;
         }
 
-        // Create a temporary/placeholder entry to make category available
         try {
-            // Check if user has permission
-            if (!currentUser || !currentUser.id) {
-                alert('You must be logged in to add categories');
-                return;
-            }
-
-            // Insert a minimal placeholder prompt with this category
-            const { data, error } = await supabase
-                .from('marketplace_prompts')
-                .insert({
-                    title: `_category_placeholder_${newCategory}`,
-                    category: newCategory,
-                    description: 'Placeholder for category',
-                    content: 'Placeholder',
-                    tier: 'free',
-                    is_active: false,
-                    user_id: currentUser.id
-                })
-                .select();
+            // Use RPC function to bypass RLS
+            const { data, error } = await supabase.rpc('admin_create_category_placeholder', {
+                category_name: newCategory
+            });
 
             if (error) {
-                console.error('Database error:', error);
-                throw new Error(`Database error: ${error.message}. Please check your permissions.`);
+                console.error('RPC error:', error);
+                throw new Error(`Failed to create category: ${error.message}`);
             }
 
             input.value = '';
@@ -1223,7 +1212,7 @@
             alert(`Category "${newCategory}" added successfully!`);
         } catch (error) {
             console.error('Error adding category:', error);
-            alert('Error adding category: ' + error.message);
+            alert('Error adding category: ' + error.message + '\n\nPlease ask your administrator to create the RPC function: admin_create_category_placeholder');
         }
     };
 
@@ -1235,6 +1224,44 @@
         // Note: We can't actually delete a category without affecting prompts
         // This is a limitation of not having a separate categories table
         alert('To remove a category, you must first change all prompts using it to a different category.');
+    };
+
+    window.editCategoryName = async function (oldName) {
+        const newName = prompt(`Rename category "${oldName}" to:`, oldName);
+
+        if (!newName || newName.trim() === '') {
+            return;
+        }
+
+        if (newName.trim() === oldName) {
+            return; // No change
+        }
+
+        try {
+            // Use RPC function to rename category
+            const { data, error } = await supabase.rpc('admin_rename_category', {
+                old_category: oldName,
+                new_category: newName.trim()
+            });
+
+            if (error) {
+                console.error('RPC error:', error);
+                throw new Error(`Failed to rename category: ${error.message}`);
+            }
+
+            // Refresh the category list
+            const modal = document.getElementById('categoryModal');
+            modal.remove();
+            await openCategoryModal();
+
+            // Reload marketplace data to reflect changes
+            await loadMarketplaceData();
+
+            alert(`Category renamed from "${oldName}" to "${newName.trim()}" successfully!`);
+        } catch (error) {
+            console.error('Error renaming category:', error);
+            alert('Error renaming category: ' + error.message + '\n\nPlease ask your administrator to create the RPC function: admin_rename_category');
+        }
     };
 
     window.closeCategoryModalAndRefresh = async function () {
