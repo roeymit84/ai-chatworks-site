@@ -2207,7 +2207,15 @@
         }
 
         function populateCategoryFilter() {
-            const categories = [...new Set(allMarketplaceData.map(p => p.category))].sort();
+            // Extract unique categories, filtering out null/undefined/empty
+            const categories = [...new Set(
+                allMarketplaceData
+                    .map(p => p.category)
+                    .filter(c => c && c.trim())  // Filter out null, undefined, empty strings
+            )].sort();
+
+            console.log('Populating category filter with:', categories);
+
             const select = document.getElementById('categoryFilter');
             select.innerHTML = '<option value="">All Categories</option>' +
                 categories.map(c => `<option value="${c}">${c}</option>`).join('');
@@ -2244,8 +2252,11 @@
             }
 
             tbody.innerHTML = data.map(p => {
-                // Safe avatar generation
-                const title = p.title || 'Untitled';
+                // Log each prompt to debug
+                console.log('Rendering prompt:', p);
+
+                // Safe field extraction with actual database field names
+                const title = p.title || p.name || 'Untitled';
                 const avatar = title.split(' ').map(w => w[0] || '').slice(0, 2).join('').toUpperCase() || 'UN';
                 const category = p.category || 'Uncategorized';
                 const uploaderEmail = p.uploader_email || p.user_email || 'Unknown';
@@ -2742,6 +2753,13 @@
 
                 if (error) throw error;
 
+                // Log the data structure to see what fields we're getting
+                console.log('Marketplace data received:', data);
+                if (data && data.length > 0) {
+                    console.log('First prompt structure:', data[0]);
+                    console.log('Available fields:', Object.keys(data[0]));
+                }
+
                 if (!data || data.length === 0) {
                     document.getElementById('marketplaceTableBody').innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 40px;">No marketplace prompts yet</td></tr>';
                     allMarketplaceData = [];
@@ -2754,6 +2772,7 @@
             } catch (error) {
                 console.error('Error loading marketplace:', error);
                 showAlert('Error loading marketplace data: ' + error.message);
+                throw error;
             }
         }
 
