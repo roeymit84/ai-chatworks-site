@@ -675,7 +675,7 @@
 
     window.editMarketplacePrompt = async function (promptId) {
         try {
-            // Fetch prompt details
+            // Fetch prompt details and categories
             const { data, error } = await supabase
                 .from('marketplace_prompts')
                 .select('*')
@@ -684,55 +684,83 @@
 
             if (error) throw error;
 
-            // Create modal
+            const categories = await getUniqueCategories();
+
+            // Create modal with same styling as new prompt modal
             const modal = document.createElement('div');
-            modal.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9999;';
+            modal.id = 'editPromptModal';
+            modal.className = 'fixed inset-0 z-40 flex items-center justify-center';
             modal.innerHTML = `
-                <div class="card" style="width: 600px; max-width: 90%; padding: 24px; max-height: 90vh; overflow-y: auto;">
-                    <h2 style="margin-bottom: 24px;">Edit Marketplace Prompt</h2>
-                    <form id="edit-prompt-form" onsubmit="updateMarketplacePrompt(event, '${promptId}'); return false;">
-                        <div class="form-group">
-                            <label>Title</label>
-                            <input type="text" id="edit-title" value="${data.title}" required>
+                <div class="absolute inset-0 bg-slate-900/20 backdrop-blur-sm" onclick="this.parentElement.remove()"></div>
+                
+                <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 transform transition-all overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                        <h3 class="text-sm font-semibold text-slate-800">Edit Prompt</h3>
+                        <button onclick="this.closest('#editPromptModal').remove()" class="text-slate-400 hover:text-slate-600">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        </button>
+                    </div>
+
+                    <div class="p-6 space-y-4">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Prompt Name</label>
+                                <input type="text" id="edit-title" value="${data.title.replace(/"/g, '&quot;')}" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm">
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Category</label>
+                                <select id="edit-category" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm text-slate-700">
+                                    ${categories.map(cat => `<option value="${cat}" ${data.category === cat ? 'selected' : ''}>${cat}</option>`).join('')}
+                                </select>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>Category</label>
-                            <select id="edit-category" required>
-                                <option value="Marketing" ${data.category === 'Marketing' ? 'selected' : ''}>Marketing</option>
-                                <option value="Coding" ${data.category === 'Coding' ? 'selected' : ''}>Coding</option>
-                                <option value="Business" ${data.category === 'Business' ? 'selected' : ''}>Business</option>
-                                <option value="Creative" ${data.category === 'Creative' ? 'selected' : ''}>Creative</option>
-                                <option value="Writing" ${data.category === 'Writing' ? 'selected' : ''}>Writing</option>
-                                <option value="Education" ${data.category === 'Education' ? 'selected' : ''}>Education</option>
-                                <option value="other" ${!['Marketing', 'Coding', 'Business', 'Creative', 'Writing', 'Education'].includes(data.category) ? 'selected' : ''}>Other</option>
-                            </select>
+
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Created By</label>
+                                <input type="email" value="${data.user_email || 'Unknown'}" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-slate-500 cursor-not-allowed" readonly>
+                            </div>
+                            <div class="flex gap-4">
+                                <div class="flex-1">
+                                    <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Tier</label>
+                                    <div class="flex gap-3 mt-2">
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input type="radio" name="edit-tier" value="free" ${data.tier === 'free' ? 'checked' : ''} class="text-blue-600 focus:ring-blue-500">
+                                            <span class="text-sm text-slate-700">Free</span>
+                                        </label>
+                                        <label class="flex items-center gap-2 cursor-pointer">
+                                            <input type="radio" name="edit-tier" value="pro" ${data.tier === 'pro' ? 'checked' : ''} class="text-blue-600 focus:ring-blue-500">
+                                            <span class="text-sm text-slate-700">Pro</span>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="flex-1">
+                                    <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Status</label>
+                                    <label class="relative inline-flex items-center cursor-pointer mt-2">
+                                        <input type="checkbox" id="edit-active" ${data.is_active ? 'checked' : ''} class="sr-only peer">
+                                        <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+                                        <span class="ml-2 text-sm font-medium text-gray-700">Active</span>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label>Description</label>
-                            <textarea id="edit-description" rows="2" required>${data.description || ''}</textarea>
+
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Description</label>
+                            <textarea id="edit-description" rows="2" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm resize-none">${data.description || ''}</textarea>
                         </div>
-                        <div class="form-group">
-                            <label>Content</label>
-                            <textarea id="edit-content" rows="5" required>${data.content || ''}</textarea>
+
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">System Prompt</label>
+                            <textarea id="edit-content" rows="6" class="w-full px-3 py-2 bg-slate-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-mono text-slate-600 resize-none">${data.content || ''}</textarea>
+                            <p class="text-xs text-slate-400 mt-1 text-right">Markdown supported</p>
                         </div>
-                        <div class="form-group">
-                            <label>Tier</label>
-                            <select id="edit-tier" required>
-                                <option value="free" ${data.tier === 'free' ? 'selected' : ''}>Free</option>
-                                <option value="pro" ${data.tier === 'pro' ? 'selected' : ''}>Pro</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label>
-                                <input type="checkbox" id="edit-active" ${data.is_active ? 'checked' : ''}>
-                                Active
-                            </label>
-                        </div>
-                        <div style="display: flex; gap: 12px; margin-top: 24px;">
-                            <button type="submit" class="btn-primary" style="flex: 1;">Update Prompt</button>
-                            <button type="button" onclick="this.closest('[style*=\"position: fixed\"]').remove()" class="btn-secondary" style="flex: 1;">Cancel</button>
-                        </div>
-                    </form>
+                    </div>
+
+                    <div class="px-6 py-4 bg-gray-50 flex justify-end gap-3 border-t border-gray-100">
+                        <button onclick="this.closest('#editPromptModal').remove()" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors">Cancel</button>
+                        <button onclick="updateMarketplacePrompt('${promptId}')" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium rounded-lg shadow-lg shadow-slate-900/10 transition-all">Update Prompt</button>
+                    </div>
                 </div>
             `;
             document.body.appendChild(modal);
@@ -742,14 +770,12 @@
         }
     };
 
-    window.updateMarketplacePrompt = async function (event, promptId) {
-        event.preventDefault();
-
+    window.updateMarketplacePrompt = async function (promptId) {
         const title = document.getElementById('edit-title').value;
         const category = document.getElementById('edit-category').value;
         const description = document.getElementById('edit-description').value;
         const content = document.getElementById('edit-content').value;
-        const tier = document.getElementById('edit-tier').value;
+        const tier = document.querySelector('input[name="edit-tier"]:checked').value;
         const isActive = document.getElementById('edit-active').checked;
 
         try {
@@ -769,7 +795,7 @@
             if (error) throw error;
 
             alert('Prompt updated successfully!');
-            document.querySelector('[style*="position: fixed"]').remove();
+            document.getElementById('editPromptModal').remove();
             await loadMarketplaceData();
         } catch (error) {
             console.error('Error updating prompt:', error);
@@ -1154,18 +1180,35 @@
             return;
         }
 
-        // Add a placeholder prompt with this category to make it available
-        // (In a real scenario, you might want a separate categories table)
-        input.value = '';
+        // Create a temporary/placeholder entry to make category available
+        try {
+            // Insert a minimal placeholder prompt with this category
+            const { error } = await supabase
+                .from('marketplace_prompts')
+                .insert({
+                    title: `_category_placeholder_${newCategory}`,
+                    category: newCategory,
+                    description: 'Placeholder for category',
+                    content: 'Placeholder',
+                    tier: 'free',
+                    is_active: false,
+                    user_id: currentUser.id
+                });
 
-        // Refresh the category list
-        const modal = document.getElementById('categoryModal');
-        modal.remove();
-        await openCategoryModal();
+            if (error) throw error;
 
-        // Show success message
-        const newInput = document.getElementById('newCategoryInput');
-        newInput.placeholder = `"${newCategory}" will be available once a prompt uses it`;
+            input.value = '';
+
+            // Refresh the category list
+            const modal = document.getElementById('categoryModal');
+            modal.remove();
+            await openCategoryModal();
+
+            alert(`Category "${newCategory}" added successfully!`);
+        } catch (error) {
+            console.error('Error adding category:', error);
+            alert('Error adding category: ' + error.message);
+        }
     };
 
     window.deleteCategoryFromList = async function (categoryName) {
