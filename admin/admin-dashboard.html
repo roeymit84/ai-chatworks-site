@@ -2070,31 +2070,31 @@
                     </svg>
                 </button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="padding: 20px;">
                 <!-- Add New Category -->
                 <div
-                    style="margin-bottom: 24px; padding: 16px; background: var(--bg-tertiary); border-radius: var(--radius-md);">
+                    style="margin-bottom: 20px; padding: 12px; background: var(--bg-tertiary); border-radius: var(--radius-md);">
                     <label
-                        style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 13px; color: var(--text-secondary);">Add
+                        style="display: block; margin-bottom: 6px; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Add
                         New Category</label>
                     <div style="display: flex; gap: 8px;">
                         <input type="text" id="newCategoryInput" class="form-input" placeholder="Enter category name"
-                            style="flex: 1;">
-                        <button class="btn btn-accent" onclick="addCategory()">Add</button>
+                            style="flex: 1; padding: 10px 12px;">
+                        <button class="btn btn-accent" onclick="addCategory()" style="padding: 10px 20px;">Add</button>
                     </div>
                 </div>
 
                 <!-- Categories List -->
                 <div>
                     <label
-                        style="display: block; margin-bottom: 12px; font-weight: 600; font-size: 13px; color: var(--text-secondary);">Existing
+                        style="display: block; margin-bottom: 10px; font-weight: 600; font-size: 12px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">Existing
                         Categories</label>
-                    <div id="categoriesList" style="max-height: 400px; overflow-y: auto;">
+                    <div id="categoriesList" style="max-height: 300px; overflow-y: auto;">
                         <!-- Categories will be populated here -->
                     </div>
                 </div>
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer" style="padding: 16px 20px;">
                 <button class="btn btn-secondary" onclick="closeModal('manageCategoriesModal')">Close</button>
             </div>
         </div>
@@ -2163,6 +2163,22 @@
             </div>
             <div class="modal-footer">
                 <button class="btn btn-accent" onclick="closeModal('alertModal')">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROMPT MODAL -->
+    <div class="modal-overlay" id="promptModal">
+        <div class="modal" style="max-width: 450px;">
+            <div class="modal-body" style="padding: 24px;">
+                <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 12px;" id="promptTitle">ai-chatworks.com
+                    says</h3>
+                <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 16px;" id="promptMessage"></p>
+                <input type="text" id="promptInput" class="form-input" style="width: 100%; padding: 10px 12px;">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closePromptModal(false)">Cancel</button>
+                <button class="btn btn-accent" onclick="closePromptModal(true)">OK</button>
             </div>
         </div>
     </div>
@@ -2923,16 +2939,16 @@
             }
 
             listContainer.innerHTML = categories.map(category => `
-                <div class="category-item" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 8px; background: var(--bg-primary);">
+                <div class="category-item" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 6px; background: var(--bg-primary);">
                     <span class="category-name" style="flex: 1; font-size: 14px; color: var(--text-primary);">${category}</span>
-                    <div style="display: flex; gap: 8px;">
-                        <button class="btn btn-ghost" onclick="editCategory('${category.replace(/'/g, "\\'")}');" style="padding: 6px 12px; font-size: 12px;">
+                    <div style="display: flex; gap: 6px;">
+                        <button class="btn btn-ghost" onclick="editCategory('${category.replace(/'/g, "\\'")}');" style="padding: 4px 10px; font-size: 12px;">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
                             </svg>
                             Edit
                         </button>
-                        <button class="btn btn-danger" onclick="deleteCategory('${category.replace(/'/g, "\\'")}')" style="padding: 6px 12px; font-size: 12px;">
+                        <button class="btn btn-danger" onclick="deleteCategory('${category.replace(/'/g, "\\'")}')" style="padding: 4px 10px; font-size: 12px;">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                 <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
                             </svg>
@@ -2974,34 +2990,34 @@
         }
 
         async function editCategory(oldName) {
-            const newName = prompt(`Rename category "${oldName}" to:`, oldName);
+            showPrompt(`Rename category "${oldName}" to:`, oldName, async (newName) => {
+                if (!newName || newName.trim() === '') {
+                    return;
+                }
 
-            if (!newName || newName.trim() === '') {
-                return;
-            }
+                if (newName.trim() === oldName) {
+                    return;
+                }
 
-            if (newName.trim() === oldName) {
-                return;
-            }
+                try {
+                    // Update all prompts with this category
+                    const { error } = await supabase
+                        .from('marketplace_prompts')
+                        .update({ category: newName.trim() })
+                        .eq('category', oldName);
 
-            try {
-                // Update all prompts with this category
-                const { error } = await supabase
-                    .from('marketplace_prompts')
-                    .update({ category: newName.trim() })
-                    .eq('category', oldName);
+                    if (error) throw error;
 
-                if (error) throw error;
+                    // Reload data
+                    await loadMarketplaceData();
+                    await loadCategoriesList();
 
-                // Reload data
-                await loadMarketplaceData();
-                await loadCategoriesList();
-
-                showAlert(`Category renamed from "${oldName}" to "${newName.trim()}"`);
-            } catch (error) {
-                console.error('Error renaming category:', error);
-                showAlert('Error renaming category: ' + error.message);
-            }
+                    showAlert(`Category renamed from "${oldName}" to "${newName.trim()}"`);
+                } catch (error) {
+                    console.error('Error renaming category:', error);
+                    showAlert('Error renaming category: ' + error.message);
+                }
+            });
         }
 
         async function deleteCategory(categoryName) {
@@ -3110,6 +3126,30 @@
             };
 
             openModal('confirmModal');
+        }
+
+        let promptCallback = null;
+        function showPrompt(message, defaultValue, onSubmit) {
+            document.getElementById('promptMessage').textContent = message;
+            document.getElementById('promptInput').value = defaultValue || '';
+            promptCallback = onSubmit;
+            openModal('promptModal');
+
+            // Focus input after modal opens
+            setTimeout(() => {
+                document.getElementById('promptInput').focus();
+                document.getElementById('promptInput').select();
+            }, 100);
+        }
+
+        function closePromptModal(confirmed) {
+            const value = document.getElementById('promptInput').value;
+            closeModal('promptModal');
+
+            if (confirmed && promptCallback) {
+                promptCallback(value);
+            }
+            promptCallback = null;
         }
 
         // ═══════════════════════════════════════
