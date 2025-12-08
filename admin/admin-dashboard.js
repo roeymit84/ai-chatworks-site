@@ -981,12 +981,22 @@
 
     window.openBulkUpload = function () {
         const modal = document.createElement('div');
-        modal.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9999;';
+        modal.id = 'bulkUploadModal';
+        modal.className = 'fixed inset-0 z-40 flex items-center justify-center';
         modal.innerHTML = `
-            <div class="card" style="width: 600px; max-width: 90%; padding: 24px;">
-                <h2 style="margin-bottom: 24px;">Bulk Upload Prompts</h2>
-                <p style="color: var(--text-tertiary); margin-bottom: 16px;">Upload a JSON file with multiple prompts. Expected format:</p>
-                <pre style="background: var(--bg-tertiary); padding: 12px; border-radius: 8px; font-size: 12px; overflow-x: auto; margin-bottom: 16px;">[
+            <div class="absolute inset-0 bg-slate-900/20 backdrop-blur-sm" onclick="document.getElementById('bulkUploadModal').remove()"></div>
+            
+            <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 transform transition-all overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                    <h3 class="text-[13px] font-semibold text-slate-800">Bulk Upload Prompts</h3>
+                    <button onclick="document.getElementById('bulkUploadModal').remove()" class="text-slate-400 hover:text-slate-600">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+
+                <div class="p-6 space-y-4">
+                    <p class="text-[13px] text-slate-500">Upload a JSON file with multiple prompts. Expected format:</p>
+                    <pre class="bg-slate-50 border border-gray-200 rounded-lg p-3 text-[11px] font-mono text-slate-600 overflow-x-auto">[
   {
     "title": "Prompt Name",
     "category": "Marketing",
@@ -996,15 +1006,19 @@
     "tags": ["tag1", "tag2"]
   }
 ]</pre>
-                <div class="form-group">
-                    <label>Select JSON File</label>
-                    <input type="file" id="bulk-upload-file" accept=".json">
+                    
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Select JSON File</label>
+                        <input type="file" id="bulk-upload-file" accept=".json" class="block w-full text-[13px] text-slate-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[13px] file:font-medium file:bg-slate-900 file:text-white hover:file:bg-slate-800 file:cursor-pointer cursor-pointer border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                    </div>
+                    
+                    <div id="bulk-upload-status" class="text-[13px]"></div>
                 </div>
-                <div style="display: flex; gap: 12px; margin-top: 24px;">
-                    <button onclick="processBulkUpload()" class="btn-primary" style="flex: 1;">Upload Prompts</button>
-                    <button onclick="this.closest('[style*=\\"position: fixed\\"]').remove()" class="btn-secondary" style="flex: 1;">Cancel</button>
+
+                <div class="px-6 py-4 bg-gray-50 flex justify-end gap-3 border-t border-gray-100">
+                    <button onclick="document.getElementById('bulkUploadModal').remove()" class="px-4 py-2 text-[13px] font-medium text-slate-600 hover:text-slate-800 transition-colors text-center">Cancel</button>
+                    <button onclick="processBulkUpload()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-[13px] font-medium rounded-lg shadow-lg shadow-slate-900/10 transition-all text-center">Upload Prompts</button>
                 </div>
-                <div id="bulk-upload-status" style="margin-top: 16px;"></div>
             </div>
         `;
         document.body.appendChild(modal);
