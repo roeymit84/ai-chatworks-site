@@ -2116,7 +2116,18 @@
         // ═══════════════════════════════════════
         // DATA LOADING
         // ═══════════════════════════════════════
-        function loadDashboardData() {
+        async function loadDashboardData() {
+            try {
+                // Try to load real data from Supabase
+                await loadDashboardDataReal();
+            } catch (error) {
+                console.error('Error loading real data, using demo data:', error);
+                // Fallback to demo data if real data fails
+                loadDashboardDataDemo();
+            }
+        }
+
+        function loadDashboardDataDemo() {
             // Load stats
             animateValue('statUsers', DEMO_DATA.users);
             animateValue('statPrompts', DEMO_DATA.prompts);
@@ -2230,10 +2241,17 @@
         // ═══════════════════════════════════════
         // MARKETPLACE
         // ═══════════════════════════════════════
-        function loadMarketplaceData() {
-            allMarketplaceData = [...DEMO_DATA.marketplacePrompts];
-            renderMarketplaceTable(allMarketplaceData);
-            populateCategoryFilter();
+        async function loadMarketplaceData() {
+            try {
+                // Try to load real data from Supabase
+                await loadMarketplaceDataReal();
+            } catch (error) {
+                console.error('Error loading real marketplace data, using demo data:', error);
+                // Fallback to demo data if real data fails
+                allMarketplaceData = [...DEMO_DATA.marketplacePrompts];
+                renderMarketplaceTable(allMarketplaceData);
+                populateCategoryFilter();
+            }
         }
 
         function populateCategoryFilter() {
@@ -2656,16 +2674,16 @@
             try {
                 // Load real stats from Supabase
                 const { data: userData } = await supabase.rpc('get_total_users');
-                if (userData !== null) document.getElementById('statUsers').textContent = userData;
+                if (userData !== null) animateValue('statUsers', userData);
 
                 const { data: promptData } = await supabase.rpc('get_total_prompts');
-                if (promptData !== null) document.getElementById('statPrompts').textContent = promptData;
+                if (promptData !== null) animateValue('statPrompts', promptData);
 
                 const { data: folderData } = await supabase.rpc('get_total_folders');
-                if (folderData !== null) document.getElementById('statFolders').textContent = folderData;
+                if (folderData !== null) animateValue('statFolders', folderData);
 
                 const { data: encryptedData } = await supabase.rpc('get_encrypted_items_count');
-                if (encryptedData !== null) document.getElementById('statEncrypted').textContent = encryptedData;
+                if (encryptedData !== null) animateValue('statEncrypted', encryptedData);
 
                 // Load marketplace stats
                 const { data: allPrompts } = await supabase
@@ -2686,22 +2704,26 @@
 
                     // Top prompts table
                     const topPrompts = [...allPrompts].sort((a, b) => b.downloads_count - a.downloads_count).slice(0, 5);
-                    document.getElementById('topPromptsTable').innerHTML = topPrompts.map(p => `
-                        <tr>
-                            <td>
-                                <div class="table-prompt">
-                                    <div class="table-avatar">${p.title.split(' ').map(w => w[0]).slice(0, 2).join('')}</div>
-                                    <div>
-                                        <div class="table-name">${p.title}</div>
-                                        <div class="table-desc">${p.category}</div>
+                    if (topPrompts.length > 0) {
+                        document.getElementById('topPromptsTable').innerHTML = topPrompts.map(p => `
+                            <tr>
+                                <td>
+                                    <div class="table-prompt">
+                                        <div class="table-avatar">${p.title.split(' ').map(w => w[0]).slice(0, 2).join('')}</div>
+                                        <div>
+                                            <div class="table-name">${p.title}</div>
+                                            <div class="table-desc">${p.category}</div>
+                                        </div>
                                     </div>
-                                </div>
-                            </td>
-                            <td><span class="badge badge-category">${p.category}</span></td>
-                            <td class="mono">${p.downloads_count.toLocaleString()}</td>
-                            <td><span class="badge badge-${p.tier}">${p.tier.toUpperCase()}</span></td>
-                        </tr>
-                    `).join('');
+                                </td>
+                                <td><span class="badge badge-category">${p.category}</span></td>
+                                <td class="mono">${p.downloads_count.toLocaleString()}</td>
+                                <td><span class="badge badge-${p.tier}">${p.tier.toUpperCase()}</span></td>
+                            </tr>
+                        `).join('');
+                    } else {
+                        document.getElementById('topPromptsTable').innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No prompts yet</td></tr>';
+                    }
                 }
 
                 // Engagement
@@ -2738,8 +2760,7 @@
                 initChart();
             } catch (error) {
                 console.error('Error loading dashboard data:', error);
-                // Fall back to demo data if real data fails
-                loadDashboardData();
+                throw error; // Re-throw to trigger fallback
             }
         }
 
