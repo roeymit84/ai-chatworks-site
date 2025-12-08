@@ -1,12 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI ChatWorks - Admin Dashboard</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             /* BRAND */
@@ -20,15 +23,15 @@
             --bg-secondary: #f9fafb;
             --bg-tertiary: #f3f4f6;
             --bg-quaternary: #e5e7eb;
-            
+
             --text-primary: #111827;
             --text-secondary: #374151;
             --text-tertiary: #6b7280;
             --text-muted: #9ca3af;
-            
+
             --border: #e5e7eb;
             --border-hover: #d1d5db;
-            
+
             /* STATUS */
             --success: #10b981;
             --success-bg: rgba(16, 185, 129, 0.1);
@@ -36,20 +39,20 @@
             --warning-bg: rgba(245, 158, 11, 0.1);
             --danger: #ef4444;
             --danger-bg: rgba(239, 68, 68, 0.1);
-            
+
             /* SPACING */
             --radius-sm: 6px;
             --radius-md: 8px;
             --radius-lg: 12px;
             --radius-xl: 16px;
-            
+
             /* SHADOWS */
             --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
             --shadow-focus: 0 0 0 3px rgba(139, 92, 246, 0.15);
-            
+
             --transition-fast: 150ms ease;
             --transition-base: 200ms ease;
         }
@@ -60,15 +63,15 @@
             --bg-secondary: #16161d;
             --bg-tertiary: #1e1e27;
             --bg-quaternary: #2a2a36;
-            
+
             --text-primary: #f3f4f6;
             --text-secondary: #d1d5db;
             --text-tertiary: #9ca3af;
             --text-muted: #6b7280;
-            
+
             --border: #2a2a36;
             --border-hover: #3f3f4a;
-            
+
             --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
@@ -90,7 +93,9 @@
             transition: background var(--transition-base), color var(--transition-base);
         }
 
-        .mono { font-family: 'JetBrains Mono', monospace; }
+        .mono {
+            font-family: 'JetBrains Mono', monospace;
+        }
 
         /* ═══════════════════════════════════════
            LOGIN OVERLAY
@@ -125,8 +130,15 @@
         }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         .login-brand {
@@ -503,8 +515,13 @@
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
         }
 
         .page-header {
@@ -855,9 +872,17 @@
             margin-bottom: 4px;
         }
 
-        .console-line.success { color: var(--success); }
-        .console-line.error { color: var(--danger); }
-        .console-line.info { color: #38bdf8; }
+        .console-line.success {
+            color: var(--success);
+        }
+
+        .console-line.error {
+            color: var(--danger);
+        }
+
+        .console-line.info {
+            color: #38bdf8;
+        }
 
         .result-table {
             width: 100%;
@@ -1157,7 +1182,7 @@
             background: white;
             border-radius: 50%;
             transition: transform var(--transition-fast);
-            box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
         }
 
         .toggle.active {
@@ -1244,6 +1269,7 @@
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
             }
+
             .chart-grid {
                 grid-template-columns: 1fr;
             }
@@ -1253,12 +1279,15 @@
             .sidebar {
                 display: none;
             }
+
             .console-grid {
                 grid-template-columns: 1fr;
             }
+
             .form-row {
                 grid-template-columns: 1fr;
             }
+
             .form-group.full-width {
                 grid-column: span 1;
             }
@@ -1268,47 +1297,51 @@
             .stats-grid {
                 grid-template-columns: 1fr;
             }
+
             .view {
                 padding: 20px;
             }
         }
     </style>
 </head>
+
 <body>
     <!-- LOGIN OVERLAY -->
-    <div class="login-overlay" id="loginOverlay">
+    <div class="login-overlay" id="login-screen">
         <div class="login-card">
             <div class="login-brand">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-                    <path d="M2 17l10 5 10-5"/>
-                    <path d="M2 12l10 5 10-5"/>
+                    <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                    <path d="M2 17l10 5 10-5" />
+                    <path d="M2 12l10 5 10-5" />
                 </svg>
                 <h1>AI ChatWorks</h1>
             </div>
             <p class="login-subtitle">Admin Dashboard</p>
-            <form id="loginForm">
+            <form id="login-form">
                 <div class="form-group">
                     <label>Email Address</label>
-                    <input type="email" class="form-input" id="loginEmail" placeholder="admin@example.com" value="admin@aichatworks.com">
+                    <input type="email" class="form-input" id="login-email" placeholder="admin@example.com"
+                        value="admin@aichatworks.com">
                 </div>
                 <div class="form-group">
                     <label>Password</label>
-                    <input type="password" class="form-input" id="loginPassword" placeholder="Password" value="demo123">
+                    <input type="password" class="form-input" id="login-password" placeholder="Password"
+                        value="demo123">
                 </div>
                 <button type="submit" class="btn btn-primary" id="loginBtn">
                     Sign In
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-                        <polyline points="10 17 15 12 10 7"/>
-                        <line x1="15" y1="12" x2="3" y2="12"/>
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                        <polyline points="10 17 15 12 10 7" />
+                        <line x1="15" y1="12" x2="3" y2="12" />
                     </svg>
                 </button>
-                <div class="error-msg" id="loginError" style="display: none;">
+                <div class="error-msg" id="login-error" style="display: none;">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="10"/>
-                        <line x1="12" y1="8" x2="12" y2="12"/>
-                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                        <circle cx="12" cy="12" r="10" />
+                        <line x1="12" y1="8" x2="12" y2="12" />
+                        <line x1="12" y1="16" x2="12.01" y2="16" />
                     </svg>
                     Invalid credentials
                 </div>
@@ -1317,14 +1350,14 @@
     </div>
 
     <!-- APP SHELL -->
-    <div class="app-shell" id="appShell">
+    <div class="app-shell" id="app-shell">
         <!-- SIDEBAR -->
         <aside class="sidebar">
             <div class="sidebar-brand">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-                    <path d="M2 17l10 5 10-5"/>
-                    <path d="M2 12l10 5 10-5"/>
+                    <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                    <path d="M2 17l10 5 10-5" />
+                    <path d="M2 12l10 5 10-5" />
                 </svg>
                 <div class="sidebar-brand-text">
                     <h2>AI ChatWorks</h2>
@@ -1336,34 +1369,36 @@
                 <div class="nav-section">
                     <div class="nav-link active" data-view="overview">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="3" y="3" width="7" height="7"/>
-                            <rect x="14" y="3" width="7" height="7"/>
-                            <rect x="14" y="14" width="7" height="7"/>
-                            <rect x="3" y="14" width="7" height="7"/>
+                            <rect x="3" y="3" width="7" height="7" />
+                            <rect x="14" y="3" width="7" height="7" />
+                            <rect x="14" y="14" width="7" height="7" />
+                            <rect x="3" y="14" width="7" height="7" />
                         </svg>
                         Overview
                     </div>
                     <div class="nav-link" data-view="queries">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                            <polyline points="7 10 12 15 17 10"/>
-                            <line x1="12" y1="15" x2="12" y2="3"/>
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="7 10 12 15 17 10" />
+                            <line x1="12" y1="15" x2="12" y2="3" />
                         </svg>
                         DB Queries
                     </div>
                     <div class="nav-link" data-view="marketplace">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
-                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
-                            <line x1="12" y1="22.08" x2="12" y2="12"/>
+                            <path
+                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                            <line x1="12" y1="22.08" x2="12" y2="12" />
                         </svg>
                         Marketplace
                         <span class="nav-badge" id="marketplaceBadge">0</span>
                     </div>
                     <div class="nav-link" data-view="settings">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <circle cx="12" cy="12" r="3"/>
-                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+                            <circle cx="12" cy="12" r="3" />
+                            <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
                         </svg>
                         Settings
                     </div>
@@ -1375,14 +1410,14 @@
                     <div class="user-avatar" id="userAvatar">AD</div>
                     <div class="user-info">
                         <div class="user-name" id="userName">Admin User</div>
-                        <div class="user-role">Super Admin</div>
+                        <div class="user-role" id="admin-email">admin@aichatworks.com</div>
                     </div>
                 </div>
-                <button class="logout-btn" id="logoutBtn">
+                <button class="logout-btn" id="logout-btn">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                        <polyline points="16 17 21 12 16 7"/>
-                        <line x1="21" y1="12" x2="9" y2="12"/>
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
                     </svg>
                     Sign Out
                 </button>
@@ -1401,9 +1436,9 @@
                         </div>
                         <button class="btn btn-secondary" onclick="refreshData()">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M23 4v6h-6"/>
-                                <path d="M1 20v-6h6"/>
-                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/>
+                                <path d="M23 4v6h-6" />
+                                <path d="M1 20v-6h6" />
+                                <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
                             </svg>
                             Refresh
                         </button>
@@ -1414,17 +1449,19 @@
                     <div class="card stat-card">
                         <div class="stat-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                                <circle cx="9" cy="7" r="4"/>
-                                <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
-                                <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                <circle cx="9" cy="7" r="4" />
+                                <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                             </svg>
                         </div>
                         <div class="stat-content">
                             <div class="stat-label">Total Users</div>
                             <div class="stat-value" id="statUsers">-</div>
                             <span class="stat-change up" id="statUsersChange">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                                </svg>
                                 +12.5%
                             </span>
                         </div>
@@ -1432,14 +1469,16 @@
                     <div class="card stat-card">
                         <div class="stat-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                             </svg>
                         </div>
                         <div class="stat-content">
                             <div class="stat-label">Total Prompts</div>
                             <div class="stat-value" id="statPrompts">-</div>
                             <span class="stat-change up">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                                </svg>
                                 +8.2%
                             </span>
                         </div>
@@ -1447,14 +1486,16 @@
                     <div class="card stat-card">
                         <div class="stat-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
                             </svg>
                         </div>
                         <div class="stat-content">
                             <div class="stat-label">Folders</div>
                             <div class="stat-value" id="statFolders">-</div>
                             <span class="stat-change up">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
+                                </svg>
                                 +5.1%
                             </span>
                         </div>
@@ -1462,15 +1503,17 @@
                     <div class="card stat-card">
                         <div class="stat-icon">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                             </svg>
                         </div>
                         <div class="stat-content">
                             <div class="stat-label">Encrypted</div>
                             <div class="stat-value" id="statEncrypted">-</div>
                             <span class="stat-change down">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/></svg>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="23 18 13.5 8.5 8.5 13.5 1 6" />
+                                </svg>
                                 -2.3%
                             </span>
                         </div>
@@ -1508,7 +1551,7 @@
                             <div class="card stat-card" style="border: 1px solid var(--border);">
                                 <div class="stat-icon">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                                     </svg>
                                 </div>
                                 <div class="stat-content">
@@ -1519,7 +1562,8 @@
                             <div class="card stat-card" style="border: 1px solid var(--border);">
                                 <div class="stat-icon" style="background: var(--warning-bg); color: var(--warning);">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                                        <polygon
+                                            points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
                                     </svg>
                                 </div>
                                 <div class="stat-content">
@@ -1530,7 +1574,7 @@
                             <div class="card stat-card" style="border: 1px solid var(--border);">
                                 <div class="stat-icon" style="background: var(--success-bg); color: var(--success);">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
                                     </svg>
                                 </div>
                                 <div class="stat-content">
@@ -1541,8 +1585,8 @@
                             <div class="card stat-card" style="border: 1px solid var(--border);">
                                 <div class="stat-icon" style="background: var(--danger-bg); color: var(--danger);">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <circle cx="12" cy="12" r="10"/>
-                                        <line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/>
+                                        <circle cx="12" cy="12" r="10" />
+                                        <line x1="4.93" y1="4.93" x2="19.07" y2="19.07" />
                                     </svg>
                                 </div>
                                 <div class="stat-content">
@@ -1570,7 +1614,10 @@
                                 </tr>
                             </thead>
                             <tbody id="topPromptsTable">
-                                <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Loading...</td></tr>
+                                <tr>
+                                    <td colspan="4" style="text-align: center; color: var(--text-muted);">Loading...
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -1604,14 +1651,15 @@
                                 <div id="queryParams">
                                     <div class="form-group">
                                         <label>Limit Results</label>
-                                        <input type="number" class="form-input" id="paramLimit" value="10" min="1" max="100">
+                                        <input type="number" class="form-input" id="paramLimit" value="10" min="1"
+                                            max="100">
                                     </div>
                                 </div>
 
                                 <div style="margin-top: auto;">
                                     <button class="btn btn-primary" onclick="runQuery()">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                            <polygon points="5 3 19 12 5 21 5 3"/>
+                                            <polygon points="5 3 19 12 5 21 5 3" />
                                         </svg>
                                         Run Query
                                     </button>
@@ -1638,16 +1686,16 @@
                         <div class="btn-group">
                             <button class="btn btn-secondary" onclick="openBulkUploadModal()">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                    <polyline points="17 8 12 3 7 8"/>
-                                    <line x1="12" y1="3" x2="12" y2="15"/>
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                    <polyline points="17 8 12 3 7 8" />
+                                    <line x1="12" y1="3" x2="12" y2="15" />
                                 </svg>
                                 Bulk Upload
                             </button>
                             <button class="btn btn-accent" onclick="openCreatePromptModal()">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <line x1="12" y1="5" x2="12" y2="19"/>
-                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                    <line x1="12" y1="5" x2="12" y2="19" />
+                                    <line x1="5" y1="12" x2="19" y2="12" />
                                 </svg>
                                 New Prompt
                             </button>
@@ -1660,10 +1708,11 @@
                         <div class="marketplace-toolbar">
                             <div class="search-box">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <circle cx="11" cy="11" r="8"/>
-                                    <path d="m21 21-4.35-4.35"/>
+                                    <circle cx="11" cy="11" r="8" />
+                                    <path d="m21 21-4.35-4.35" />
                                 </svg>
-                                <input type="text" class="search-input" placeholder="Search prompts..." id="marketplaceSearch" oninput="filterMarketplace()">
+                                <input type="text" class="search-input" placeholder="Search prompts..."
+                                    id="marketplaceSearch" oninput="filterMarketplace()">
                             </div>
                             <div style="display: flex; gap: 8px;">
                                 <select class="filter-select" id="categoryFilter" onchange="filterMarketplace()">
@@ -1692,7 +1741,8 @@
                             <thead>
                                 <tr>
                                     <th style="width: 40px;">
-                                        <input type="checkbox" id="selectAll" onchange="toggleAllPrompts(this.checked)" style="cursor: pointer;">
+                                        <input type="checkbox" id="selectAll" onchange="toggleAllPrompts(this.checked)"
+                                            style="cursor: pointer;">
                                     </th>
                                     <th>Prompt Name</th>
                                     <th>Category</th>
@@ -1704,7 +1754,11 @@
                                 </tr>
                             </thead>
                             <tbody id="marketplaceTableBody">
-                                <tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 40px;">Loading marketplace data...</td></tr>
+                                <tr>
+                                    <td colspan="8"
+                                        style="text-align: center; color: var(--text-muted); padding: 40px;">Loading
+                                        marketplace data...</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -1736,7 +1790,9 @@
                             <div class="setting-row">
                                 <div class="setting-info">
                                     <h4>Email</h4>
-                                    <p id="settingsEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="0b6a6f6662654b6a6268636a7f7c6479607825686466">[email&#160;protected]</a></p>
+                                    <p id="settingsEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__"
+                                            data-cfemail="0b6a6f6662654b6a6268636a7f7c6479607825686466">[email&#160;protected]</a>
+                                    </p>
                                 </div>
                             </div>
                             <div class="setting-row">
@@ -1769,8 +1825,8 @@
                 <span class="modal-title">New Prompt</span>
                 <button class="modal-close" onclick="closeModal('createPromptModal')">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
                     </svg>
                 </button>
             </div>
@@ -1807,18 +1863,21 @@
                     <div class="form-group">
                         <label>Status</label>
                         <div class="toggle-wrapper">
-                            <div class="toggle active" id="createStatusToggle" onclick="this.classList.toggle('active')"></div>
+                            <div class="toggle active" id="createStatusToggle"
+                                onclick="this.classList.toggle('active')"></div>
                             <span class="toggle-label">Active</span>
                         </div>
                     </div>
                 </div>
                 <div class="form-group full-width">
                     <label>Description</label>
-                    <textarea class="form-input" id="createPromptDesc" rows="2" placeholder="Short description..."></textarea>
+                    <textarea class="form-input" id="createPromptDesc" rows="2"
+                        placeholder="Short description..."></textarea>
                 </div>
                 <div class="form-group full-width">
                     <label>System Prompt</label>
-                    <textarea class="form-input mono" id="createPromptContent" rows="5" placeholder="You are a helpful assistant..." style="font-size: 12px;"></textarea>
+                    <textarea class="form-input mono" id="createPromptContent" rows="5"
+                        placeholder="You are a helpful assistant..." style="font-size: 12px;"></textarea>
                 </div>
             </div>
             <div class="modal-footer">
@@ -1835,8 +1894,8 @@
                 <span class="modal-title">Edit Prompt</span>
                 <button class="modal-close" onclick="closeModal('editPromptModal')">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
                     </svg>
                 </button>
             </div>
@@ -1885,7 +1944,8 @@
                 </div>
                 <div class="form-group full-width">
                     <label>System Prompt</label>
-                    <textarea class="form-input mono" id="editPromptContent" rows="5" style="font-size: 12px;"></textarea>
+                    <textarea class="form-input mono" id="editPromptContent" rows="5"
+                        style="font-size: 12px;"></textarea>
                 </div>
             </div>
             <div class="modal-footer">
@@ -1902,14 +1962,16 @@
                 <span class="modal-title">Bulk Upload Prompts</span>
                 <button class="modal-close" onclick="closeModal('bulkUploadModal')">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <line x1="18" y1="6" x2="6" y2="18"/>
-                        <line x1="6" y1="6" x2="18" y2="18"/>
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
                     </svg>
                 </button>
             </div>
             <div class="modal-body">
-                <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 13px;">Upload a JSON file with multiple prompts. Expected format:</p>
-                <pre style="background: var(--bg-tertiary); padding: 12px; border-radius: var(--radius-md); font-size: 11px; font-family: 'JetBrains Mono'; overflow-x: auto; margin-bottom: 16px;">[
+                <p style="color: var(--text-secondary); margin-bottom: 16px; font-size: 13px;">Upload a JSON file with
+                    multiple prompts. Expected format:</p>
+                <pre
+                    style="background: var(--bg-tertiary); padding: 12px; border-radius: var(--radius-md); font-size: 11px; font-family: 'JetBrains Mono'; overflow-x: auto; margin-bottom: 16px;">[
   {
     "title": "Prompt Name",
     "category": "Marketing",
@@ -1950,7 +2012,8 @@
     <div class="modal-overlay" id="alertModal">
         <div class="modal" style="max-width: 400px;">
             <div class="modal-body" style="padding: 24px;">
-                <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 12px;" id="alertTitle">ai-chatworks.com says</h3>
+                <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 12px;" id="alertTitle">ai-chatworks.com
+                    says</h3>
                 <p style="color: var(--text-secondary); font-size: 13px;" id="alertMessage"></p>
             </div>
             <div class="modal-footer">
@@ -1962,8 +2025,9 @@
     <!-- External Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    
+
     <!-- Admin Dashboard Logic -->
     <script src="admin-dashboard.js"></script>
 </body>
+
 </html>
