@@ -691,7 +691,7 @@
             modal.id = 'editPromptModal';
             modal.className = 'fixed inset-0 z-40 flex items-center justify-center';
             modal.innerHTML = `
-                <div class="absolute inset-0 bg-purple-600/20 backdrop-blur-sm" onclick="this.parentElement.remove()"></div>
+                <div class="absolute inset-0 bg-slate-900/30 backdrop-blur-sm" onclick="this.parentElement.remove()"></div>
                 
                 <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 transform transition-all overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
@@ -815,7 +815,7 @@
         modal.id = 'promptModal';
         modal.className = 'fixed inset-0 z-40 flex items-center justify-center';
         modal.innerHTML = `
-            <div class="absolute inset-0 bg-purple-600/20 backdrop-blur-sm" onclick="this.parentElement.remove()"></div>
+            <div class="absolute inset-0 bg-slate-900/30 backdrop-blur-sm" onclick="this.parentElement.remove()"></div>
             
             <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 transform transition-all overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
@@ -957,24 +957,24 @@
     window.showConfirmModal = function (title, message, warning, onConfirm) {
         const modal = document.createElement('div');
         modal.id = 'confirmModal';
-        modal.className = 'fixed inset-0 z-[9999] flex items-center justify-center';
+        modal.className = 'fixed inset-0 z-[9999] flex items-center justify-center p-4';
         modal.innerHTML = `
-            <div class="absolute inset-0 bg-slate-900/30 backdrop-blur-sm" onclick="document.getElementById('confirmModal').remove()"></div>
+            <div class="absolute inset-0 bg-black/20" onclick="document.getElementById('confirmModal').remove()"></div>
             
-            <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 transform transition-all overflow-hidden">
+            <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all">
                 <div class="px-6 py-5">
-                    <h3 class="text-[15px] font-semibold text-slate-900 mb-2">${title}</h3>
-                    <p class="text-[13px] text-slate-600 mb-1">${message}</p>
-                    ${warning ? `<p class="text-[13px] text-slate-500 mt-3">${warning}</p>` : ''}
+                    <h3 class="text-[15px] font-semibold text-slate-900 mb-3">${title}</h3>
+                    <p class="text-[13px] text-slate-700 leading-relaxed">${message}</p>
+                    ${warning ? `<p class="text-[13px] text-slate-500 mt-3 leading-relaxed">${warning}</p>` : ''}
                 </div>
 
                 <div class="px-6 py-4 bg-gray-50 flex justify-end gap-3 border-t border-gray-100">
                     <button onclick="document.getElementById('confirmModal').remove()" 
-                        class="px-5 py-2.5 text-[13px] font-medium text-slate-700 hover:text-slate-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                        class="px-6 py-2.5 text-[13px] font-medium text-slate-700 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors">
                         Cancel
                     </button>
                     <button id="confirmModalOkBtn"
-                        class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-medium rounded-lg transition-colors">
+                        class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-medium rounded-full transition-colors">
                         OK
                     </button>
                 </div>
@@ -996,19 +996,19 @@
     window.showAlertModal = function (title, message) {
         const modal = document.createElement('div');
         modal.id = 'alertModal';
-        modal.className = 'fixed inset-0 z-[9999] flex items-center justify-center';
+        modal.className = 'fixed inset-0 z-[9999] flex items-center justify-center p-4';
         modal.innerHTML = `
-            <div class="absolute inset-0 bg-slate-900/30 backdrop-blur-sm" onclick="document.getElementById('alertModal').remove()"></div>
+            <div class="absolute inset-0 bg-black/20" onclick="document.getElementById('alertModal').remove()"></div>
             
-            <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 transform transition-all overflow-hidden">
+            <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md transform transition-all">
                 <div class="px-6 py-5">
-                    <h3 class="text-[15px] font-semibold text-slate-900 mb-2">${title}</h3>
-                    <p class="text-[13px] text-slate-600">${message}</p>
+                    <h3 class="text-[15px] font-semibold text-slate-900 mb-3">${title}</h3>
+                    <p class="text-[13px] text-slate-700 leading-relaxed">${message}</p>
                 </div>
 
                 <div class="px-6 py-4 bg-gray-50 flex justify-end border-t border-gray-100">
                     <button onclick="document.getElementById('alertModal').remove()" 
-                        class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-medium rounded-lg transition-colors">
+                        class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-medium rounded-full transition-colors">
                         OK
                     </button>
                 </div>
@@ -1128,7 +1128,7 @@
         modal.id = 'bulkUploadModal';
         modal.className = 'fixed inset-0 z-40 flex items-center justify-center';
         modal.innerHTML = `
-            <div class="absolute inset-0 bg-purple-600/20 backdrop-blur-sm" onclick="document.getElementById('bulkUploadModal').remove()"></div>
+            <div class="absolute inset-0 bg-slate-900/30 backdrop-blur-sm" onclick="document.getElementById('bulkUploadModal').remove()"></div>
             
             <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 transform transition-all overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
