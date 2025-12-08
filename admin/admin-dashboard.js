@@ -220,7 +220,8 @@
             await Promise.all([
                 loadTotalStats(),
                 loadUserGrowthChart(),
-                loadMonthlyEngagement()
+                loadMonthlyEngagement(),
+                loadMarketplaceStats()
             ]);
         } catch (error) {
             console.error('Error loading dashboard data:', error);
@@ -328,6 +329,72 @@
             document.getElementById('engagement-percent').textContent = percentage + '% of Total Users';
         } catch (error) {
             console.error('Error loading monthly engagement:', error);
+        }
+    }
+
+    async function loadMarketplaceStats() {
+        try {
+            // Get all marketplace prompts
+            const { data: allPrompts, error: allError } = await supabase
+                .from('marketplace_prompts')
+                .select('tier, downloads, title, category')
+                .eq('is_active', true);
+
+            if (allError) throw allError;
+
+            const totalPrompts = allPrompts?.length || 0;
+            const proPrompts = allPrompts?.filter(p => p.tier === 'pro').length || 0;
+            const regularPrompts = allPrompts?.filter(p => p.tier === 'free').length || 0;
+
+            document.getElementById('marketplace-total-prompts').textContent = totalPrompts;
+            document.getElementById('marketplace-pro-prompts').textContent = proPrompts;
+            document.getElementById('marketplace-regular-prompts').textContent = regularPrompts;
+
+            // Get top 5 downloaded prompts
+            const { data: topDownloads, error: topError } = await supabase
+                .from('marketplace_prompts')
+                .select('title, category, downloads, tier')
+                .eq('is_active', true)
+                .order('downloads', { ascending: false })
+                .limit(5);
+
+            if (topError) throw topError;
+
+            const topDownloadsContainer = document.getElementById('marketplace-top-downloads');
+
+            if (!topDownloads || topDownloads.length === 0) {
+                topDownloadsContainer.innerHTML = '<p style="color: var(--text-tertiary); text-align: center;">No downloads yet</p>';
+                return;
+            }
+
+            let html = '<div style="display: flex; flex-direction: column; gap: 12px;">';
+            topDownloads.forEach((prompt, index) => {
+                const tierBadgeClass = prompt.tier === 'pro' ? 'badge-pro-gold' : 'badge-free';
+                html += `
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: var(--bg-secondary); border-radius: 8px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="font-size: 18px; font-weight: 700; color: var(--text-tertiary); min-width: 24px;">#${index + 1}</div>
+                            <div>
+                                <div style="font-weight: 600;">${prompt.title}</div>
+                                <div style="font-size: 12px; color: var(--text-tertiary);">${prompt.category}</div>
+                            </div>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span class="badge ${tierBadgeClass}" style="font-size: 11px;">${prompt.tier.toUpperCase()}</span>
+                            <div style="font-weight: 600; color: #8b5cf6;">${prompt.downloads} downloads</div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+
+            topDownloadsContainer.innerHTML = html;
+        } catch (error) {
+            console.error('Error loading marketplace stats:', error);
+            document.getElementById('marketplace-total-prompts').textContent = '0';
+            document.getElementById('marketplace-pro-prompts').textContent = '0';
+            document.getElementById('marketplace-regular-prompts').textContent = '0';
+            document.getElementById('marketplace-top-downloads').innerHTML = '<p style="color: var(--danger); text-align: center;">Error loading data</p>';
         }
     }
 
@@ -622,7 +689,7 @@
 
     window.refreshOverview = async function () {
         console.log('Refreshing overview data...');
-        await loadOverviewData();
+        await loadDashboardData();
         alert('Overview data refreshed!');
     };
 
