@@ -13,8 +13,32 @@
         rel="stylesheet">
 
     <link rel="stylesheet" href="admin-dashboard.css">
+    <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        /* Marketplace table hover effects */
+        .action-buttons {
+            opacity: 0;
+            transform: translateX(8px);
+            transition: all 0.2s ease;
+        }
+
+        .group:hover .action-buttons {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* Sort icon transitions */
+        .sort-icon {
+            opacity: 0.3;
+            transition: opacity 0.2s;
+        }
+
+        th:hover .sort-icon {
+            opacity: 1;
+        }
+    </style>
 </head>
 
 <body>
@@ -310,81 +334,114 @@
 
             <!-- MARKETPLACE VIEW -->
             <div id="view-marketplace" class="view-container hidden">
-                <header class="form-group"
-                    style="margin-bottom: 32px; display: flex; justify-content: space-between; align-items: center;">
-                    <div>
-                        <h2 style="font-size: 24px;">Marketplace Management</h2>
-                        <p style="color: var(--text-tertiary);">Manage public prompts and uploads</p>
-                    </div>
-                    <button onclick="refreshMarketplace()" class="btn-secondary"
-                        style="display: flex; align-items: center; gap: 8px;" title="Refresh marketplace data">
-                        <svg viewBox="0 0 32 32" width="16" height="16" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-miterlimit="10">
-                            <path d="M25.7,10.9C23.9,7.4,20.2,5,16,5c-4.7,0-8.6,2.9-10.2,7" />
-                            <path d="M6.2,21c1.8,3.5,5.5,6,9.8,6c4.7,0,8.6-2.9,10.2-7" />
-                            <polyline points="26,5 26,11 20,11" />
-                            <polyline points="6,27 6,21 12,21" />
-                        </svg>
-                        Refresh
-                    </button>
-                </header>
-
-                <div class="marketplace-grid">
-
-                    <div class="card">
-                        <div style="padding: 16px 24px; border-bottom: 1px solid var(--border-color);">
-                            <h3>Live Prompts</h3>
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="px-5 py-4 border-b border-gray-100 flex justify-between items-center bg-white">
+                        <div>
+                            <h2 class="text-base font-semibold text-slate-900">Live Prompts</h2>
+                            <p class="text-[11px] text-slate-400 mt-0.5">Manage your marketplace library</p>
                         </div>
-                        <div id="marketplace-table-container">
-                            <p style="padding: 20px; text-align: center; color: var(--text-tertiary);">Loading
-                                marketplace data...</p>
-                        </div>
-                    </div>
-
-                    <div class="card" style="padding: 24px;">
-                        <h3 style="margin-bottom: 20px;">Upload to Marketplace</h3>
-                        <form id="marketplace-upload-form" onsubmit="event.preventDefault(); uploadPrompt();">
-                            <div class="form-group">
-                                <label>Prompt Name</label>
-                                <input type="text" id="upload-name" placeholder="e.g., SEO Wizard" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Category</label>
-                                <select id="upload-category" onchange="toggleCustomCategory()">
-                                    <option>Marketing</option>
-                                    <option>Coding</option>
-                                    <option>Business</option>
-                                    <option>Creative</option>
-                                    <option>Writing</option>
-                                    <option>Education</option>
-                                </select>
-                            </div>
-                            <div class="form-group" id="custom-category-group" style="display: none;">
-                                <label>Custom Category Name</label>
-                                <input type="text" id="custom-category-input"
-                                    placeholder="e.g., Design, Finance, Health">
-                            </div>
-                            <div class="form-group">
-                                <label>Description</label>
-                                <textarea id="upload-description" rows="2" placeholder="Short description..."
-                                    required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label>Prompt Content</label>
-                                <textarea id="upload-content" rows="5" placeholder="Act as an expert..."
-                                    required></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label>Tier</label>
-                                <select id="upload-tier">
-                                    <option value="free">Free</option>
-                                    <option value="pro">Pro</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="btn-primary">
-                                Publish Prompt
+                        <div class="flex gap-2">
+                            <button onclick="openCreatePromptModal()"
+                                class="bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors shadow-lg shadow-slate-900/20 flex items-center gap-2">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                New Prompt
                             </button>
-                        </form>
+                            <button onclick="openBulkUpload()"
+                                class="bg-white hover:bg-gray-50 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border border-gray-200 flex items-center gap-2">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                                Bulk Upload
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="overflow-x-auto min-h-[400px]">
+                        <table class="w-full text-left border-collapse table-fixed" id="marketplace-table">
+                            <thead>
+                                <tr class="bg-gray-50/40 border-b border-gray-100">
+                                    <th
+                                        class="px-4 py-3 text-[10px] font-bold tracking-wider text-slate-400 uppercase w-[25%] group/header align-middle">
+                                        <div
+                                            class="flex items-center gap-1 cursor-pointer hover:text-slate-600 transition-colors">
+                                            Prompt Name
+                                            <svg class="sort-icon w-3 h-3 opacity-30" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                                            </svg>
+                                        </div>
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-[10px] font-bold tracking-wider text-slate-400 uppercase w-[15%] align-middle">
+                                        <div
+                                            class="flex items-center gap-1 cursor-pointer hover:text-slate-600 transition-colors">
+                                            Category
+                                            <svg class="sort-icon w-3 h-3 opacity-30" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                                            </svg>
+                                        </div>
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-[10px] font-bold tracking-wider text-slate-400 uppercase w-[20%] align-middle">
+                                        <div
+                                            class="flex items-center gap-1 cursor-pointer hover:text-slate-600 transition-colors">
+                                            Updated By
+                                            <svg class="sort-icon w-3 h-3 opacity-30" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                                            </svg>
+                                        </div>
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-[10px] font-bold tracking-wider text-slate-400 uppercase text-center w-[12%] align-middle">
+                                        <div
+                                            class="flex items-center justify-center gap-1 cursor-pointer hover:text-slate-600 transition-colors">
+                                            Downloads
+                                            <svg class="sort-icon w-3 h-3 opacity-30" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                                            </svg>
+                                        </div>
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-[10px] font-bold tracking-wider text-slate-400 uppercase text-center w-[10%] align-middle">
+                                        Tier</th>
+                                    <th
+                                        class="px-4 py-3 text-[10px] font-bold tracking-wider text-slate-400 uppercase w-[10%] align-middle">
+                                        <div
+                                            class="flex items-center gap-1 cursor-pointer hover:text-slate-600 transition-colors">
+                                            Status
+                                            <svg class="sort-icon w-3 h-3 opacity-30" fill="none" stroke="currentColor"
+                                                viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                    d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"></path>
+                                            </svg>
+                                        </div>
+                                    </th>
+                                    <th
+                                        class="px-4 py-3 text-[10px] font-bold tracking-wider text-slate-400 uppercase text-right w-[8%] align-middle">
+                                        Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-50" id="marketplace-table-body">
+                                <tr>
+                                    <td colspan="7" class="px-4 py-8 text-center text-sm text-slate-400">Loading
+                                        marketplace data...</td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

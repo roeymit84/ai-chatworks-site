@@ -495,7 +495,7 @@
     // ============================================
 
     async function loadMarketplaceData() {
-        const container = document.getElementById('marketplace-table-container');
+        const tbody = document.getElementById('marketplace-table-body');
 
         try {
             const { data, error } = await supabase.rpc('admin_get_marketplace_prompts');
@@ -506,62 +506,75 @@
             }
 
             if (!data || data.length === 0) {
-                container.innerHTML = '<p style="padding: 20px; text-align: center; color: var(--text-tertiary);">No marketplace prompts yet. Upload your first prompt!</p>';
+                tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-sm text-slate-400">No marketplace prompts yet. Upload your first prompt!</td></tr>';
                 return;
             }
 
-            let html = `
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>Prompt Name</th>
-                            <th>Category</th>
-                            <th>Downloads</th>
-                            <th>Tier</th>
-                            <th>Status</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-            `;
-
+            let html = '';
             data.forEach(prompt => {
-                const tierBadgeClass = prompt.tier === 'pro' ? 'badge-pro-gold' : 'badge-free';
-                const statusBadge = prompt.is_active ?
-                    '<span class="badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">ACTIVE</span>' :
-                    '<span class="badge" style="background: rgba(107, 114, 128, 0.1); color: #6b7280;">INACTIVE</span>';
+                // Tier badge styling
+                const tierBadge = prompt.tier === 'pro'
+                    ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200/50 tracking-wide">PRO</span>'
+                    : '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-500 border border-slate-200 tracking-wide">FREE</span>';
+
+                // Status indicator with animation
+                const statusIndicator = prompt.is_active
+                    ? `<div class="flex items-center h-full gap-2">
+                         <span class="relative flex h-2 w-2">
+                           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                           <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                         </span>
+                         <span class="text-[11px] font-medium text-slate-600">Active</span>
+                       </div>`
+                    : `<div class="flex items-center h-full gap-2">
+                         <span class="relative inline-flex rounded-full h-2 w-2 bg-slate-300"></span>
+                         <span class="text-[11px] font-medium text-slate-400">Inactive</span>
+                       </div>`;
+
+                // Category badge
+                const categoryBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 border border-slate-200">${prompt.category}</span>`;
 
                 html += `
-                    <tr>
-                        <td>
-                            <strong>${prompt.prompt_name}</strong><br>
-                            <span style="color:var(--text-tertiary); font-size:12px;">by ${prompt.uploader_email || 'Unknown'}</span>
+                    <tr class="group hover:bg-blue-50/30 transition-colors duration-200">
+                        <td class="px-4 py-3 align-middle">
+                            <div class="flex items-center h-full text-xs font-medium text-slate-700">${prompt.prompt_name}</div>
                         </td>
-                        <td>${prompt.category}</td>
-                        <td>${prompt.downloads_count}</td>
-                        <td><span class="badge ${tierBadgeClass}">${prompt.tier.toUpperCase()}</span></td>
-                        <td>${statusBadge}</td>
-                        <td>
-                            <button onclick="editMarketplacePrompt('${prompt.prompt_id}')" class="btn-secondary" style="padding: 6px 12px; font-size: 12px;">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                </svg>
-                                Edit
-                            </button>
+                        <td class="px-4 py-3 align-middle">
+                            <div class="flex items-center h-full">${categoryBadge}</div>
+                        </td>
+                        <td class="px-4 py-3 align-middle">
+                            <div class="flex items-center h-full text-xs text-slate-500">${prompt.uploader_email || 'Unknown'}</div>
+                        </td>
+                        <td class="px-4 py-3 align-middle">
+                            <div class="flex items-center justify-center h-full text-xs font-medium text-slate-600">${prompt.downloads_count || 0}</div>
+                        </td>
+                        <td class="px-4 py-3 align-middle">
+                            <div class="flex items-center justify-center h-full">${tierBadge}</div>
+                        </td>
+                        <td class="px-4 py-3 align-middle">
+                            ${statusIndicator}
+                        </td>
+                        <td class="px-4 py-3 align-middle text-right">
+                            <div class="action-buttons opacity-0 group-hover:opacity-100 transition-all duration-200 flex justify-end gap-2">
+                                <button onclick="editMarketplacePrompt('${prompt.prompt_id}')" class="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                                </button>
+                                <button onclick="deleteMarketplacePrompt('${prompt.prompt_id}', '${prompt.prompt_name.replace(/'/g, "\\'")}')\" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                                </button>
+                            </div>
                         </td>
                     </tr>
                 `;
             });
 
-            html += '</tbody></table>';
-            container.innerHTML = html;
+            tbody.innerHTML = html;
 
             // Load categories for upload form
             await loadCategories();
         } catch (error) {
             console.error('Error loading marketplace:', error);
-            container.innerHTML = `<p style="padding: 20px; text-align: center; color: var(--danger);">Error: ${error.message}</p>`;
+            tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-sm text-red-600">Error: ${error.message}</td></tr>`;
         }
     }
 
@@ -802,6 +815,298 @@
         } catch (error) {
             console.error('Error updating prompt:', error);
             alert('Error updating prompt: ' + error.message);
+        }
+    };
+
+    // ============================================
+    // CREATE PROMPT MODAL
+    // ============================================
+
+    window.openCreatePromptModal = function () {
+        const modal = document.createElement('div');
+        modal.id = 'promptModal';
+        modal.className = 'fixed inset-0 z-40 flex items-center justify-center';
+        modal.innerHTML = `
+            <div class="absolute inset-0 bg-slate-900/20 backdrop-blur-sm" onclick="this.parentElement.remove()"></div>
+            
+            <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 transform transition-all overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                    <h3 class="text-sm font-semibold text-slate-800">New Prompt</h3>
+                    <button onclick="this.closest('#promptModal').remove()" class="text-slate-400 hover:text-slate-600">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+
+                <div class="p-6 space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Prompt Name</label>
+                            <input type="text" id="modal-upload-name" placeholder="e.g. SEO Writer" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Category</label>
+                            <select id="modal-upload-category" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm text-slate-700">
+                                <option>Marketing</option>
+                                <option>Coding</option>
+                                <option>Business</option>
+                                <option>Creative</option>
+                                <option>Writing</option>
+                                <option>Education</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Created By</label>
+                            <input type="email" id="modal-upload-email" value="${currentUser?.email || 'admin@example.com'}" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-slate-500 cursor-not-allowed" readonly>
+                        </div>
+                        <div class="flex gap-6">
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Tier</label>
+                                <div class="flex gap-3 mt-2">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="radio" name="modal-tier" value="free" checked class="text-blue-600 focus:ring-blue-500">
+                                        <span class="text-sm text-slate-700">Free</span>
+                                    </label>
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="radio" name="modal-tier" value="pro" class="text-blue-600 focus:ring-blue-500">
+                                        <span class="text-sm text-slate-700">Pro</span>
+                                    </label>
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Status</label>
+                                <label class="relative inline-flex items-center cursor-pointer mt-1">
+                                    <input type="checkbox" id="modal-status" checked class="sr-only peer">
+                                    <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+                                    <span class="ml-2 text-sm font-medium text-gray-700">Active</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Description</label>
+                        <textarea id="modal-upload-description" rows="2" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm resize-none" placeholder="Short description..."></textarea>
+                    </div>
+
+                    <div>
+                        <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">System Prompt</label>
+                        <textarea id="modal-upload-content" rows="6" class="w-full px-3 py-2 bg-slate-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-mono text-slate-600 resize-none" placeholder="You are a helpful assistant..."></textarea>
+                        <p class="text-xs text-slate-400 mt-1 text-right">Markdown supported</p>
+                    </div>
+                </div>
+
+                <div class="px-6 py-4 bg-gray-50 flex justify-end gap-3 border-t border-gray-100">
+                    <button onclick="this.closest('#promptModal').remove()" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors">Cancel</button>
+                    <button onclick="uploadPromptFromModal()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium rounded-lg shadow-lg shadow-slate-900/10 transition-all">Save Changes</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    };
+
+    window.toggleModalCustomCategory = function () {
+        const categorySelect = document.getElementById('modal-upload-category');
+        const customGroup = document.getElementById('modal-custom-category-group');
+        const customInput = document.getElementById('modal-custom-category-input');
+
+        if (categorySelect.value === 'other') {
+            customGroup.style.display = 'block';
+            customInput.required = true;
+        } else {
+            customGroup.style.display = 'none';
+            customInput.required = false;
+            customInput.value = '';
+        }
+    };
+
+    window.uploadPromptFromModal = async function () {
+        const title = document.getElementById('modal-upload-name').value;
+        let category = document.getElementById('modal-upload-category').value;
+        const description = document.getElementById('modal-upload-description').value;
+        const content = document.getElementById('modal-upload-content').value;
+        const tier = document.querySelector('input[name="modal-tier"]:checked').value;
+        const isActive = document.getElementById('modal-status').checked;
+
+        // Use custom category if "other" is selected
+        if (category === 'other') {
+            const customCategory = document.getElementById('modal-custom-category-input').value.trim();
+            if (!customCategory) {
+                alert('Please enter a custom category name');
+                return;
+            }
+            category = customCategory;
+        }
+
+        try {
+            const { error } = await supabase
+                .from('marketplace_prompts')
+                .insert({
+                    title: title,
+                    category: category,
+                    description: description,
+                    content: content,
+                    tier: tier,
+                    is_active: isActive,
+                    user_id: currentUser.id
+                });
+
+            if (error) throw error;
+
+            alert('Prompt published successfully!');
+            document.getElementById('promptModal').remove();
+            loadMarketplaceData();
+        } catch (error) {
+            console.error('Upload error:', error);
+            alert('Error uploading prompt: ' + error.message);
+        }
+    };
+
+    // ============================================
+    // DELETE MARKETPLACE PROMPT
+    // ============================================
+
+    window.deleteMarketplacePrompt = async function (promptId, promptName) {
+        if (!confirm(`Are you sure you want to delete "${promptName}"?\n\nThis action cannot be undone.`)) {
+            return;
+        }
+
+        try {
+            const { error } = await supabase
+                .from('marketplace_prompts')
+                .delete()
+                .eq('id', promptId);
+
+            if (error) throw error;
+
+            alert('Prompt deleted successfully!');
+            await loadMarketplaceData();
+        } catch (error) {
+            console.error('Error deleting prompt:', error);
+            alert('Error deleting prompt: ' + error.message);
+        }
+    };
+
+    // ============================================
+    // BULK UPLOAD
+    // ============================================
+
+    window.openBulkUpload = function () {
+        const modal = document.createElement('div');
+        modal.style.cssText = 'position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 9999;';
+        modal.innerHTML = `
+            <div class="card" style="width: 600px; max-width: 90%; padding: 24px;">
+                <h2 style="margin-bottom: 24px;">Bulk Upload Prompts</h2>
+                <p style="color: var(--text-tertiary); margin-bottom: 16px;">Upload a JSON file with multiple prompts. Expected format:</p>
+                <pre style="background: var(--bg-tertiary); padding: 12px; border-radius: 8px; font-size: 12px; overflow-x: auto; margin-bottom: 16px;">[
+  {
+    "title": "Prompt Name",
+    "category": "Marketing",
+    "description": "Short description",
+    "content": "Act as an expert...",
+    "tier": "free",
+    "tags": ["tag1", "tag2"]
+  }
+]</pre>
+                <div class="form-group">
+                    <label>Select JSON File</label>
+                    <input type="file" id="bulk-upload-file" accept=".json">
+                </div>
+                <div style="display: flex; gap: 12px; margin-top: 24px;">
+                    <button onclick="processBulkUpload()" class="btn-primary" style="flex: 1;">Upload Prompts</button>
+                    <button onclick="this.closest('[style*=\\"position: fixed\\"]').remove()" class="btn-secondary" style="flex: 1;">Cancel</button>
+                </div>
+                <div id="bulk-upload-status" style="margin-top: 16px;"></div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    };
+
+    window.processBulkUpload = async function () {
+        const fileInput = document.getElementById('bulk-upload-file');
+        const statusDiv = document.getElementById('bulk-upload-status');
+
+        if (!fileInput.files || !fileInput.files[0]) {
+            alert('Please select a JSON file');
+            return;
+        }
+
+        try {
+            const file = fileInput.files[0];
+            const text = await file.text();
+            const prompts = JSON.parse(text);
+
+            if (!Array.isArray(prompts)) {
+                throw new Error('JSON file must contain an array of prompts');
+            }
+
+            statusDiv.innerHTML = '<p style="color: var(--accent-primary);">Uploading prompts...</p>';
+
+            let successCount = 0;
+            let errorCount = 0;
+            const errors = [];
+
+            for (let i = 0; i < prompts.length; i++) {
+                const prompt = prompts[i];
+
+                try {
+                    // Validate required fields
+                    if (!prompt.title || !prompt.content) {
+                        throw new Error('Missing required fields: title and content');
+                    }
+
+                    const { error } = await supabase
+                        .from('marketplace_prompts')
+                        .insert({
+                            title: prompt.title,
+                            category: prompt.category || 'Uncategorized',
+                            description: prompt.description || '',
+                            content: prompt.content,
+                            tier: prompt.tier || 'free',
+                            tags: prompt.tags || [],
+                            user_id: currentUser.id
+                        });
+
+                    if (error) throw error;
+                    successCount++;
+                } catch (error) {
+                    errorCount++;
+                    errors.push(`Prompt ${i + 1} (${prompt.title || 'unnamed'}): ${error.message}`);
+                }
+
+                // Update progress
+                statusDiv.innerHTML = `<p style="color: var(--accent-primary);">Progress: ${i + 1}/${prompts.length}</p>`;
+            }
+
+            // Show results
+            let resultHTML = `
+                <div style="margin-top: 16px;">
+                    <p style="color: var(--success); font-weight: 600;">✓ ${successCount} prompts uploaded successfully</p>
+            `;
+
+            if (errorCount > 0) {
+                resultHTML += `
+                    <p style="color: var(--danger); font-weight: 600;">✗ ${errorCount} prompts failed</p>
+                    <details style="margin-top: 8px;">
+                        <summary style="cursor: pointer; color: var(--text-tertiary);">View errors</summary>
+                        <ul style="margin-top: 8px; font-size: 12px; color: var(--danger);">
+                            ${errors.map(err => `<li>${err}</li>`).join('')}
+                        </ul>
+                    </details>
+                `;
+            }
+
+            resultHTML += '</div>';
+            statusDiv.innerHTML = resultHTML;
+
+            // Reload marketplace data
+            await loadMarketplaceData();
+
+        } catch (error) {
+            console.error('Bulk upload error:', error);
+            statusDiv.innerHTML = `<p style="color: var(--danger);">Error: ${error.message}</p>`;
         }
     };
 
