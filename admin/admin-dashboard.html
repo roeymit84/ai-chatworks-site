@@ -3273,33 +3273,58 @@
             paramsDiv.innerHTML = configs[query] || configs.default;
         }
 
-        function runQuery() {
+        async function runQuery() {
             const query = document.getElementById('querySelector').value;
             const output = document.getElementById('consoleOutput');
 
             output.innerHTML = '<div class="console-line info">Executing query...</div>';
 
-            setTimeout(() => {
-                const results = {
-                    recent_users: `[
-  { "id": "usr_001", "email": "john@example.com", "created": "2024-01-15" },
-  { "id": "usr_002", "email": "jane@example.com", "created": "2024-01-14" },
-  { "id": "usr_003", "email": "bob@example.com", "created": "2024-01-13" }
-]`,
-                    db_stats: `{
-  "total_users": ${DEMO_DATA.users},
-  "total_prompts": ${DEMO_DATA.prompts},
-  "total_folders": ${DEMO_DATA.folders},
-  "encrypted_items": ${DEMO_DATA.prompts + DEMO_DATA.folders},
-  "marketplace_prompts": ${allMarketplaceData.length}
-}`
-                };
+            try {
+                let result;
+
+                switch (query) {
+                    case 'recent_users':
+                        const limit = parseInt(document.getElementById('paramLimit')?.value) || 10;
+                        const { data: users, error: usersError } = await supabase.rpc('admin_get_recent_users', { limit_count: limit });
+                        if (usersError) throw usersError;
+                        result = JSON.stringify(users, null, 2);
+                        break;
+
+                    case 'db_stats':
+                        // Use the admin_get_db_stats function that returns all stats in one query
+                        const { data: stats, error: statsError } = await supabase.rpc('admin_get_db_stats');
+                        if (statsError) throw statsError;
+
+                        // Format the response
+                        const formattedStats = stats && stats.length > 0 ? {
+                            total_users: stats[0].total_users || 0,
+                            total_prompts: stats[0].total_prompts || 0,
+                            total_folders: stats[0].total_folders || 0,
+                            encrypted_prompts: stats[0].encrypted_prompts || 0,
+                            encrypted_folders: stats[0].encrypted_folders || 0,
+                            encrypted_items: (stats[0].encrypted_prompts || 0) + (stats[0].encrypted_folders || 0),
+                            marketplace_prompts: stats[0].marketplace_prompts || 0,
+                            total_downloads: stats[0].total_downloads || 0
+                        } : {};
+
+                        result = JSON.stringify(formattedStats, null, 2);
+                        break;
+
+                    default:
+                        result = 'Query not found. Available queries: recent_users, db_stats';
+                }
 
                 output.innerHTML = `
                     <div class="console-line success">✓ Query executed successfully</div>
-                    <pre style="margin-top: 12px; white-space: pre-wrap;">${results[query] || results.db_stats}</pre>
+                    <pre style="margin-top: 12px; white-space: pre-wrap;">${result}</pre>
                 `;
-            }, 500);
+            } catch (error) {
+                console.error('Query error:', error);
+                output.innerHTML = `
+                    <div class="console-line error">✗ Query failed: ${error.message}</div>
+                    <pre style="margin-top: 12px; white-space: pre-wrap; color: var(--error);">${JSON.stringify(error, null, 2)}</pre>
+                `;
+            }
         }
 
         // ═══════════════════════════════════════
