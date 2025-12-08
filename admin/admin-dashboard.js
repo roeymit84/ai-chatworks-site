@@ -1294,18 +1294,58 @@
     // ============================================
 
     async function populateFilterDropdowns() {
-        const categoryFilter = document.getElementById('filter-category');
+        const categoryDropdown = document.getElementById('category-dropdown');
+        const categoryButton = document.getElementById('category-filter-button');
 
-        if (categoryFilter && allMarketplaceData.length > 0) {
+        if (categoryDropdown && allMarketplaceData.length > 0) {
             const categories = [...new Set(allMarketplaceData.map(p => p.category))].filter(Boolean).sort();
-            categoryFilter.innerHTML = '<option value=\"\">All Categories</option>' +
-                categories.map(cat => `<option value=\"${cat}\">${cat}</option>`).join('');
+
+            // Build dropdown HTML
+            let dropdownHTML = `
+                <div class="py-1">
+                    <button type="button" class="category-option w-full text-left px-3 py-2 text-[13px] hover:bg-purple-50 transition-colors ${activeFilters.category === '' ? 'bg-purple-100 text-purple-700' : 'text-slate-700'}" data-value="">
+                        All Categories
+                    </button>
+            `;
+
+            categories.forEach(cat => {
+                const isSelected = activeFilters.category === cat;
+                dropdownHTML += `
+                    <button type="button" class="category-option w-full text-left px-3 py-2 text-[13px] hover:bg-purple-50 transition-colors ${isSelected ? 'bg-purple-100 text-purple-700' : 'text-slate-700'}" data-value="${cat}">
+                        ${cat}
+                    </button>
+                `;
+            });
+
+            dropdownHTML += '</div>';
+            categoryDropdown.innerHTML = dropdownHTML;
+
+            // Add click handlers to options
+            const options = categoryDropdown.querySelectorAll('.category-option');
+            options.forEach(option => {
+                option.addEventListener('click', function () {
+                    const value = this.getAttribute('data-value');
+                    const text = this.textContent.trim();
+
+                    // Update button text
+                    document.getElementById('category-filter-text').textContent = text;
+
+                    // Update active filter
+                    activeFilters.category = value;
+                    applyMarketplaceFilters();
+
+                    // Close dropdown
+                    categoryDropdown.classList.add('hidden');
+                    document.getElementById('category-filter-icon').style.transform = '';
+                });
+            });
         }
     }
 
     window.initializeMarketplaceFilters = function () {
         const searchInput = document.getElementById('marketplace-search');
-        const categoryFilter = document.getElementById('filter-category');
+        const categoryButton = document.getElementById('category-filter-button');
+        const categoryDropdown = document.getElementById('category-dropdown');
 
         if (searchInput) {
             searchInput.addEventListener('input', (e) => {
@@ -1314,10 +1354,28 @@
             });
         }
 
-        if (categoryFilter) {
-            categoryFilter.addEventListener('change', (e) => {
-                activeFilters.category = e.target.value;
-                applyMarketplaceFilters();
+        if (categoryButton && categoryDropdown) {
+            // Toggle dropdown on button click
+            categoryButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isHidden = categoryDropdown.classList.contains('hidden');
+                const icon = document.getElementById('category-filter-icon');
+
+                if (isHidden) {
+                    categoryDropdown.classList.remove('hidden');
+                    icon.style.transform = 'rotate(180deg)';
+                } else {
+                    categoryDropdown.classList.add('hidden');
+                    icon.style.transform = '';
+                }
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!categoryButton.contains(e.target) && !categoryDropdown.contains(e.target)) {
+                    categoryDropdown.classList.add('hidden');
+                    document.getElementById('category-filter-icon').style.transform = '';
+                }
             });
         }
     };
@@ -1436,10 +1494,10 @@
         };
 
         const searchInput = document.getElementById('marketplace-search');
-        const categoryFilter = document.getElementById('filter-category');
+        const categoryFilterText = document.getElementById('category-filter-text');
 
         if (searchInput) searchInput.value = '';
-        if (categoryFilter) categoryFilter.value = '';
+        if (categoryFilterText) categoryFilterText.textContent = 'All Categories';
 
         renderMarketplaceTable(allMarketplaceData);
     };

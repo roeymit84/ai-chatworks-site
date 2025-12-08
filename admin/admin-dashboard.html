@@ -376,12 +376,23 @@
                                     <path d="m21 21-4.35-4.35"></path>
                                 </svg>
                                 <input type="text" id="marketplace-search" placeholder="Search prompts..."
-                                    class="w-[145px] h-[32px] pl-10 pr-3 py-1.5 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-[13px]">
+                                    class="w-[150px] h-[32px] pl-10 pr-3 py-1.5 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all text-[13px]">
                             </div>
-                            <select id="filter-category"
-                                class="w-[145px] h-[32px] px-3 py-1.5 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-[13px]">
-                                <option value="">All Categories</option>
-                            </select>
+                            <div class="relative" id="category-filter-container">
+                                <button id="category-filter-button" type="button"
+                                    class="w-[175px] h-[32px] px-3 py-1.5 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-all text-[13px] text-left flex items-center justify-between hover:border-gray-300">
+                                    <span id="category-filter-text" class="text-slate-700">All Categories</span>
+                                    <svg class="w-4 h-4 text-slate-400 transition-transform" id="category-filter-icon"
+                                        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </button>
+                                <div id="category-dropdown"
+                                    class="hidden absolute z-50 w-[175px] mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                                    <!-- Dropdown options will be populated here -->
+                                </div>
+                            </div>
                             <button onclick="clearMarketplaceFilters()"
                                 class="h-[32px] px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-gray-100 rounded-lg transition-colors">
 

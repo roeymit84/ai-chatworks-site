@@ -275,9 +275,9 @@ textarea {
     width: 100%;
     padding: 10px 16px;
     border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
+    border-radius: 8px;
     background: var(--bg-tertiary);
-    font-size: 14px;
+    font-size: 13px;
     color: var(--text-primary);
     font-family: inherit;
     transition: all 0.2s;
