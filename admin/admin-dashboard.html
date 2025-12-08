@@ -1441,7 +1441,7 @@
                     <path d="M2 17l10 5 10-5" />
                     <path d="M2 12l10 5 10-5" />
                 </svg>
-                <img src="images/AI ChatWorks.svg" alt="AI ChatWorks"
+                <img src="images/AI%20ChatWorks.svg" alt="AI ChatWorks"
                     style="width: 48px; height: 48px; margin-bottom: 16px;">
                 <h1>AI ChatWorks</h1>
             </div>
@@ -1480,7 +1480,8 @@
         <!-- SIDEBAR -->
         <aside class="sidebar">
             <div class="sidebar-brand">
-                <img src="images/AI ChatWorks.svg" alt="AI ChatWorks" style="width: 32px; height: 32px;">
+                <img src="images/AI%20ChatWorks.svg" alt="AI ChatWorks" style="width: 32px; height: 32px;"
+                    onerror="this.style.display='none'">
                 <div class="sidebar-brand-text">
                     <h2>AI ChatWorks</h2>
                     <span>Admin Dashboard</span>
@@ -1553,7 +1554,16 @@
                 <div class="page-header">
                     <div class="header-row">
                         <div>
-                            <h1>Dashboard Overview</h1>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <rect x="3" y="3" width="7" height="7" />
+                                    <rect x="14" y="3" width="7" height="7" />
+                                    <rect x="14" y="14" width="7" height="7" />
+                                    <rect x="3" y="14" width="7" height="7" />
+                                </svg>
+                                <h1>Dashboard Overview</h1>
+                            </div>
                             <p>Real-time platform metrics</p>
                         </div>
                         <button class="btn btn-secondary" onclick="refreshData()">
@@ -1805,6 +1815,15 @@
                                 </svg>
                                 Bulk Upload
                             </button>
+                            <button class="btn btn-secondary" onclick="refreshMarketplace()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    style="width: 16px; height: 16px;">
+                                    <path d="M23 4v6h-6" />
+                                    <path d="M1 20v-6h6" />
+                                    <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
+                                </svg>
+                                Refresh
+                            </button>
                             <button class="btn btn-accent" onclick="openCreatePromptModal()">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <line x1="12" y1="5" x2="12" y2="19" />
@@ -1812,8 +1831,7 @@
                                 </svg>
                                 New Prompt
                             </button>
-                            <button class="btn btn-secondary" onclick="openManageCategoriesModal()"
-                                style="margin-left: 8px;">
+                            <button class="btn btn-secondary" onclick="openManageCategoriesModal()">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                     stroke-width="2">
                                     <path d="M4 6h16M4 12h16M4 18h16" />
@@ -1891,7 +1909,15 @@
             <!-- SETTINGS VIEW -->
             <div class="view" id="viewSettings">
                 <div class="page-header">
-                    <h1>Settings</h1>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2">
+                            <circle cx="12" cy="12" r="3" />
+                            <path
+                                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                        </svg>
+                        <h1>Settings</h1>
+                    </div>
                     <p>Configure your dashboard preferences</p>
                 </div>
 
