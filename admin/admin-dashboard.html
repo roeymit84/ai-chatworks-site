@@ -2231,6 +2231,12 @@
             const wrapper = document.createElement('div');
             wrapper.className = 'custom-dropdown';
 
+            // Copy min-width from select element
+            const minWidth = selectElement.style.minWidth;
+            if (minWidth) {
+                wrapper.style.minWidth = minWidth;
+            }
+
             const trigger = document.createElement('div');
             trigger.className = 'dropdown-trigger';
 
@@ -3045,14 +3051,17 @@
         }
 
         async function deleteCategory(categoryName) {
+            console.log('deleteCategory called for:', categoryName);
             // Count prompts in this category
             const promptCount = allMarketplaceData.filter(p => p.category === categoryName).length;
+            console.log('Prompt count in category:', promptCount);
 
             if (promptCount > 0) {
                 showConfirm(
                     `Delete category "${categoryName}"?`,
                     `This category has ${promptCount} prompt(s). They will be set to "Uncategorized".`,
                     async () => {
+                        console.log('Delete confirmed for category:', categoryName);
                         try {
                             // Update all prompts in this category to "Uncategorized"
                             const { error } = await supabase
@@ -3060,8 +3069,12 @@
                                 .update({ category: 'Uncategorized' })
                                 .eq('category', categoryName);
 
-                            if (error) throw error;
+                            if (error) {
+                                console.error('Supabase error deleting category:', error);
+                                throw error;
+                            }
 
+                            console.log('Category update successful, reloading data');
                             // Reload data
                             await loadMarketplaceData();
                             await loadCategoriesList();
@@ -3074,6 +3087,7 @@
                     }
                 );
             } else {
+                console.log('Category has no prompts');
                 showAlert(`Category "${categoryName}" has no prompts and will be removed automatically.`);
                 await loadCategoriesList();
             }
@@ -3462,12 +3476,6 @@
             console.log('=== loadMarketplaceDataReal END ===');
         }
 
-        function populateCategoryFilter() {
-            const categories = [...new Set(allMarketplaceData.map(p => p.category))].sort();
-            const select = document.getElementById('categoryFilter');
-            select.innerHTML = '<option value="">All Categories</option>' +
-                categories.map(c => `<option value="${c}">${c}</option>`).join('');
-        }
     </script>
 </body>
 
