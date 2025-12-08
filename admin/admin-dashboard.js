@@ -23,6 +23,13 @@
     let supabase = null;
     let currentUser = null;
     let charts = {};
+    let allMarketplaceData = []; // Store all data for filtering
+    let activeFilters = {
+        search: '',
+        category: '',
+        tier: '',
+        status: ''
+    };
 
     // ============================================
     // QUERY CONFIGURATIONS
@@ -507,74 +514,26 @@
 
             if (!data || data.length === 0) {
                 tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-sm text-slate-400">No marketplace prompts yet. Upload your first prompt!</td></tr>';
+                allMarketplaceData = [];
                 return;
             }
 
-            let html = '';
-            data.forEach(prompt => {
-                // Tier badge styling
-                const tierBadge = prompt.tier === 'pro'
-                    ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200/50 tracking-wide">PRO</span>'
-                    : '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-500 border border-slate-200 tracking-wide">FREE</span>';
+            // Store data globally for filtering
+            allMarketplaceData = data;
 
-                // Status indicator with animation
-                const statusIndicator = prompt.is_active
-                    ? `<div class="flex items-center h-full gap-2">
-                         <span class="relative flex h-2 w-2">
-                           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                           <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-                         </span>
-                         <span class="text-[11px] font-medium text-slate-600">Active</span>
-                       </div>`
-                    : `<div class="flex items-center h-full gap-2">
-                         <span class="relative inline-flex rounded-full h-2 w-2 bg-slate-300"></span>
-                         <span class="text-[11px] font-medium text-slate-400">Inactive</span>
-                       </div>`;
+            // Render the table
+            renderMarketplaceTable(data);
 
-                // Category badge
-                const categoryBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 border border-slate-200">${prompt.category}</span>`;
-
-                html += `
-                    <tr class="group hover:bg-blue-50/30 transition-colors duration-200">
-                        <td class="px-4 py-3 align-middle">
-                            <div class="flex items-center h-full text-xs font-medium text-slate-700">${prompt.prompt_name}</div>
-                        </td>
-                        <td class="px-4 py-3 align-middle">
-                            <div class="flex items-center h-full">${categoryBadge}</div>
-                        </td>
-                        <td class="px-4 py-3 align-middle">
-                            <div class="flex items-center h-full text-xs text-slate-500">${prompt.uploader_email || 'Unknown'}</div>
-                        </td>
-                        <td class="px-4 py-3 align-middle">
-                            <div class="flex items-center justify-center h-full text-xs font-medium text-slate-600">${prompt.downloads_count || 0}</div>
-                        </td>
-                        <td class="px-4 py-3 align-middle">
-                            <div class="flex items-center justify-center h-full">${tierBadge}</div>
-                        </td>
-                        <td class="px-4 py-3 align-middle">
-                            ${statusIndicator}
-                        </td>
-                        <td class="px-4 py-3 align-middle text-right">
-                            <div class="action-buttons opacity-0 group-hover:opacity-100 transition-all duration-200 flex justify-end gap-2">
-                                <button onclick="editMarketplacePrompt('${prompt.prompt_id}')" class="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
-                                </button>
-                                <button onclick="deleteMarketplacePrompt('${prompt.prompt_id}', '${prompt.prompt_name.replace(/'/g, "\\'")}')\" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            });
-
-            tbody.innerHTML = html;
-
-            // Load categories for upload form
+            // Load categories for upload form and populate filter dropdown
             await loadCategories();
+            await populateFilterDropdowns();
+
+            // Initialize filters
+            initializeMarketplaceFilters();
         } catch (error) {
             console.error('Error loading marketplace:', error);
             tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-sm text-red-600">Error: ${error.message}</td></tr>`;
+            allMarketplaceData = [];
         }
     }
 
@@ -822,7 +781,10 @@
     // CREATE PROMPT MODAL
     // ============================================
 
-    window.openCreatePromptModal = function () {
+    window.openCreatePromptModal = async function () {
+        // Load categories first
+        const categories = await getUniqueCategories();
+
         const modal = document.createElement('div');
         modal.id = 'promptModal';
         modal.className = 'fixed inset-0 z-40 flex items-center justify-center';
@@ -844,14 +806,12 @@
                             <input type="text" id="modal-upload-name" placeholder="e.g. SEO Writer" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm">
                         </div>
                         <div>
-                            <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Category</label>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Category</label>
+                                <button onclick="openCategoryModal()" class="text-[10px] text-blue-600 hover:text-blue-800 font-medium hover:underline">Manage</button>
+                            </div>
                             <select id="modal-upload-category" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm text-slate-700">
-                                <option>Marketing</option>
-                                <option>Coding</option>
-                                <option>Business</option>
-                                <option>Creative</option>
-                                <option>Writing</option>
-                                <option>Education</option>
+                                ${categories.map(cat => `<option value="${cat}">${cat}</option>`).join('')}
                             </select>
                         </div>
                     </div>
@@ -861,8 +821,8 @@
                             <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Created By</label>
                             <input type="email" id="modal-upload-email" value="${currentUser?.email || 'admin@example.com'}" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-slate-500 cursor-not-allowed" readonly>
                         </div>
-                        <div class="flex gap-6">
-                            <div>
+                        <div class="flex gap-4">
+                            <div class="flex-1">
                                 <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Tier</label>
                                 <div class="flex gap-3 mt-2">
                                     <label class="flex items-center gap-2 cursor-pointer">
@@ -875,9 +835,9 @@
                                     </label>
                                 </div>
                             </div>
-                            <div>
+                            <div class="flex-1">
                                 <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Status</label>
-                                <label class="relative inline-flex items-center cursor-pointer mt-1">
+                                <label class="relative inline-flex items-center cursor-pointer mt-2">
                                     <input type="checkbox" id="modal-status" checked class="sr-only peer">
                                     <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
                                     <span class="ml-2 text-sm font-medium text-gray-700">Active</span>
@@ -1108,6 +1068,300 @@
             console.error('Bulk upload error:', error);
             statusDiv.innerHTML = `<p style="color: var(--danger);">Error: ${error.message}</p>`;
         }
+    };
+
+    // ============================================
+    // CATEGORY MANAGEMENT
+    // ============================================
+
+    async function getUniqueCategories() {
+        try {
+            const { data, error } = await supabase
+                .from('marketplace_prompts')
+                .select('category');
+
+            if (error) throw error;
+
+            const categories = [...new Set(data.map(p => p.category))].filter(Boolean).sort();
+
+            // Add default categories if none exist
+            if (categories.length === 0) {
+                return ['Marketing', 'Coding', 'Business', 'Creative', 'Writing', 'Education'];
+            }
+
+            return categories;
+        } catch (error) {
+            console.error('Error loading categories:', error);
+            return ['Marketing', 'Coding', 'Business', 'Creative', 'Writing', 'Education'];
+        }
+    }
+
+    window.openCategoryModal = async function () {
+        const categories = await getUniqueCategories();
+
+        const modal = document.createElement('div');
+        modal.id = 'categoryModal';
+        modal.className = 'fixed inset-0 z-50 flex items-center justify-center';
+        modal.innerHTML = `
+            <div class="absolute inset-0 bg-slate-900/30 backdrop-blur-sm" onclick="this.parentElement.remove()"></div>
+            
+            <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-sm mx-4 transform transition-all overflow-hidden">
+                <div class="px-5 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+                    <h3 class="text-sm font-semibold text-slate-800">Manage Categories</h3>
+                    <button onclick="this.closest('#categoryModal').remove()" class="text-slate-400 hover:text-slate-600">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+
+                <div class="p-5">
+                    <div class="flex gap-2 mb-4">
+                        <input type="text" id="newCategoryInput" placeholder="New category name" class="flex-1 px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm">
+                        <button onclick="addCategoryToList()" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-xs font-medium transition-colors">Add</button>
+                    </div>
+
+                    <div class="space-y-2 max-h-48 overflow-y-auto pr-2" id="categoryList">
+                        ${categories.map(cat => `
+                            <div class="flex justify-between items-center p-2 hover:bg-gray-50 rounded border border-transparent hover:border-gray-100 group">
+                                <span class="text-sm text-slate-700">${cat}</span>
+                                <button onclick="deleteCategoryFromList('${cat}')" class="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"></path></svg>
+                                </button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                
+                <div class="px-5 py-3 bg-gray-50 text-right border-t border-gray-100">
+                    <button onclick="closeCategoryModalAndRefresh()" class="text-xs font-medium text-slate-600 hover:text-slate-900">Done</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+    };
+
+    window.addCategoryToList = async function () {
+        const input = document.getElementById('newCategoryInput');
+        const newCategory = input.value.trim();
+
+        if (!newCategory) {
+            alert('Please enter a category name');
+            return;
+        }
+
+        const categories = await getUniqueCategories();
+        if (categories.includes(newCategory)) {
+            alert('Category already exists');
+            return;
+        }
+
+        // Add a placeholder prompt with this category to make it available
+        // (In a real scenario, you might want a separate categories table)
+        input.value = '';
+
+        // Refresh the category list
+        const modal = document.getElementById('categoryModal');
+        modal.remove();
+        await openCategoryModal();
+
+        // Show success message
+        const newInput = document.getElementById('newCategoryInput');
+        newInput.placeholder = `"${newCategory}" will be available once a prompt uses it`;
+    };
+
+    window.deleteCategoryFromList = async function (categoryName) {
+        if (!confirm(`Delete category "${categoryName}"?\n\nNote: This will not delete prompts using this category.`)) {
+            return;
+        }
+
+        // Note: We can't actually delete a category without affecting prompts
+        // This is a limitation of not having a separate categories table
+        alert('To remove a category, you must first change all prompts using it to a different category.');
+    };
+
+    window.closeCategoryModalAndRefresh = async function () {
+        document.getElementById('categoryModal').remove();
+
+        // Refresh the category dropdown in the prompt modal if it exists
+        const categorySelect = document.getElementById('modal-upload-category');
+        if (categorySelect) {
+            const categories = await getUniqueCategories();
+            categorySelect.innerHTML = categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+        }
+    };
+
+    // ============================================
+    // SEARCH AND FILTER
+    // ============================================
+
+    async function populateFilterDropdowns() {
+        const categoryFilter = document.getElementById('filter-category');
+
+        if (categoryFilter && allMarketplaceData.length > 0) {
+            const categories = [...new Set(allMarketplaceData.map(p => p.category))].filter(Boolean).sort();
+            categoryFilter.innerHTML = '<option value=\"\">All Categories</option>' +
+                categories.map(cat => `<option value=\"${cat}\">${cat}</option>`).join('');
+        }
+    }
+
+    window.initializeMarketplaceFilters = function () {
+        const searchInput = document.getElementById('marketplace-search');
+        const categoryFilter = document.getElementById('filter-category');
+        const tierFilter = document.getElementById('filter-tier');
+        const statusFilter = document.getElementById('filter-status');
+
+        if (searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                activeFilters.search = e.target.value.toLowerCase();
+                applyMarketplaceFilters();
+            });
+        }
+
+        if (categoryFilter) {
+            categoryFilter.addEventListener('change', (e) => {
+                activeFilters.category = e.target.value;
+                applyMarketplaceFilters();
+            });
+        }
+
+        if (tierFilter) {
+            tierFilter.addEventListener('change', (e) => {
+                activeFilters.tier = e.target.value;
+                applyMarketplaceFilters();
+            });
+        }
+
+        if (statusFilter) {
+            statusFilter.addEventListener('change', (e) => {
+                activeFilters.status = e.target.value;
+                applyMarketplaceFilters();
+            });
+        }
+    };
+
+    function applyMarketplaceFilters() {
+        let filteredData = [...allMarketplaceData];
+
+        // Apply search filter
+        if (activeFilters.search) {
+            filteredData = filteredData.filter(prompt =>
+                prompt.prompt_name.toLowerCase().includes(activeFilters.search)
+            );
+        }
+
+        // Apply category filter
+        if (activeFilters.category) {
+            filteredData = filteredData.filter(prompt =>
+                prompt.category === activeFilters.category
+            );
+        }
+
+        // Apply tier filter
+        if (activeFilters.tier) {
+            filteredData = filteredData.filter(prompt =>
+                prompt.tier === activeFilters.tier
+            );
+        }
+
+        // Apply status filter
+        if (activeFilters.status) {
+            const isActive = activeFilters.status === 'active';
+            filteredData = filteredData.filter(prompt =>
+                prompt.is_active === isActive
+            );
+        }
+
+        // Render filtered data
+        renderMarketplaceTable(filteredData);
+    }
+
+    function renderMarketplaceTable(data) {
+        const tbody = document.getElementById('marketplace-table-body');
+
+        if (!data || data.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-sm text-slate-400">No prompts match your filters</td></tr>';
+            return;
+        }
+
+        let html = '';
+        data.forEach(prompt => {
+            // Tier badge styling
+            const tierBadge = prompt.tier === 'pro'
+                ? '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200/50 tracking-wide">PRO</span>'
+                : '<span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-100 text-slate-500 border border-slate-200 tracking-wide">FREE</span>';
+
+            // Status indicator with animation
+            const statusIndicator = prompt.is_active
+                ? `<div class="flex items-center h-full gap-2">
+                     <span class="relative flex h-2 w-2">
+                       <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                       <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                     </span>
+                     <span class="text-[11px] font-medium text-slate-600">Active</span>
+                   </div>`
+                : `<div class="flex items-center h-full gap-2">
+                     <span class="relative inline-flex rounded-full h-2 w-2 bg-slate-300"></span>
+                     <span class="text-[11px] font-medium text-slate-400">Inactive</span>
+                   </div>`;
+
+            // Category badge
+            const categoryBadge = `<span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-slate-100 text-slate-600 border border-slate-200">${prompt.category}</span>`;
+
+            html += `
+                <tr class="group hover:bg-blue-50/30 transition-colors duration-200">
+                    <td class="px-4 py-3 align-middle">
+                        <div class="flex items-center h-full text-xs font-medium text-slate-700">${prompt.prompt_name}</div>
+                    </td>
+                    <td class="px-4 py-3 align-middle">
+                        <div class="flex items-center h-full">${categoryBadge}</div>
+                    </td>
+                    <td class="px-4 py-3 align-middle">
+                        <div class="flex items-center h-full text-xs text-slate-500">${prompt.uploader_email || 'Unknown'}</div>
+                    </td>
+                    <td class="px-4 py-3 align-middle">
+                        <div class="flex items-center justify-center h-full text-xs font-medium text-slate-600">${prompt.downloads_count || 0}</div>
+                    </td>
+                    <td class="px-4 py-3 align-middle">
+                        <div class="flex items-center justify-center h-full">${tierBadge}</div>
+                    </td>
+                    <td class="px-4 py-3 align-middle">
+                        ${statusIndicator}
+                    </td>
+                    <td class="px-4 py-3 align-middle text-right">
+                        <div class="action-buttons opacity-0 group-hover:opacity-100 transition-all duration-200 flex justify-end gap-2">
+                            <button onclick="editMarketplacePrompt('${prompt.prompt_id}')" class="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
+                            </button>
+                            <button onclick="deleteMarketplacePrompt('${prompt.prompt_id}', '${prompt.prompt_name.replace(/'/g, "\\'")}')" class="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+
+        tbody.innerHTML = html;
+    }
+
+    window.clearMarketplaceFilters = function () {
+        activeFilters = {
+            search: '',
+            category: '',
+            tier: '',
+            status: ''
+        };
+
+        const searchInput = document.getElementById('marketplace-search');
+        const categoryFilter = document.getElementById('filter-category');
+        const tierFilter = document.getElementById('filter-tier');
+        const statusFilter = document.getElementById('filter-status');
+
+        if (searchInput) searchInput.value = '';
+        if (categoryFilter) categoryFilter.value = '';
+        if (tierFilter) tierFilter.value = '';
+        if (statusFilter) statusFilter.value = '';
+
+        renderMarketplaceTable(allMarketplaceData);
     };
 
 })();

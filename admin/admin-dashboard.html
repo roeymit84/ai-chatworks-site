@@ -335,30 +335,60 @@
             <!-- MARKETPLACE VIEW -->
             <div id="view-marketplace" class="view-container hidden">
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
-                    <div class="px-5 py-4 border-b border-gray-100 flex justify-between items-center bg-white">
-                        <div>
-                            <h2 class="text-base font-semibold text-slate-900">Live Prompts</h2>
-                            <p class="text-[11px] text-slate-400 mt-0.5">Manage your marketplace library</p>
+                    <div class="px-5 py-4 border-b border-gray-100 bg-white">
+                        <div class="flex justify-between items-center mb-3">
+                            <div>
+                                <h2 class="text-base font-semibold text-slate-900">Live Prompts</h2>
+                                <p class="text-[11px] text-slate-400 mt-0.5">Manage your marketplace library</p>
+                            </div>
+                            <div class="flex gap-2">
+                                <button onclick="openCreatePromptModal()"
+                                    class="bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors shadow-lg shadow-slate-900/20 flex items-center gap-2">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <line x1="12" y1="5" x2="12" y2="19"></line>
+                                        <line x1="5" y1="12" x2="19" y2="12"></line>
+                                    </svg>
+                                    New Prompt
+                                </button>
+                                <button onclick="openBulkUpload()"
+                                    class="bg-white hover:bg-gray-50 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border border-gray-200 flex items-center gap-2">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                        <polyline points="17 8 12 3 7 8"></polyline>
+                                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                                    </svg>
+                                    Bulk Upload
+                                </button>
+                            </div>
                         </div>
-                        <div class="flex gap-2">
-                            <button onclick="openCreatePromptModal()"
-                                class="bg-slate-900 hover:bg-slate-800 text-white px-3 py-1.5 rounded-lg text-xs font-medium transition-colors shadow-lg shadow-slate-900/20 flex items-center gap-2">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                        
+                        <!-- Search and Filters -->
+                        <div class="flex gap-2 items-center">
+                            <div class="flex-1 relative">
+                                <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <path d="m21 21-4.35-4.35"></path>
                                 </svg>
-                                New Prompt
-                            </button>
-                            <button onclick="openBulkUpload()"
-                                class="bg-white hover:bg-gray-50 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border border-gray-200 flex items-center gap-2">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                    stroke-width="2">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                    <polyline points="17 8 12 3 7 8"></polyline>
-                                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                                </svg>
-                                Bulk Upload
+                                <input type="text" id="marketplace-search" placeholder="Search prompts..." 
+                                    class="w-full pl-10 pr-3 py-1.5 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm">
+                            </div>
+                            <select id="filter-category" class="px-3 py-1.5 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm">
+                                <option value="">All Categories</option>
+                            </select>
+                            <select id="filter-tier" class="px-3 py-1.5 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm">
+                                <option value="">All Tiers</option>
+                                <option value="free">Free</option>
+                                <option value="pro">Pro</option>
+                            </select>
+                            <select id="filter-status" class="px-3 py-1.5 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm">
+                                <option value="">All Status</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                            <button onclick="clearMarketplaceFilters()" class="px-3 py-1.5 text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-gray-100 rounded-lg transition-colors">
+                                Clear
                             </button>
                         </div>
                     </div>
