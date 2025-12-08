@@ -1293,7 +1293,7 @@
         modal.id = 'categoryModal';
         modal.className = 'fixed inset-0 z-50 flex items-center justify-center';
         modal.innerHTML = `
-            <div class="absolute inset-0 bg-purple-600/30 backdrop-blur-sm" onclick="document.getElementById('categoryModal').remove()"></div>
+            <div class="absolute inset-0 bg-black/20" onclick="document.getElementById('categoryModal').remove()"></div>
             
             <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-sm mx-4 transform transition-all overflow-hidden">
                 <div class="px-5 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
