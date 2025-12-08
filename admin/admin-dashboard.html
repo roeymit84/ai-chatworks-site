@@ -1409,10 +1409,7 @@
             font-weight: 600;
         }
 
-        .dropdown-option.selected::before {
-            content: '✓ ';
-            margin-right: 8px;
-        }
+        /* Removed checkmark icon from selected items */
 
         /* Scrollbar styling for dropdown */
         .dropdown-menu::-webkit-scrollbar {
@@ -1444,6 +1441,8 @@
                     <path d="M2 17l10 5 10-5" />
                     <path d="M2 12l10 5 10-5" />
                 </svg>
+                <img src="images/AI ChatWorks.svg" alt="AI ChatWorks"
+                    style="width: 48px; height: 48px; margin-bottom: 16px;">
                 <h1>AI ChatWorks</h1>
             </div>
             <p class="login-subtitle">Admin Dashboard</p>
@@ -1481,11 +1480,7 @@
         <!-- SIDEBAR -->
         <aside class="sidebar">
             <div class="sidebar-brand">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                    <path d="M2 17l10 5 10-5" />
-                    <path d="M2 12l10 5 10-5" />
-                </svg>
+                <img src="images/AI ChatWorks.svg" alt="AI ChatWorks" style="width: 32px; height: 32px;">
                 <div class="sidebar-brand-text">
                     <h2>AI ChatWorks</h2>
                     <span>Admin Dashboard</span>
@@ -1504,19 +1499,19 @@
                         Overview
                     </div>
                     <div class="nav-link" data-view="queries">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                            <polyline points="7 10 12 15 17 10" />
-                            <line x1="12" y1="15" x2="12" y2="3" />
+                        <svg width="20" height="20" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M14.5 2.49866C14.5 3.60194 11.366 4.49731 7.5 4.49731C3.634 4.49731 0.5 3.60194 0.5 2.49866M14.5 2.49866C14.5 1.39538 11.366 0.5 7.5 0.5C3.634 0.5 0.5 1.39538 0.5 2.49866M14.5 2.49866V12.4922C14.5 13.5955 11.366 14.4908 7.5 14.4908C3.634 14.4908 0.5 13.5956 0.5 12.4923V2.49866M14.5 7.49536C14.5 8.59864 11.366 9.49414 7.5 9.49414C3.634 9.49414 0.5 8.59864 0.5 7.49536"
+                                stroke="currentColor" stroke-linecap="square" />
                         </svg>
                         DB Queries
                     </div>
                     <div class="nav-link" data-view="marketplace">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <svg width="20" height="20" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                            fill="currentColor">
                             <path
-                                d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
-                            <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
-                            <line x1="12" y1="22.08" x2="12" y2="12" />
+                                d="M2.7,9.45a4.235,4.235,0,0,0,.3.3V22a1,1,0,0,0,1,1H20a1,1,0,0,0,1-1V9.752a4.235,4.235,0,0,0,.3-.3,4,4,0,0,0,.731-3.456L20.97,1.758A1,1,0,0,0,20,1H4a1,1,0,0,0-.97.758L1.972,5.994A4,4,0,0,0,2.7,9.45ZM13,21H11V16h2Zm6,0H15V15a1,1,0,0,0-1-1H10a1,1,0,0,0-1,1v6H5V10.9A3.989,3.989,0,0,0,8.914,9.61c.026.03.053.059.08.089A4.086,4.086,0,0,0,12.041,11a4.039,4.039,0,0,0,2.965-1.3c.027-.03.054-.059.08-.089A3.989,3.989,0,0,0,19,10.9ZM3.911,6.479,4.781,3H19.219l.87,3.479A2.029,2.029,0,0,1,18.12,9,2.041,2.041,0,0,1,16.1,7.14l-.042-.5a1,1,0,0,0-1.993.166v0a2.006,2.006,0,0,1-.529,1.539A2.059,2.059,0,0,1,11.959,9,2.029,2.029,0,0,1,9.937,6.806v0a1,1,0,0,0-.914-1.079.989.989,0,0,0-1.079.913l-.042.5A2.041,2.041,0,0,1,5.88,9,2.029,2.029,0,0,1,3.911,6.479Z">
+                            </path>
                         </svg>
                         Marketplace
                         <span class="nav-badge" id="marketplaceBadge">0</span>
@@ -1730,7 +1725,14 @@
             <!-- DB QUERIES VIEW -->
             <div class="view" id="viewQueries">
                 <div class="page-header">
-                    <h1>Database Console</h1>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <svg width="24" height="24" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path
+                                d="M14.5 2.49866C14.5 3.60194 11.366 4.49731 7.5 4.49731C3.634 4.49731 0.5 3.60194 0.5 2.49866M14.5 2.49866C14.5 1.39538 11.366 0.5 7.5 0.5C3.634 0.5 0.5 1.39538 0.5 2.49866M14.5 2.49866V12.4922C14.5 13.5955 11.366 14.4908 7.5 14.4908C3.634 14.4908 0.5 13.5956 0.5 12.4923V2.49866M14.5 7.49536C14.5 8.59864 11.366 9.49414 7.5 9.49414C3.634 9.49414 0.5 8.59864 0.5 7.49536"
+                                stroke="currentColor" stroke-width="1" stroke-linecap="square" />
+                        </svg>
+                        <h1>Database Console</h1>
+                    </div>
                     <p>Run secure queries directly on the database</p>
                 </div>
 
@@ -1783,7 +1785,15 @@
                 <div class="page-header">
                     <div class="header-row">
                         <div>
-                            <h1>Marketplace</h1>
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <svg width="24" height="24" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                                    fill="currentColor">
+                                    <path
+                                        d="M2.7,9.45a4.235,4.235,0,0,0,.3.3V22a1,1,0,0,0,1,1H20a1,1,0,0,0,1-1V9.752a4.235,4.235,0,0,0,.3-.3,4,4,0,0,0,.731-3.456L20.97,1.758A1,1,0,0,0,20,1H4a1,1,0,0,0-.97.758L1.972,5.994A4,4,0,0,0,2.7,9.45ZM13,21H11V16h2Zm6,0H15V15a1,1,0,0,0-1-1H10a1,1,0,0,0-1,1v6H5V10.9A3.989,3.989,0,0,0,8.914,9.61c.026.03.053.059.08.089A4.086,4.086,0,0,0,12.041,11a4.039,4.039,0,0,0,2.965-1.3c.027-.03.054-.059.08-.089A3.989,3.989,0,0,0,19,10.9ZM3.911,6.479,4.781,3H19.219l.87,3.479A2.029,2.029,0,0,1,18.12,9,2.041,2.041,0,0,1,16.1,7.14l-.042-.5a1,1,0,0,0-1.993.166v0a2.006,2.006,0,0,1-.529,1.539A2.059,2.059,0,0,1,11.959,9,2.029,2.029,0,0,1,9.937,6.806v0a1,1,0,0,0-.914-1.079.989.989,0,0,0-1.079.913l-.042.5A2.041,2.041,0,0,1,5.88,9,2.029,2.029,0,0,1,3.911,6.479Z">
+                                    </path>
+                                </svg>
+                                <h1>Marketplace</h1>
+                            </div>
                             <p>Manage your prompt library</p>
                         </div>
                         <div class="btn-group">
@@ -1827,11 +1837,11 @@
                             </div>
                             <div style="display: flex; gap: 8px;">
                                 <select class="filter-select" id="categoryFilter" onchange="filterMarketplace()"
-                                    style="min-width: 175px;">
+                                    style="min-width: 185px; height: 38.9px;">
                                     <option value="">All Categories</option>
                                 </select>
                                 <select class="filter-select" id="tierFilter" onchange="filterMarketplace()"
-                                    style="min-width: 135px;">
+                                    style="min-width: 145px; height: 38.9px;">
                                     <option value="">All Tiers</option>
                                     <option value="pro">Pro</option>
                                     <option value="free">Free</option>
@@ -2236,6 +2246,11 @@
             if (minWidth) {
                 wrapper.style.minWidth = minWidth;
             }
+            const height = selectElement.style.height;
+            if (height) {
+                wrapper.style.height = height;
+            }
+
 
             const trigger = document.createElement('div');
             trigger.className = 'dropdown-trigger';
@@ -2307,9 +2322,10 @@
                 optionDiv.dataset.value = option.value;
                 optionDiv.dataset.index = index;
 
-                if (option.selected) {
-                    optionDiv.classList.add('selected');
-                }
+                // Removed the 'selected' class toggle here to remove checkmark
+                // if (option.selected) {
+                //     optionDiv.classList.add('selected');
+                // }
 
                 optionDiv.addEventListener('click', () => {
                     selectDropdownOption(wrapper, index);
@@ -2328,11 +2344,11 @@
                 triggerText.textContent = selectedOption.textContent;
                 triggerText.classList.remove('placeholder');
 
-                // Update selected state in menu
-                const options = wrapper._menu.querySelectorAll('.dropdown-option');
-                options.forEach((opt, idx) => {
-                    opt.classList.toggle('selected', idx === select.selectedIndex);
-                });
+                // Update selected state in menu (removed checkmark logic)
+                // const options = wrapper._menu.querySelectorAll('.dropdown-option');
+                // options.forEach((opt, idx) => {
+                //     opt.classList.toggle('selected', idx === select.selectedIndex);
+                // });
             } else {
                 triggerText.textContent = 'Select...';
                 triggerText.classList.add('placeholder');
@@ -3009,14 +3025,33 @@
                 return;
             }
 
-            // Add to temporary categories list for immediate use
-            // It will be saved when a prompt is created with it
-            input.value = '';
+            try {
+                // Create a placeholder prompt to register the category in the database
+                const { error } = await supabase
+                    .from('marketplace_prompts')
+                    .insert([{
+                        user_id: currentUser.id,
+                        title: `_category_placeholder_${categoryName}`,
+                        content: 'Placeholder',
+                        description: 'Placeholder for category',
+                        category: categoryName,
+                        tier: 'free',
+                        is_active: false
+                    }]);
 
-            // Refresh dropdowns to include new category
-            await populateModalCategories();
+                if (error) throw error;
 
-            showAlert(`Category "${categoryName}" added successfully`);
+                input.value = '';
+
+                // Reload marketplace data to include new category
+                await loadMarketplaceData();
+                await loadCategoriesList();
+
+                showAlert(`Category "${categoryName}" added successfully`);
+            } catch (error) {
+                console.error('Error adding category:', error);
+                showAlert('Error adding category: ' + error.message);
+            }
         }
 
         async function editCategory(oldName) {
