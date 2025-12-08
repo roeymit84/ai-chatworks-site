@@ -1827,11 +1827,11 @@
                             </div>
                             <div style="display: flex; gap: 8px;">
                                 <select class="filter-select" id="categoryFilter" onchange="filterMarketplace()"
-                                    style="min-width: 180px;">
+                                    style="min-width: 175px;">
                                     <option value="">All Categories</option>
                                 </select>
                                 <select class="filter-select" id="tierFilter" onchange="filterMarketplace()"
-                                    style="min-width: 140px;">
+                                    style="min-width: 135px;">
                                     <option value="">All Tiers</option>
                                     <option value="pro">Pro</option>
                                     <option value="free">Free</option>
@@ -2622,7 +2622,7 @@
                 const avatar = title.split(' ').map(w => w[0] || '').slice(0, 2).join('').toUpperCase() || 'UN';
                 const category = p.category || 'Uncategorized';
                 const uploaderEmail = p.uploader_email || p.user_email || 'Unknown';
-                const downloads = p.downloads || 0;
+                const downloads = p.downloads || p.downloads_count || 0;
                 const tier = p.tier || 'free';
                 const isActive = p.is_active !== undefined ? p.is_active : true;
 
@@ -3114,7 +3114,7 @@
                                 content: p.content,
                                 tier: (p.tier === 'pro') ? 'pro' : 'free',
                                 is_active: true,
-                                downloads: 0,
+                                downloads_count: 0,
                                 uploader_email: currentUser.email
                             });
                             success++;
@@ -3331,7 +3331,7 @@
                 // Load marketplace stats
                 const { data: allPrompts } = await supabase
                     .from('marketplace_prompts')
-                    .select('tier, title, category, is_active');
+                    .select('tier, downloads_count, title, category, is_active');
 
                 if (allPrompts) {
                     const totalPrompts = allPrompts.length;
@@ -3346,14 +3346,14 @@
                     document.getElementById('marketplaceBadge').textContent = totalPrompts;
 
                     // Top prompts table
-                    const topPrompts = [...allPrompts].sort((a, b) => (b.downloads || 0) - (a.downloads || 0)).slice(0, 5);
+                    const topPrompts = [...allPrompts].sort((a, b) => (b.downloads_count || 0) - (a.downloads_count || 0)).slice(0, 5);
                     if (topPrompts.length > 0) {
                         document.getElementById('topPromptsTable').innerHTML = topPrompts.map(p => {
                             const title = p.title || 'Untitled';
                             const avatar = title.split(' ').map(w => w[0] || '').slice(0, 2).join('').toUpperCase() || 'UN';
                             const category = p.category || 'Uncategorized';
                             const tier = p.tier || 'free';
-                            const downloads = p.downloads || 0;
+                            const downloads = p.downloads_count || 0;
 
                             return `
                             <tr>
@@ -3417,33 +3417,49 @@
 
         // Update loadMarketplaceData to use real Supabase data
         async function loadMarketplaceDataReal() {
+            console.log('=== loadMarketplaceDataReal START ===');
             try {
                 const { data, error } = await supabase.rpc('admin_get_marketplace_prompts');
 
-                if (error) throw error;
+                if (error) {
+                    console.error('RPC Error:', error);
+                    throw error;
+                }
 
-                // Log the data structure to see what fields we're getting
                 console.log('Marketplace data received:', data);
                 if (data && data.length > 0) {
                     console.log('First prompt structure:', data[0]);
-                    console.log('Available fields:', Object.keys(data[0]));
+                    console.log('Available fields:', Object.keys(data[0] || {}));
                 }
 
                 if (!data || data.length === 0) {
                     document.getElementById('marketplaceTableBody').innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 40px;">No marketplace prompts yet</td></tr>';
                     allMarketplaceData = [];
+                    console.log('No marketplace data, allMarketplaceData set to empty array.');
                     return;
                 }
 
-                allMarketplaceData = data;
-                renderMarketplaceTable(data);
+                allMarketplaceData = data || [];
+                console.log('allMarketplaceData set, length:', allMarketplaceData.length);
+
+                renderMarketplaceTable(allMarketplaceData);
+                console.log('Table rendered');
+
+                // Populate category filter
                 populateCategoryFilter();
-                populateModalCategories(); // Also populate modal categories
+                console.log('Category filter populated');
+
+                // Populate modal categories
+                await populateModalCategories();
+                console.log('Modal categories populated');
+
             } catch (error) {
-                console.error('Error loading marketplace:', error);
+                console.error('Error in loadMarketplaceDataReal:', error);
                 showAlert('Error loading marketplace data: ' + error.message);
+                allMarketplaceData = [];
                 throw error;
             }
+            console.log('=== loadMarketplaceDataReal END ===');
         }
 
         function populateCategoryFilter() {
