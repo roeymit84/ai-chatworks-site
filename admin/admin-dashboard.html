@@ -1427,7 +1427,7 @@
         <!-- MAIN CONTENT -->
         <main class="main-content">
             <!-- OVERVIEW VIEW -->
-            <div class="view active" id="viewOverview">
+            <div class="view active" id="view-overview">
                 <div class="page-header">
                     <div class="header-row">
                         <div>
@@ -1457,7 +1457,7 @@
                         </div>
                         <div class="stat-content">
                             <div class="stat-label">Total Users</div>
-                            <div class="stat-value" id="statUsers">-</div>
+                            <div class="stat-value" id="total-users">-</div>
                             <span class="stat-change up" id="statUsersChange">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
@@ -1474,7 +1474,7 @@
                         </div>
                         <div class="stat-content">
                             <div class="stat-label">Total Prompts</div>
-                            <div class="stat-value" id="statPrompts">-</div>
+                            <div class="stat-value" id="total-prompts">-</div>
                             <span class="stat-change up">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
@@ -1491,7 +1491,7 @@
                         </div>
                         <div class="stat-content">
                             <div class="stat-label">Folders</div>
-                            <div class="stat-value" id="statFolders">-</div>
+                            <div class="stat-value" id="total-folders">-</div>
                             <span class="stat-change up">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
@@ -1509,7 +1509,7 @@
                         </div>
                         <div class="stat-content">
                             <div class="stat-label">Encrypted</div>
-                            <div class="stat-value" id="statEncrypted">-</div>
+                            <div class="stat-value" id="encrypted-items">-</div>
                             <span class="stat-change down">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <polyline points="23 18 13.5 8.5 8.5 13.5 1 6" />
@@ -1527,7 +1527,7 @@
                         </div>
                         <div class="card-body">
                             <div class="chart-container">
-                                <canvas id="growthChart"></canvas>
+                                <canvas id="userGrowthChart"></canvas>
                             </div>
                         </div>
                     </div>
@@ -1625,7 +1625,7 @@
             </div>
 
             <!-- DB QUERIES VIEW -->
-            <div class="view" id="viewQueries">
+            <div class="view" id="view-queries">
                 <div class="page-header">
                     <h1>Database Console</h1>
                     <p>Run secure queries directly on the database</p>
@@ -1676,7 +1676,7 @@
             </div>
 
             <!-- MARKETPLACE VIEW -->
-            <div class="view" id="viewMarketplace">
+            <div class="view" id="view-marketplace">
                 <div class="page-header">
                     <div class="header-row">
                         <div>
@@ -1753,7 +1753,7 @@
                                     <th style="width: 80px;">Actions</th>
                                 </tr>
                             </thead>
-                            <tbody id="marketplaceTableBody">
+                            <tbody id="marketplace-table-body">
                                 <tr>
                                     <td colspan="8"
                                         style="text-align: center; color: var(--text-muted); padding: 40px;">Loading
@@ -1766,7 +1766,7 @@
             </div>
 
             <!-- SETTINGS VIEW -->
-            <div class="view" id="viewSettings">
+            <div class="view" id="view-settings">
                 <div class="page-header">
                     <h1>Settings</h1>
                     <p>Configure your dashboard preferences</p>
