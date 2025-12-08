@@ -1436,13 +1436,8 @@
     <div class="login-overlay" id="loginOverlay">
         <div class="login-card">
             <div class="login-brand">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                    <path d="M2 17l10 5 10-5" />
-                    <path d="M2 12l10 5 10-5" />
-                </svg>
-                <img src="images/AI%20ChatWorks.svg" alt="AI ChatWorks"
-                    style="width: 48px; height: 48px; margin-bottom: 16px;">
+                <img src="/images/AI%20ChatWorks.svg" alt="AI ChatWorks"
+                    style="width: 48px; height: 48px; margin-bottom: 16px;" onerror="this.style.display='none'">
                 <h1>AI ChatWorks</h1>
             </div>
             <p class="login-subtitle">Admin Dashboard</p>
@@ -1480,7 +1475,7 @@
         <!-- SIDEBAR -->
         <aside class="sidebar">
             <div class="sidebar-brand">
-                <img src="images/AI%20ChatWorks.svg" alt="AI ChatWorks" style="width: 32px; height: 32px;"
+                <img src="/images/AI%20ChatWorks.svg" alt="AI ChatWorks" style="width: 32px; height: 32px;"
                     onerror="this.style.display='none'">
                 <div class="sidebar-brand-text">
                     <h2>AI ChatWorks</h2>
@@ -2511,6 +2506,16 @@
             loadDashboardData();
         }
 
+        async function refreshMarketplace() {
+            try {
+                await loadMarketplaceData();
+                showAlert('Marketplace data refreshed successfully!');
+            } catch (error) {
+                console.error('Error refreshing marketplace:', error);
+                showAlert('Error refreshing marketplace: ' + error.message);
+            }
+        }
+
         async function initChart() {
             const ctx = document.getElementById('growthChart').getContext('2d');
 
@@ -3290,6 +3295,40 @@
                         result = JSON.stringify(users, null, 2);
                         break;
 
+                    case 'find_user':
+                        const searchEmail = document.getElementById('paramEmail')?.value || '';
+                        const { data: foundUsers, error: findError } = await supabase.rpc('admin_find_user_by_email', { search_email: searchEmail });
+                        if (findError) throw findError;
+                        result = JSON.stringify(foundUsers, null, 2);
+                        break;
+
+                    case 'heavy_users':
+                        const minPrompts = parseInt(document.getElementById('paramMinPrompts')?.value) || 10;
+                        const { data: heavyUsers, error: heavyError } = await supabase.rpc('admin_get_heavy_users', { min_prompts: minPrompts });
+                        if (heavyError) throw heavyError;
+                        result = JSON.stringify(heavyUsers, null, 2);
+                        break;
+
+                    case 'inactive_users':
+                        const daysInactive = parseInt(document.getElementById('paramDays')?.value) || 30;
+                        const { data: inactiveUsers, error: inactiveError } = await supabase.rpc('admin_get_inactive_users', { days_inactive: daysInactive });
+                        if (inactiveError) throw inactiveError;
+                        result = JSON.stringify(inactiveUsers, null, 2);
+                        break;
+
+                    case 'marketplace_prompts':
+                        const { data: mpPrompts, error: mpError } = await supabase.rpc('admin_get_marketplace_prompts');
+                        if (mpError) throw mpError;
+                        result = JSON.stringify(mpPrompts, null, 2);
+                        break;
+
+                    case 'top_downloads':
+                        const topLimit = parseInt(document.getElementById('paramLimit')?.value) || 10;
+                        const { data: topDownloads, error: topError } = await supabase.rpc('admin_get_top_downloads', { limit_count: topLimit });
+                        if (topError) throw topError;
+                        result = JSON.stringify(topDownloads, null, 2);
+                        break;
+
                     case 'db_stats':
                         // Use the admin_get_db_stats function that returns all stats in one query
                         const { data: stats, error: statsError } = await supabase.rpc('admin_get_db_stats');
@@ -3311,7 +3350,7 @@
                         break;
 
                     default:
-                        result = 'Query not found. Available queries: recent_users, db_stats';
+                        result = 'Query not found. Available queries: recent_users, find_user, heavy_users, inactive_users, marketplace_prompts, top_downloads, db_stats';
                 }
 
                 output.innerHTML = `
