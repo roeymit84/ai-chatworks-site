@@ -600,7 +600,7 @@
         if (category === 'other') {
             const customCategory = document.getElementById('custom-category-input').value.trim();
             if (!customCategory) {
-                alert('Please enter a custom category name');
+                showAlertModal('ai-chatworks.com says', 'Please enter a custom category name');
                 return;
             }
             category = customCategory;
@@ -620,13 +620,13 @@
 
             if (error) throw error;
 
-            alert('Prompt published successfully!');
+            showAlertModal('ai-chatworks.com says', 'Prompt published successfully!');
             document.getElementById('marketplace-upload-form').reset();
             document.getElementById('custom-category-group').style.display = 'none';
             loadMarketplaceData();
         } catch (error) {
             console.error('Upload error:', error);
-            alert('Error uploading prompt: ' + error.message);
+            showAlertModal('ai-chatworks.com says', 'Error uploading prompt: ' + error.message);
         }
     };
 
@@ -660,13 +660,13 @@
     window.refreshOverview = async function () {
         console.log('Refreshing overview data...');
         await loadDashboardData();
-        alert('Overview data refreshed!');
+        showAlertModal('ai-chatworks.com says', 'Overview data refreshed!');
     };
 
     window.refreshMarketplace = async function () {
         console.log('Refreshing marketplace data...');
         await loadMarketplaceData();
-        alert('Marketplace data refreshed!');
+        showAlertModal('ai-chatworks.com says', 'Marketplace data refreshed!');
     };
 
     // ============================================
@@ -691,7 +691,7 @@
             modal.id = 'editPromptModal';
             modal.className = 'fixed inset-0 z-40 flex items-center justify-center';
             modal.innerHTML = `
-                <div class="absolute inset-0 bg-slate-900/20 backdrop-blur-sm" onclick="this.parentElement.remove()"></div>
+                <div class="absolute inset-0 bg-purple-600/20 backdrop-blur-sm" onclick="this.parentElement.remove()"></div>
                 
                 <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 transform transition-all overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
@@ -759,14 +759,14 @@
 
                     <div class="px-6 py-4 bg-gray-50 flex justify-end gap-3 border-t border-gray-100">
                         <button onclick="document.getElementById('editPromptModal').remove()" class="px-4 py-2 text-[13px] font-medium text-slate-600 hover:text-slate-800 transition-colors">Cancel</button>
-                        <button onclick="updateMarketplacePrompt('${promptId}')" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-[13px] font-medium rounded-lg shadow-lg shadow-slate-900/10 transition-all">Update Prompt</button>
+                        <button onclick="updateMarketplacePrompt('${promptId}')" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-[13px] font-medium rounded-lg shadow-lg shadow-purple-600/10 transition-all">Update Prompt</button>
                     </div>
                 </div>
             `;
             document.body.appendChild(modal);
         } catch (error) {
             console.error('Error loading prompt:', error);
-            alert('Error loading prompt: ' + error.message);
+            showAlertModal('ai-chatworks.com says', 'Error loading prompt: ' + error.message);
         }
     };
 
@@ -794,12 +794,12 @@
 
             if (error) throw error;
 
-            alert('Prompt updated successfully!');
+            showAlertModal('ai-chatworks.com says', 'Prompt updated successfully!');
             document.getElementById('editPromptModal').remove();
             await loadMarketplaceData();
         } catch (error) {
             console.error('Error updating prompt:', error);
-            alert('Error updating prompt: ' + error.message);
+            showAlertModal('ai-chatworks.com says', 'Error updating prompt: ' + error.message);
         }
     };
 
@@ -815,7 +815,7 @@
         modal.id = 'promptModal';
         modal.className = 'fixed inset-0 z-40 flex items-center justify-center';
         modal.innerHTML = `
-            <div class="absolute inset-0 bg-slate-900/20 backdrop-blur-sm" onclick="this.parentElement.remove()"></div>
+            <div class="absolute inset-0 bg-purple-600/20 backdrop-blur-sm" onclick="this.parentElement.remove()"></div>
             
             <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 transform transition-all overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
@@ -886,7 +886,7 @@
 
                 <div class="px-6 py-4 bg-gray-50 flex justify-end gap-3 border-t border-gray-100">
                     <button onclick="document.getElementById('promptModal').remove()" class="px-4 py-2 text-[13px] font-medium text-slate-600 hover:text-slate-800 transition-colors">Cancel</button>
-                    <button onclick="uploadPromptFromModal()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-[13px] font-medium rounded-lg shadow-lg shadow-slate-900/10 transition-all">Save Changes</button>
+                    <button onclick="uploadPromptFromModal()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-[13px] font-medium rounded-lg shadow-lg shadow-purple-600/10 transition-all">Save Changes</button>
                 </div>
             </div>
         `;
@@ -920,7 +920,7 @@
         if (category === 'other') {
             const customCategory = document.getElementById('modal-custom-category-input').value.trim();
             if (!customCategory) {
-                alert('Please enter a custom category name');
+                showAlertModal('ai-chatworks.com says', 'Please enter a custom category name');
                 return;
             }
             category = customCategory;
@@ -941,13 +941,80 @@
 
             if (error) throw error;
 
-            alert('Prompt published successfully!');
+            showAlertModal('ai-chatworks.com says', 'Prompt published successfully!');
             document.getElementById('promptModal').remove();
             loadMarketplaceData();
         } catch (error) {
             console.error('Upload error:', error);
-            alert('Error uploading prompt: ' + error.message);
+            showAlertModal('ai-chatworks.com says', 'Error uploading prompt: ' + error.message);
         }
+    };
+
+    // ============================================
+    // CUSTOM CONFIRMATION MODAL
+    // ============================================
+
+    window.showConfirmModal = function (title, message, warning, onConfirm) {
+        const modal = document.createElement('div');
+        modal.id = 'confirmModal';
+        modal.className = 'fixed inset-0 z-[9999] flex items-center justify-center';
+        modal.innerHTML = `
+            <div class="absolute inset-0 bg-slate-900/30 backdrop-blur-sm" onclick="document.getElementById('confirmModal').remove()"></div>
+            
+            <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 transform transition-all overflow-hidden">
+                <div class="px-6 py-5">
+                    <h3 class="text-[15px] font-semibold text-slate-900 mb-2">${title}</h3>
+                    <p class="text-[13px] text-slate-600 mb-1">${message}</p>
+                    ${warning ? `<p class="text-[13px] text-slate-500 mt-3">${warning}</p>` : ''}
+                </div>
+
+                <div class="px-6 py-4 bg-gray-50 flex justify-end gap-3 border-t border-gray-100">
+                    <button onclick="document.getElementById('confirmModal').remove()" 
+                        class="px-5 py-2.5 text-[13px] font-medium text-slate-700 hover:text-slate-900 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                        Cancel
+                    </button>
+                    <button id="confirmModalOkBtn"
+                        class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-medium rounded-lg transition-colors">
+                        OK
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+
+        // Add event listener to OK button
+        document.getElementById('confirmModalOkBtn').addEventListener('click', () => {
+            document.getElementById('confirmModal').remove();
+            onConfirm();
+        });
+    };
+
+    // ============================================
+    // CUSTOM ALERT MODAL
+    // ============================================
+
+    window.showAlertModal = function (title, message) {
+        const modal = document.createElement('div');
+        modal.id = 'alertModal';
+        modal.className = 'fixed inset-0 z-[9999] flex items-center justify-center';
+        modal.innerHTML = `
+            <div class="absolute inset-0 bg-slate-900/30 backdrop-blur-sm" onclick="document.getElementById('alertModal').remove()"></div>
+            
+            <div class="relative bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 transform transition-all overflow-hidden">
+                <div class="px-6 py-5">
+                    <h3 class="text-[15px] font-semibold text-slate-900 mb-2">${title}</h3>
+                    <p class="text-[13px] text-slate-600">${message}</p>
+                </div>
+
+                <div class="px-6 py-4 bg-gray-50 flex justify-end border-t border-gray-100">
+                    <button onclick="document.getElementById('alertModal').remove()" 
+                        class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-[13px] font-medium rounded-lg transition-colors">
+                        OK
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
     };
 
     // ============================================
@@ -955,24 +1022,101 @@
     // ============================================
 
     window.deleteMarketplacePrompt = async function (promptId, promptName) {
-        if (!confirm(`Are you sure you want to delete "${promptName}"?\n\nThis action cannot be undone.`)) {
-            return;
+        showConfirmModal(
+            'ai-chatworks.com says',
+            `Are you sure you want to delete "${promptName}"?`,
+            'This action cannot be undone.',
+            async () => {
+                try {
+                    const { error } = await supabase
+                        .from('marketplace_prompts')
+                        .delete()
+                        .eq('id', promptId);
+
+                    if (error) throw error;
+
+                    showAlertModal('ai-chatworks.com says', 'Prompt deleted successfully!');
+                    await loadMarketplaceData();
+                } catch (error) {
+                    console.error('Error deleting prompt:', error);
+                    showAlertModal('ai-chatworks.com says', 'Error deleting prompt: ' + error.message);
+                }
+            }
+        );
+    };
+
+    // ============================================
+    // BULK DELETE PROMPTS
+    // ============================================
+
+    window.toggleAllPrompts = function (checked) {
+        const checkboxes = document.querySelectorAll('.prompt-checkbox');
+        checkboxes.forEach(cb => {
+            cb.checked = checked;
+        });
+        updateBulkDeleteButton();
+    };
+
+    window.togglePromptSelection = function () {
+        updateBulkDeleteButton();
+
+        // Update "select all" checkbox state
+        const checkboxes = document.querySelectorAll('.prompt-checkbox');
+        const selectAllCheckbox = document.getElementById('select-all-prompts');
+        const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+        const someChecked = Array.from(checkboxes).some(cb => cb.checked);
+
+        if (selectAllCheckbox) {
+            selectAllCheckbox.checked = allChecked;
+            selectAllCheckbox.indeterminate = someChecked && !allChecked;
         }
+    };
 
-        try {
-            const { error } = await supabase
-                .from('marketplace_prompts')
-                .delete()
-                .eq('id', promptId);
+    function updateBulkDeleteButton() {
+        const checkboxes = document.querySelectorAll('.prompt-checkbox:checked');
+        const bulkDeleteContainer = document.getElementById('bulk-delete-container');
+        const selectedCount = document.getElementById('selected-count');
 
-            if (error) throw error;
-
-            alert('Prompt deleted successfully!');
-            await loadMarketplaceData();
-        } catch (error) {
-            console.error('Error deleting prompt:', error);
-            alert('Error deleting prompt: ' + error.message);
+        if (checkboxes.length > 0) {
+            bulkDeleteContainer.classList.remove('hidden');
+            selectedCount.textContent = checkboxes.length;
+        } else {
+            bulkDeleteContainer.classList.add('hidden');
         }
+    }
+
+    window.bulkDeletePrompts = async function () {
+        const checkboxes = document.querySelectorAll('.prompt-checkbox:checked');
+        const promptIds = Array.from(checkboxes).map(cb => cb.dataset.promptId);
+        const count = promptIds.length;
+
+        if (count === 0) return;
+
+        showConfirmModal(
+            'ai-chatworks.com says',
+            `Are you sure you want to delete ${count} prompt(s)?`,
+            'This action cannot be undone.',
+            async () => {
+                try {
+                    const { error } = await supabase
+                        .from('marketplace_prompts')
+                        .delete()
+                        .in('id', promptIds);
+
+                    if (error) throw error;
+
+                    showAlertModal('ai-chatworks.com says', `${count} prompt(s) deleted successfully!`);
+                    await loadMarketplaceData();
+
+                    // Reset select all checkbox
+                    const selectAllCheckbox = document.getElementById('select-all-prompts');
+                    if (selectAllCheckbox) selectAllCheckbox.checked = false;
+                } catch (error) {
+                    console.error('Error deleting prompts:', error);
+                    showAlertModal('ai-chatworks.com says', 'Error deleting prompts: ' + error.message);
+                }
+            }
+        );
     };
 
     // ============================================
@@ -984,7 +1128,7 @@
         modal.id = 'bulkUploadModal';
         modal.className = 'fixed inset-0 z-40 flex items-center justify-center';
         modal.innerHTML = `
-            <div class="absolute inset-0 bg-slate-900/20 backdrop-blur-sm" onclick="document.getElementById('bulkUploadModal').remove()"></div>
+            <div class="absolute inset-0 bg-purple-600/20 backdrop-blur-sm" onclick="document.getElementById('bulkUploadModal').remove()"></div>
             
             <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 transform transition-all overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
@@ -1009,7 +1153,7 @@
                     
                     <div>
                         <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-2">Select JSON File</label>
-                        <input type="file" id="bulk-upload-file" accept=".json" class="block w-full text-[13px] text-slate-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[13px] file:font-medium file:bg-slate-900 file:text-white hover:file:bg-slate-800 file:cursor-pointer cursor-pointer border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                        <input type="file" id="bulk-upload-file" accept=".json" class="block w-full text-[13px] text-slate-700 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-[13px] file:font-medium file:bg-purple-600 file:text-white hover:file:bg-slate-800 file:cursor-pointer cursor-pointer border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20">
                     </div>
                     
                     <div id="bulk-upload-status" class="text-[13px]"></div>
@@ -1017,7 +1161,7 @@
 
                 <div class="px-6 py-4 bg-gray-50 flex justify-end gap-3 border-t border-gray-100">
                     <button onclick="document.getElementById('bulkUploadModal').remove()" class="px-4 py-2 text-[13px] font-medium text-slate-600 hover:text-slate-800 transition-colors text-center">Cancel</button>
-                    <button onclick="processBulkUpload()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-[13px] font-medium rounded-lg shadow-lg shadow-slate-900/10 transition-all text-center">Upload Prompts</button>
+                    <button onclick="processBulkUpload()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white text-[13px] font-medium rounded-lg shadow-lg shadow-purple-600/10 transition-all text-center">Upload Prompts</button>
                 </div>
             </div>
         `;
@@ -1029,7 +1173,7 @@
         const statusDiv = document.getElementById('bulk-upload-status');
 
         if (!fileInput.files || !fileInput.files[0]) {
-            alert('Please select a JSON file');
+            showAlertModal('ai-chatworks.com says', 'Please select a JSON file');
             return;
         }
 
@@ -1149,7 +1293,7 @@
         modal.id = 'categoryModal';
         modal.className = 'fixed inset-0 z-50 flex items-center justify-center';
         modal.innerHTML = `
-            <div class="absolute inset-0 bg-slate-900/30 backdrop-blur-sm" onclick="document.getElementById('categoryModal').remove()"></div>
+            <div class="absolute inset-0 bg-purple-600/30 backdrop-blur-sm" onclick="document.getElementById('categoryModal').remove()"></div>
             
             <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-sm mx-4 transform transition-all overflow-hidden">
                 <div class="px-5 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
@@ -1195,13 +1339,13 @@
         const newCategory = input.value.trim();
 
         if (!newCategory) {
-            alert('Please enter a category name');
+            showAlertModal('ai-chatworks.com says', 'Please enter a category name');
             return;
         }
 
         const categories = await getUniqueCategories();
         if (categories.includes(newCategory)) {
-            alert('Category already exists');
+            showAlertModal('ai-chatworks.com says', 'Category already exists');
             return;
         }
 
@@ -1226,18 +1370,21 @@
             alert(`Category "${newCategory}" added successfully!`);
         } catch (error) {
             console.error('Error adding category:', error);
-            alert('Error adding category: ' + error.message + '\n\nPlease ask your administrator to create the RPC function: admin_create_category_placeholder');
+            showAlertModal('ai-chatworks.com says', 'Error adding category: ' + error.message + '\n\nPlease ask your administrator to create the RPC function: admin_create_category_placeholder');
         }
     };
 
     window.deleteCategoryFromList = async function (categoryName) {
-        if (!confirm(`Delete category "${categoryName}"?\n\nNote: This will not delete prompts using this category.`)) {
-            return;
-        }
-
-        // Note: We can't actually delete a category without affecting prompts
-        // This is a limitation of not having a separate categories table
-        alert('To remove a category, you must first change all prompts using it to a different category.');
+        showConfirmModal(
+            'ai-chatworks.com says',
+            `Delete category "${categoryName}"?`,
+            'Note: This will not delete prompts using this category.',
+            () => {
+                // Note: We can't actually delete a category without affecting prompts
+                // This is a limitation of not having a separate categories table
+                showAlertModal('ai-chatworks.com says', 'To remove a category, you must first change all prompts using it to a different category.');
+            }
+        );
     };
 
     window.editCategoryName = async function (oldName) {
@@ -1274,7 +1421,7 @@
             alert(`Category renamed from "${oldName}" to "${newName.trim()}" successfully!`);
         } catch (error) {
             console.error('Error renaming category:', error);
-            alert('Error renaming category: ' + error.message + '\n\nPlease ask your administrator to create the RPC function: admin_rename_category');
+            showAlertModal('ai-chatworks.com says', 'Error renaming category: ' + error.message + '\n\nPlease ask your administrator to create the RPC function: admin_rename_category');
         }
     };
 
@@ -1420,7 +1567,7 @@
         const tbody = document.getElementById('marketplace-table-body');
 
         if (!data || data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-[13px] text-slate-400">No prompts match your filters</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="8" class="px-4 py-8 text-center text-[13px] text-slate-400">No prompts match your filters</td></tr>';
             return;
         }
 
@@ -1450,6 +1597,11 @@
 
             html += `
                 <tr class="group hover:bg-blue-50/30 transition-colors duration-200">
+                    <td class="px-4 py-3 align-middle">
+                        <input type="checkbox" class="prompt-checkbox w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500 cursor-pointer" 
+                            data-prompt-id="${prompt.prompt_id}" 
+                            onchange="togglePromptSelection()">
+                    </td>
                     <td class="px-4 py-3 align-middle">
                         <div class="flex items-center h-full text-xs font-medium text-slate-700">${prompt.prompt_name}</div>
                     </td>

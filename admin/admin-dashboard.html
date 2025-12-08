@@ -405,6 +405,11 @@
                         <table class="w-full text-left border-collapse table-fixed" id="marketplace-table">
                             <thead>
                                 <tr class="bg-gray-50/40 border-b border-gray-100">
+                                    <th class="w-10 px-4 py-3">
+                                        <input type="checkbox" id="select-all-prompts"
+                                            class="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500 cursor-pointer"
+                                            onchange="toggleAllPrompts(this.checked)">
+                                    </th>
                                     <th
                                         class="px-4 py-3 text-[10px] font-bold tracking-wider text-slate-400 uppercase w-[25%] group/header align-middle">
                                         <div
@@ -473,17 +478,29 @@
                                         Actions</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-50" id="marketplace-table-body">
+                            <tbody id="marketplace-table-body">
                                 <tr>
-                                    <td colspan="7" class="px-4 py-8 text-center text-sm text-slate-400">Loading
-                                        marketplace data...</td>
+                                    <td colspan="8" class="px-4 py-8 text-center text-[13px] text-slate-400">
+                                        Loading marketplace data...
+                                    </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Bulk Delete Button (Hidden by default) -->
+                    <div id="bulk-delete-container"
+                        class="hidden px-5 py-3 bg-red-50 border-t border-red-100 flex items-center justify-between">
+                        <span class="text-[13px] text-red-700 font-medium">
+                            <span id="selected-count">0</span> prompt(s) selected
+                        </span>
+                        <button onclick="bulkDeletePrompts()"
+                            class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-[13px] font-medium rounded-lg transition-colors">
+                            Delete Selected
+                        </button>
+                    </div>
                 </div>
             </div>
-
         </div>
     </div>
 
