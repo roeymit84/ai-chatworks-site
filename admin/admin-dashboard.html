@@ -1813,12 +1813,8 @@
                     <div class="form-group">
                         <label>Category</label>
                         <select class="form-select" id="createPromptCategory">
-                            <option>Marketing</option>
-                            <option>Coding</option>
-                            <option>Business</option>
-                            <option>Creative</option>
-                            <option>Writing</option>
-                            <option>Education</option>
+                            <option value="">Select Category</option>
+                            <!-- Categories will be populated dynamically -->
                         </select>
                     </div>
                 </div>
@@ -1883,12 +1879,8 @@
                     <div class="form-group">
                         <label>Category</label>
                         <select class="form-select" id="editPromptCategory">
-                            <option>Marketing</option>
-                            <option>Coding</option>
-                            <option>Business</option>
-                            <option>Creative</option>
-                            <option>Writing</option>
-                            <option>Education</option>
+                            <option value="">Select Category</option>
+                            <!-- Categories will be populated dynamically -->
                         </select>
                     </div>
                 </div>
@@ -2252,21 +2244,20 @@
             }
 
             tbody.innerHTML = data.map(p => {
-                // Log each prompt to debug
-                console.log('Rendering prompt:', p);
-
-                // Safe field extraction with actual database field names
-                const title = p.title || p.name || 'Untitled';
+                // Map RPC function fields to expected names
+                // RPC returns: prompt_id, prompt_name, category, downloads, tier, created_at, uploader_email
+                const id = p.prompt_id || p.id;
+                const title = p.prompt_name || p.title || 'Untitled';
                 const avatar = title.split(' ').map(w => w[0] || '').slice(0, 2).join('').toUpperCase() || 'UN';
                 const category = p.category || 'Uncategorized';
                 const uploaderEmail = p.uploader_email || p.user_email || 'Unknown';
-                const downloads = p.downloads_count || 0;
+                const downloads = p.downloads || p.downloads_count || 0;
                 const tier = p.tier || 'free';
                 const isActive = p.is_active !== undefined ? p.is_active : true;
 
                 return `
                 <tr>
-                    <td><input type="checkbox" class="prompt-checkbox" data-id="${p.id}" onchange="updateBulkSelection()" style="cursor: pointer;"></td>
+                    <td><input type="checkbox" class="prompt-checkbox" data-id="${id}" onchange="updateBulkSelection()" style="cursor: pointer;"></td>
                     <td>
                         <div class="table-prompt">
                             <div class="table-avatar">${avatar}</div>
@@ -2285,12 +2276,12 @@
                     </td>
                     <td>
                         <div class="actions-cell">
-                            <button class="action-btn" onclick="openEditPromptModal('${p.id}')" title="Edit">
+                            <button class="action-btn" onclick="openEditPromptModal('${id}')" title="Edit">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
                                 </svg>
                             </button>
-                            <button class="action-btn danger" onclick="deletePrompt('${p.id}', '${title.replace(/'/g, "\\'")}')" title="Delete">
+                            <button class="action-btn danger" onclick="deletePrompt('${id}', '${title.replace(/'/g, "\\'")}')" title="Delete">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
                                 </svg>
@@ -2398,18 +2389,58 @@
         }
 
         function openEditPromptModal(id) {
-            const prompt = allMarketplaceData.find(p => p.id === id);
-            if (!prompt) return;
+            // Find prompt using either prompt_id or id field
+            const prompt = allMarketplaceData.find(p => (p.prompt_id || p.id) === id);
+            if (!prompt) {
+                console.error('Prompt not found:', id);
+                showAlert('Prompt not found');
+                return;
+            }
 
+            // Populate modal categories first
+            populateModalCategories();
+
+            // Map RPC fields to form fields
             document.getElementById('editPromptId').value = id;
-            document.getElementById('editPromptName').value = prompt.title;
-            document.getElementById('editPromptCategory').value = prompt.category;
+            document.getElementById('editPromptName').value = prompt.prompt_name || prompt.title || '';
+            document.getElementById('editPromptCategory').value = prompt.category || '';
             document.getElementById('editPromptDesc').value = prompt.description || '';
             document.getElementById('editPromptContent').value = prompt.content || '';
-            document.querySelector(`input[name="editTier"][value="${prompt.tier}"]`).checked = true;
-            document.getElementById('editStatusToggle').classList.toggle('active', prompt.is_active);
+
+            const tier = prompt.tier || 'free';
+            const tierRadio = document.querySelector(`input[name="editTier"][value="${tier}"]`);
+            if (tierRadio) tierRadio.checked = true;
+
+            const isActive = prompt.is_active !== undefined ? prompt.is_active : true;
+            const toggle = document.getElementById('editStatusToggle');
+            if (toggle) {
+                if (isActive) {
+                    toggle.classList.add('active');
+                } else {
+                    toggle.classList.remove('active');
+                }
+            }
 
             openModal('editPromptModal');
+        }
+
+        function populateModalCategories() {
+            // Get unique categories from loaded data
+            const categories = [...new Set(
+                allMarketplaceData
+                    .map(p => p.category)
+                    .filter(c => c && c.trim())
+            )].sort();
+
+            // Populate both create and edit modals
+            const createSelect = document.getElementById('createPromptCategory');
+            const editSelect = document.getElementById('editPromptCategory');
+
+            const optionsHTML = '<option value="">Select Category</option>' +
+                categories.map(c => `<option value="${c}">${c}</option>`).join('');
+
+            if (createSelect) createSelect.innerHTML = optionsHTML;
+            if (editSelect) editSelect.innerHTML = optionsHTML;
         }
 
         function updatePrompt() {
@@ -2769,6 +2800,7 @@
                 allMarketplaceData = data;
                 renderMarketplaceTable(data);
                 populateCategoryFilter();
+                populateModalCategories(); // Also populate modal categories
             } catch (error) {
                 console.error('Error loading marketplace:', error);
                 showAlert('Error loading marketplace data: ' + error.message);
