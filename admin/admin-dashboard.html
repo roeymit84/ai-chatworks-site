@@ -1456,12 +1456,6 @@
                         <div class="stat-content">
                             <div class="stat-label">Total Users</div>
                             <div class="stat-value" id="statUsers">-</div>
-                            <span class="stat-change up" id="statUsersChange">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-                                </svg>
-                                +12.5%
-                            </span>
                         </div>
                     </div>
                     <div class="card stat-card">
@@ -1473,12 +1467,6 @@
                         <div class="stat-content">
                             <div class="stat-label">Total Prompts</div>
                             <div class="stat-value" id="statPrompts">-</div>
-                            <span class="stat-change up">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-                                </svg>
-                                +8.2%
-                            </span>
                         </div>
                     </div>
                     <div class="card stat-card">
@@ -1490,12 +1478,6 @@
                         <div class="stat-content">
                             <div class="stat-label">Folders</div>
                             <div class="stat-value" id="statFolders">-</div>
-                            <span class="stat-change up">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-                                </svg>
-                                +5.1%
-                            </span>
                         </div>
                     </div>
                     <div class="card stat-card">
@@ -1508,12 +1490,6 @@
                         <div class="stat-content">
                             <div class="stat-label">Encrypted</div>
                             <div class="stat-value" id="statEncrypted">-</div>
-                            <span class="stat-change down">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="23 18 13.5 8.5 8.5 13.5 1 6" />
-                                </svg>
-                                -2.3%
-                            </span>
                         </div>
                     </div>
                 </div>
@@ -2117,63 +2093,7 @@
         // DATA LOADING
         // ═══════════════════════════════════════
         async function loadDashboardData() {
-            try {
-                // Try to load real data from Supabase
-                await loadDashboardDataReal();
-            } catch (error) {
-                console.error('Error loading real data, using demo data:', error);
-                // Fallback to demo data if real data fails
-                loadDashboardDataDemo();
-            }
-        }
-
-        function loadDashboardDataDemo() {
-            // Load stats
-            animateValue('statUsers', DEMO_DATA.users);
-            animateValue('statPrompts', DEMO_DATA.prompts);
-            animateValue('statFolders', DEMO_DATA.folders);
-            // Encrypted = prompts + folders
-            animateValue('statEncrypted', DEMO_DATA.prompts + DEMO_DATA.folders);
-
-            // Engagement
-            document.getElementById('engagementValue').textContent = DEMO_DATA.activeUsers.toLocaleString();
-            const engagementPercent = Math.round((DEMO_DATA.activeUsers / DEMO_DATA.users) * 100);
-            setTimeout(() => {
-                document.getElementById('engagementBar').style.width = engagementPercent + '%';
-                document.getElementById('engagementPercent').textContent = engagementPercent;
-            }, 300);
-
-            // Marketplace stats
-            const proCount = DEMO_DATA.marketplacePrompts.filter(p => p.tier === 'pro').length;
-            const freeCount = DEMO_DATA.marketplacePrompts.filter(p => p.tier === 'free').length;
-            const inactiveCount = DEMO_DATA.marketplacePrompts.filter(p => !p.is_active).length;
-            document.getElementById('mpTotalPrompts').textContent = DEMO_DATA.marketplacePrompts.length;
-            document.getElementById('mpProPrompts').textContent = proCount;
-            document.getElementById('mpFreePrompts').textContent = freeCount;
-            document.getElementById('mpInactivePrompts').textContent = inactiveCount;
-            document.getElementById('marketplaceBadge').textContent = DEMO_DATA.marketplacePrompts.length;
-
-            // Top prompts table
-            const topPrompts = [...DEMO_DATA.marketplacePrompts].sort((a, b) => b.downloads_count - a.downloads_count).slice(0, 5);
-            document.getElementById('topPromptsTable').innerHTML = topPrompts.map(p => `
-                <tr>
-                    <td>
-                        <div class="table-prompt">
-                            <div class="table-avatar">${p.title.split(' ').map(w => w[0]).slice(0, 2).join('')}</div>
-                            <div>
-                                <div class="table-name">${p.title}</div>
-                                <div class="table-desc">${p.description}</div>
-                            </div>
-                        </div>
-                    </td>
-                    <td><span class="badge badge-category">${p.category}</span></td>
-                    <td class="mono">${p.downloads_count.toLocaleString()}</td>
-                    <td><span class="badge badge-${p.tier}">${p.tier.toUpperCase()}</span></td>
-                </tr>
-            `).join('');
-
-            // Chart
-            initChart();
+            await loadDashboardDataReal();
         }
 
         function animateValue(id, target) {
@@ -2195,7 +2115,7 @@
             loadDashboardData();
         }
 
-        function initChart() {
+        async function initChart() {
             const ctx = document.getElementById('growthChart').getContext('2d');
 
             if (growthChart) growthChart.destroy();
@@ -2204,54 +2124,86 @@
             gradient.addColorStop(0, 'rgba(139, 92, 246, 0.4)');
             gradient.addColorStop(1, 'rgba(139, 92, 246, 0)');
 
-            const data = Array.from({ length: 30 }, () => Math.floor(Math.random() * 100) + 50);
+            try {
+                // Load real user growth data from Supabase
+                const { data, error } = await supabase.rpc('get_user_growth_data');
 
-            growthChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: Array.from({ length: 30 }, (_, i) => `Day ${i + 1}`),
-                    datasets: [{
-                        data,
-                        fill: true,
-                        backgroundColor: gradient,
-                        borderColor: '#8b5cf6',
-                        borderWidth: 2,
-                        tension: 0.4,
-                        pointRadius: 0,
-                        pointHoverRadius: 5,
-                        pointHoverBackgroundColor: '#8b5cf6'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        x: { display: false },
-                        y: {
-                            beginAtZero: true,
-                            grid: { color: 'rgba(0,0,0,0.05)' },
-                            ticks: { color: '#9ca3af', font: { size: 11 } }
+                if (error) throw error;
+
+                let labels, chartData;
+                if (data && data.length > 0) {
+                    // Use real data
+                    labels = data.map(row => new Date(row.signup_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+                    chartData = data.map(row => row.user_count);
+                } else {
+                    // Empty state - show message
+                    labels = ['No data'];
+                    chartData = [0];
+                }
+
+                growthChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels,
+                        datasets: [{
+                            data: chartData,
+                            fill: true,
+                            backgroundColor: gradient,
+                            borderColor: '#8b5cf6',
+                            borderWidth: 2,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: '#8b5cf6'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { display: true, grid: { display: false }, ticks: { color: '#9ca3af', font: { size: 10 } } },
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: 'rgba(0,0,0,0.05)' },
+                                ticks: { color: '#9ca3af', font: { size: 11 } }
+                            }
                         }
                     }
-                }
-            });
+                });
+            } catch (error) {
+                console.error('Error loading chart data:', error);
+                // Show empty chart on error
+                growthChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Error loading data'],
+                        datasets: [{
+                            data: [0],
+                            fill: true,
+                            backgroundColor: gradient,
+                            borderColor: '#8b5cf6',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            x: { display: false },
+                            y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#9ca3af' } }
+                        }
+                    }
+                });
+            }
         }
 
         // ═══════════════════════════════════════
         // MARKETPLACE
         // ═══════════════════════════════════════
         async function loadMarketplaceData() {
-            try {
-                // Try to load real data from Supabase
-                await loadMarketplaceDataReal();
-            } catch (error) {
-                console.error('Error loading real marketplace data, using demo data:', error);
-                // Fallback to demo data if real data fails
-                allMarketplaceData = [...DEMO_DATA.marketplacePrompts];
-                renderMarketplaceTable(allMarketplaceData);
-                populateCategoryFilter();
-            }
+            await loadMarketplaceDataReal();
         }
 
         function populateCategoryFilter() {
@@ -2286,29 +2238,39 @@
         function renderMarketplaceTable(data) {
             const tbody = document.getElementById('marketplaceTableBody');
 
-            if (!data.length) {
+            if (!data || !data.length) {
                 tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 40px;">No prompts found</td></tr>';
                 return;
             }
 
-            tbody.innerHTML = data.map(p => `
+            tbody.innerHTML = data.map(p => {
+                // Safe avatar generation
+                const title = p.title || 'Untitled';
+                const avatar = title.split(' ').map(w => w[0] || '').slice(0, 2).join('').toUpperCase() || 'UN';
+                const category = p.category || 'Uncategorized';
+                const uploaderEmail = p.uploader_email || p.user_email || 'Unknown';
+                const downloads = p.downloads_count || 0;
+                const tier = p.tier || 'free';
+                const isActive = p.is_active !== undefined ? p.is_active : true;
+
+                return `
                 <tr>
                     <td><input type="checkbox" class="prompt-checkbox" data-id="${p.id}" onchange="updateBulkSelection()" style="cursor: pointer;"></td>
                     <td>
                         <div class="table-prompt">
-                            <div class="table-avatar">${p.title.split(' ').map(w => w[0]).slice(0, 2).join('')}</div>
+                            <div class="table-avatar">${avatar}</div>
                             <div>
-                                <div class="table-name">${p.title}</div>
-                                <div class="table-desc">${p.category} prompt</div>
+                                <div class="table-name">${title}</div>
+                                <div class="table-desc">${category} prompt</div>
                             </div>
                         </div>
                     </td>
-                    <td><span class="badge badge-category">${p.category}</span></td>
-                    <td style="color: var(--text-tertiary); font-size: 12px;">${p.uploader_email}</td>
-                    <td class="mono">${p.downloads_count.toLocaleString()}</td>
-                    <td><span class="badge badge-${p.tier}">${p.tier.toUpperCase()}</span></td>
+                    <td><span class="badge badge-category">${category}</span></td>
+                    <td style="color: var(--text-tertiary); font-size: 12px;">${uploaderEmail}</td>
+                    <td class="mono">${downloads.toLocaleString()}</td>
+                    <td><span class="badge badge-${tier}">${tier.toUpperCase()}</span></td>
                     <td>
-                        <span class="badge badge-${p.is_active ? 'active' : 'inactive'}">${p.is_active ? 'Active' : 'Inactive'}</span>
+                        <span class="badge badge-${isActive ? 'active' : 'inactive'}">${isActive ? 'Active' : 'Inactive'}</span>
                     </td>
                     <td>
                         <div class="actions-cell">
@@ -2317,7 +2279,7 @@
                                     <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
                                 </svg>
                             </button>
-                            <button class="action-btn danger" onclick="deletePrompt('${p.id}', '${p.title.replace(/'/g, "\\'")}')" title="Delete">
+                            <button class="action-btn danger" onclick="deletePrompt('${p.id}', '${title.replace(/'/g, "\\'")}')" title="Delete">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
                                 </svg>
@@ -2325,7 +2287,8 @@
                         </div>
                     </td>
                 </tr>
-            `).join('');
+            `;
+            }).join('');
         }
 
         // ═══════════════════════════════════════
@@ -2703,24 +2666,32 @@
                     document.getElementById('marketplaceBadge').textContent = totalPrompts;
 
                     // Top prompts table
-                    const topPrompts = [...allPrompts].sort((a, b) => b.downloads_count - a.downloads_count).slice(0, 5);
+                    const topPrompts = [...allPrompts].sort((a, b) => (b.downloads_count || 0) - (a.downloads_count || 0)).slice(0, 5);
                     if (topPrompts.length > 0) {
-                        document.getElementById('topPromptsTable').innerHTML = topPrompts.map(p => `
+                        document.getElementById('topPromptsTable').innerHTML = topPrompts.map(p => {
+                            const title = p.title || 'Untitled';
+                            const avatar = title.split(' ').map(w => w[0] || '').slice(0, 2).join('').toUpperCase() || 'UN';
+                            const category = p.category || 'Uncategorized';
+                            const tier = p.tier || 'free';
+                            const downloads = p.downloads_count || 0;
+
+                            return `
                             <tr>
                                 <td>
                                     <div class="table-prompt">
-                                        <div class="table-avatar">${p.title.split(' ').map(w => w[0]).slice(0, 2).join('')}</div>
+                                        <div class="table-avatar">${avatar}</div>
                                         <div>
-                                            <div class="table-name">${p.title}</div>
-                                            <div class="table-desc">${p.category}</div>
+                                            <div class="table-name">${title}</div>
+                                            <div class="table-desc">${category}</div>
                                         </div>
                                     </div>
                                 </td>
-                                <td><span class="badge badge-category">${p.category}</span></td>
-                                <td class="mono">${p.downloads_count.toLocaleString()}</td>
-                                <td><span class="badge badge-${p.tier}">${p.tier.toUpperCase()}</span></td>
+                                <td><span class="badge badge-category">${category}</span></td>
+                                <td class="mono">${downloads.toLocaleString()}</td>
+                                <td><span class="badge badge-${tier}">${tier.toUpperCase()}</span></td>
                             </tr>
-                        `).join('');
+                        `;
+                        }).join('');
                     } else {
                         document.getElementById('topPromptsTable').innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No prompts yet</td></tr>';
                     }
