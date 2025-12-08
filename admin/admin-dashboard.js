@@ -513,7 +513,7 @@
             }
 
             if (!data || data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-sm text-slate-400">No marketplace prompts yet. Upload your first prompt!</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-[13px] text-slate-400">No marketplace prompts yet. Upload your first prompt!</td></tr>';
                 allMarketplaceData = [];
                 return;
             }
@@ -532,7 +532,7 @@
             initializeMarketplaceFilters();
         } catch (error) {
             console.error('Error loading marketplace:', error);
-            tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-sm text-red-600">Error: ${error.message}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-[13px] text-red-600">Error: ${error.message}</td></tr>`;
             allMarketplaceData = [];
         }
     }
@@ -695,7 +695,7 @@
                 
                 <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 transform transition-all overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-                        <h3 class="text-sm font-semibold text-slate-800">Edit Prompt</h3>
+                        <h3 class="text-[13px] font-semibold text-slate-800">Edit Prompt</h3>
                         <button onclick="this.closest('#editPromptModal').remove()" class="text-slate-400 hover:text-slate-600">
                             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                         </button>
@@ -705,11 +705,11 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Prompt Name</label>
-                                <input type="text" id="edit-title" value="${data.title.replace(/"/g, '&quot;')}" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm">
+                                <input type="text" id="edit-title" value="${data.title.replace(/"/g, '&quot;')}" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-[13px]">
                             </div>
                             <div>
                                 <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Category</label>
-                                <select id="edit-category" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm text-slate-700">
+                                <select id="edit-category" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-[13px] text-slate-700">
                                     ${categories.map(cat => `<option value="${cat}" ${data.category === cat ? 'selected' : ''}>${cat}</option>`).join('')}
                                 </select>
                             </div>
@@ -718,7 +718,7 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Created By</label>
-                                <input type="email" value="${data.user_email || 'Unknown'}" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-slate-500 cursor-not-allowed" readonly>
+                                <input type="email" value="${data.user_email || 'Unknown'}" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-[13px] text-slate-500 cursor-not-allowed" readonly>
                             </div>
                             <div class="flex gap-4">
                                 <div class="flex-1">
@@ -726,11 +726,11 @@
                                     <div class="flex gap-3 mt-2">
                                         <label class="flex items-center gap-2 cursor-pointer">
                                             <input type="radio" name="edit-tier" value="free" ${data.tier === 'free' ? 'checked' : ''} class="text-blue-600 focus:ring-blue-500">
-                                            <span class="text-sm text-slate-700">Free</span>
+                                            <span class="text-[13px] text-slate-700">Free</span>
                                         </label>
                                         <label class="flex items-center gap-2 cursor-pointer">
                                             <input type="radio" name="edit-tier" value="pro" ${data.tier === 'pro' ? 'checked' : ''} class="text-blue-600 focus:ring-blue-500">
-                                            <span class="text-sm text-slate-700">Pro</span>
+                                            <span class="text-[13px] text-slate-700">Pro</span>
                                         </label>
                                     </div>
                                 </div>
@@ -739,7 +739,7 @@
                                     <label class="relative inline-flex items-center cursor-pointer mt-2">
                                         <input type="checkbox" id="edit-active" ${data.is_active ? 'checked' : ''} class="sr-only peer">
                                         <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
-                                        <span class="ml-2 text-sm font-medium text-gray-700">Active</span>
+                                        <span class="ml-2 text-[13px] font-medium text-gray-700">Active</span>
                                     </label>
                                 </div>
                             </div>
@@ -747,19 +747,19 @@
 
                         <div>
                             <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Description</label>
-                            <textarea id="edit-description" rows="2" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm resize-none">${data.description || ''}</textarea>
+                            <textarea id="edit-description" rows="2" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-[13px] resize-none">${data.description || ''}</textarea>
                         </div>
 
                         <div>
                             <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">System Prompt</label>
-                            <textarea id="edit-content" rows="6" class="w-full px-3 py-2 bg-slate-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-mono text-slate-600 resize-none">${data.content || ''}</textarea>
+                            <textarea id="edit-content" rows="6" class="w-full px-3 py-2 bg-slate-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-[13px] font-mono text-slate-600 resize-none">${data.content || ''}</textarea>
                             <p class="text-xs text-slate-400 mt-1 text-right">Markdown supported</p>
                         </div>
                     </div>
 
                     <div class="px-6 py-4 bg-gray-50 flex justify-end gap-3 border-t border-gray-100">
-                        <button onclick="document.getElementById('editPromptModal').remove()" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors">Cancel</button>
-                        <button onclick="updateMarketplacePrompt('${promptId}')" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium rounded-lg shadow-lg shadow-slate-900/10 transition-all">Update Prompt</button>
+                        <button onclick="document.getElementById('editPromptModal').remove()" class="px-4 py-2 text-[13px] font-medium text-slate-600 hover:text-slate-800 transition-colors">Cancel</button>
+                        <button onclick="updateMarketplacePrompt('${promptId}')" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-[13px] font-medium rounded-lg shadow-lg shadow-slate-900/10 transition-all">Update Prompt</button>
                     </div>
                 </div>
             `;
@@ -819,7 +819,7 @@
             
             <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-2xl mx-4 transform transition-all overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-                    <h3 class="text-sm font-semibold text-slate-800">New Prompt</h3>
+                    <h3 class="text-[13px] font-semibold text-slate-800">New Prompt</h3>
                     <button onclick="this.closest('#promptModal').remove()" class="text-slate-400 hover:text-slate-600">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
@@ -829,14 +829,14 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Prompt Name</label>
-                            <input type="text" id="modal-upload-name" placeholder="e.g. SEO Writer" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm">
+                            <input type="text" id="modal-upload-name" placeholder="e.g. SEO Writer" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-[13px]">
                         </div>
                         <div>
                             <div class="flex justify-between items-center mb-1">
                                 <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Category</label>
                                 <button onclick="openCategoryModal()" class="text-[10px] text-blue-600 hover:text-blue-800 font-medium hover:underline">Manage</button>
                             </div>
-                            <select id="modal-upload-category" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm text-slate-700">
+                            <select id="modal-upload-category" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-[13px] text-slate-700">
                                 ${categories.map(cat => `<option value="${cat}">${cat}</option>`).join('')}
                             </select>
                         </div>
@@ -845,7 +845,7 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Created By</label>
-                            <input type="email" id="modal-upload-email" value="${currentUser?.email || 'admin@example.com'}" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm text-slate-500 cursor-not-allowed" readonly>
+                            <input type="email" id="modal-upload-email" value="${currentUser?.email || 'admin@example.com'}" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-[13px] text-slate-500 cursor-not-allowed" readonly>
                         </div>
                         <div class="flex gap-4">
                             <div class="flex-1">
@@ -853,11 +853,11 @@
                                 <div class="flex gap-3 mt-2">
                                     <label class="flex items-center gap-2 cursor-pointer">
                                         <input type="radio" name="modal-tier" value="free" checked class="text-blue-600 focus:ring-blue-500">
-                                        <span class="text-sm text-slate-700">Free</span>
+                                        <span class="text-[13px] text-slate-700">Free</span>
                                     </label>
                                     <label class="flex items-center gap-2 cursor-pointer">
                                         <input type="radio" name="modal-tier" value="pro" class="text-blue-600 focus:ring-blue-500">
-                                        <span class="text-sm text-slate-700">Pro</span>
+                                        <span class="text-[13px] text-slate-700">Pro</span>
                                     </label>
                                 </div>
                             </div>
@@ -866,7 +866,7 @@
                                 <label class="relative inline-flex items-center cursor-pointer mt-2">
                                     <input type="checkbox" id="modal-status" checked class="sr-only peer">
                                     <div class="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
-                                    <span class="ml-2 text-sm font-medium text-gray-700">Active</span>
+                                    <span class="ml-2 text-[13px] font-medium text-gray-700">Active</span>
                                 </label>
                             </div>
                         </div>
@@ -874,19 +874,19 @@
 
                     <div>
                         <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Description</label>
-                        <textarea id="modal-upload-description" rows="2" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm resize-none" placeholder="Short description..."></textarea>
+                        <textarea id="modal-upload-description" rows="2" class="w-full px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-[13px] resize-none" placeholder="Short description..."></textarea>
                     </div>
 
                     <div>
                         <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">System Prompt</label>
-                        <textarea id="modal-upload-content" rows="6" class="w-full px-3 py-2 bg-slate-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-sm font-mono text-slate-600 resize-none" placeholder="You are a helpful assistant..."></textarea>
+                        <textarea id="modal-upload-content" rows="6" class="w-full px-3 py-2 bg-slate-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-[13px] font-mono text-slate-600 resize-none" placeholder="You are a helpful assistant..."></textarea>
                         <p class="text-xs text-slate-400 mt-1 text-right">Markdown supported</p>
                     </div>
                 </div>
 
                 <div class="px-6 py-4 bg-gray-50 flex justify-end gap-3 border-t border-gray-100">
-                    <button onclick="document.getElementById('promptModal').remove()" class="px-4 py-2 text-sm font-medium text-slate-600 hover:text-slate-800 transition-colors">Cancel</button>
-                    <button onclick="uploadPromptFromModal()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-sm font-medium rounded-lg shadow-lg shadow-slate-900/10 transition-all">Save Changes</button>
+                    <button onclick="document.getElementById('promptModal').remove()" class="px-4 py-2 text-[13px] font-medium text-slate-600 hover:text-slate-800 transition-colors">Cancel</button>
+                    <button onclick="uploadPromptFromModal()" class="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-[13px] font-medium rounded-lg shadow-lg shadow-slate-900/10 transition-all">Save Changes</button>
                 </div>
             </div>
         `;
@@ -1139,7 +1139,7 @@
             
             <div class="relative bg-white rounded-xl shadow-2xl w-full max-w-sm mx-4 transform transition-all overflow-hidden">
                 <div class="px-5 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-                    <h3 class="text-sm font-semibold text-slate-800">Manage Categories</h3>
+                    <h3 class="text-[13px] font-semibold text-slate-800">Manage Categories</h3>
                     <button onclick="document.getElementById('categoryModal').remove()" class="text-slate-400 hover:text-slate-600">
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                     </button>
@@ -1147,14 +1147,14 @@
 
                 <div class="p-5">
                     <div class="flex gap-2 mb-4">
-                        <input type="text" id="newCategoryInput" placeholder="New category name" class="flex-1 px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-sm">
+                        <input type="text" id="newCategoryInput" placeholder="New category name" class="flex-1 px-3 py-2 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 text-[13px]">
                         <button onclick="addCategoryToList()" class="bg-blue-500 hover:bg-blue-600 text-white px-3 py-2 rounded-lg text-xs font-medium transition-colors">Add</button>
                     </div>
 
                     <div class="space-y-2 max-h-48 overflow-y-auto pr-2" id="categoryList">
                         ${categories.map(cat => `
                             <div class="flex justify-between items-center p-2 hover:bg-gray-50 rounded border border-transparent hover:border-gray-100 group" data-category="${cat}">
-                                <span class="text-sm text-slate-700 category-name">${cat}</span>
+                                <span class="text-[13px] text-slate-700 category-name">${cat}</span>
                                 <div class="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                                     <button onclick="editCategoryName('${cat.replace(/'/g, "\\'")}')\" class="text-slate-400 hover:text-blue-500 p-1" title="Rename">
                                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>
@@ -1292,8 +1292,6 @@
     window.initializeMarketplaceFilters = function () {
         const searchInput = document.getElementById('marketplace-search');
         const categoryFilter = document.getElementById('filter-category');
-        const tierFilter = document.getElementById('filter-tier');
-        const statusFilter = document.getElementById('filter-status');
 
         if (searchInput) {
             searchInput.addEventListener('input', (e) => {
@@ -1305,20 +1303,6 @@
         if (categoryFilter) {
             categoryFilter.addEventListener('change', (e) => {
                 activeFilters.category = e.target.value;
-                applyMarketplaceFilters();
-            });
-        }
-
-        if (tierFilter) {
-            tierFilter.addEventListener('change', (e) => {
-                activeFilters.tier = e.target.value;
-                applyMarketplaceFilters();
-            });
-        }
-
-        if (statusFilter) {
-            statusFilter.addEventListener('change', (e) => {
-                activeFilters.status = e.target.value;
                 applyMarketplaceFilters();
             });
         }
@@ -1364,7 +1348,7 @@
         const tbody = document.getElementById('marketplace-table-body');
 
         if (!data || data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-sm text-slate-400">No prompts match your filters</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-[13px] text-slate-400">No prompts match your filters</td></tr>';
             return;
         }
 
@@ -1439,13 +1423,9 @@
 
         const searchInput = document.getElementById('marketplace-search');
         const categoryFilter = document.getElementById('filter-category');
-        const tierFilter = document.getElementById('filter-tier');
-        const statusFilter = document.getElementById('filter-status');
 
         if (searchInput) searchInput.value = '';
         if (categoryFilter) categoryFilter.value = '';
-        if (tierFilter) tierFilter.value = '';
-        if (statusFilter) statusFilter.value = '';
 
         renderMarketplaceTable(allMarketplaceData);
     };
