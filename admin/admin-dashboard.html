@@ -1802,6 +1802,14 @@
                                 </svg>
                                 New Prompt
                             </button>
+                            <button class="btn btn-secondary" onclick="openManageCategoriesModal()"
+                                style="margin-left: 8px;">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2">
+                                    <path d="M4 6h16M4 12h16M4 18h16" />
+                                </svg>
+                                Manage Categories
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -2046,6 +2054,48 @@
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal('editPromptModal')">Cancel</button>
                 <button class="btn btn-accent" onclick="updatePrompt()">Update Prompt</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MANAGE CATEGORIES MODAL -->
+    <div class="modal-overlay" id="manageCategoriesModal">
+        <div class="modal" style="max-width: 600px;">
+            <div class="modal-header">
+                <span class="modal-title">Manage Categories</span>
+                <button class="modal-close" onclick="closeModal('manageCategoriesModal')">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Add New Category -->
+                <div
+                    style="margin-bottom: 24px; padding: 16px; background: var(--bg-tertiary); border-radius: var(--radius-md);">
+                    <label
+                        style="display: block; margin-bottom: 8px; font-weight: 600; font-size: 13px; color: var(--text-secondary);">Add
+                        New Category</label>
+                    <div style="display: flex; gap: 8px;">
+                        <input type="text" id="newCategoryInput" class="form-input" placeholder="Enter category name"
+                            style="flex: 1;">
+                        <button class="btn btn-accent" onclick="addCategory()">Add</button>
+                    </div>
+                </div>
+
+                <!-- Categories List -->
+                <div>
+                    <label
+                        style="display: block; margin-bottom: 12px; font-weight: 600; font-size: 13px; color: var(--text-secondary);">Existing
+                        Categories</label>
+                    <div id="categoriesList" style="max-height: 400px; overflow-y: auto;">
+                        <!-- Categories will be populated here -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('manageCategoriesModal')">Close</button>
             </div>
         </div>
     </div>
@@ -2644,7 +2694,7 @@
             openModal('createPromptModal');
         }
 
-        function createPrompt() {
+        async function createPrompt() {
             const title = document.getElementById('createPromptName').value;
             const category = document.getElementById('createPromptCategory').value;
             const description = document.getElementById('createPromptDesc').value;
@@ -2657,23 +2707,43 @@
                 return;
             }
 
-            const newPrompt = {
-                id: Date.now().toString(),
-                title,
-                category,
-                description,
-                content,
-                tier,
-                is_active: isActive,
-                downloads_count: 0,
-                uploader_email: currentUser.email
-            };
+            if (!category) {
+                showAlert('Please select a category');
+                return;
+            }
 
-            allMarketplaceData.unshift(newPrompt);
-            DEMO_DATA.marketplacePrompts = allMarketplaceData;
-            renderMarketplaceTable(allMarketplaceData);
-            closeModal('createPromptModal');
-            showAlert('Prompt created successfully!');
+            try {
+                // Insert into database
+                const { data, error } = await supabase
+                    .from('marketplace_prompts')
+                    .insert([{
+                        user_id: currentUser.id,
+                        title,
+                        category,
+                        description,
+                        content,
+                        tier,
+                        is_active: isActive
+                    }])
+                    .select();
+
+                if (error) throw error;
+
+                // Reload marketplace data
+                await loadMarketplaceData();
+
+                closeModal('createPromptModal');
+                showAlert('Prompt created successfully!');
+
+                // Clear form
+                document.getElementById('createPromptName').value = '';
+                document.getElementById('createPromptDesc').value = '';
+                document.getElementById('createPromptContent').value = '';
+                document.getElementById('createStatusToggle').classList.add('active');
+            } catch (error) {
+                console.error('Error creating prompt:', error);
+                showAlert('Error creating prompt: ' + error.message);
+            }
         }
 
         async function openEditPromptModal(id) {
@@ -2758,36 +2828,220 @@
             }
         }
 
-        function updatePrompt() {
+        async function updatePrompt() {
             const id = document.getElementById('editPromptId').value;
-            const prompt = allMarketplaceData.find(p => p.id === id);
-            if (!prompt) return;
+            const title = document.getElementById('editPromptName').value;
+            const category = document.getElementById('editPromptCategory').value;
+            const description = document.getElementById('editPromptDesc').value;
+            const content = document.getElementById('editPromptContent').value;
+            const tier = document.querySelector('input[name="editTier"]:checked').value;
+            const isActive = document.getElementById('editStatusToggle').classList.contains('active');
 
-            prompt.title = document.getElementById('editPromptName').value;
-            prompt.category = document.getElementById('editPromptCategory').value;
-            prompt.description = document.getElementById('editPromptDesc').value;
-            prompt.content = document.getElementById('editPromptContent').value;
-            prompt.tier = document.querySelector('input[name="editTier"]:checked').value;
-            prompt.is_active = document.getElementById('editStatusToggle').classList.contains('active');
+            if (!title || !content) {
+                showAlert('Please fill in the prompt name and content');
+                return;
+            }
 
-            renderMarketplaceTable(allMarketplaceData);
-            closeModal('editPromptModal');
-            showAlert('Prompt updated successfully!');
+            if (!category) {
+                showAlert('Please select a category');
+                return;
+            }
+
+            try {
+                // Update in database
+                const { error } = await supabase
+                    .from('marketplace_prompts')
+                    .update({
+                        title,
+                        category,
+                        description,
+                        content,
+                        tier,
+                        is_active: isActive,
+                        updated_at: new Date().toISOString()
+                    })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                // Reload marketplace data
+                await loadMarketplaceData();
+
+                closeModal('editPromptModal');
+                showAlert('Prompt updated successfully!');
+            } catch (error) {
+                console.error('Error updating prompt:', error);
+                showAlert('Error updating prompt: ' + error.message);
+            }
         }
 
-        function deletePrompt(id, title) {
+        async function deletePrompt(id, title) {
             showConfirm(
                 `Delete "${title}"?`,
                 'This action cannot be undone.',
-                () => {
-                    allMarketplaceData = allMarketplaceData.filter(p => p.id !== id);
-                    DEMO_DATA.marketplacePrompts = allMarketplaceData;
-                    renderMarketplaceTable(allMarketplaceData);
-                    showAlert('Prompt deleted successfully!');
+                async () => {
+                    try {
+                        const { error } = await supabase
+                            .from('marketplace_prompts')
+                            .delete()
+                            .eq('id', id);
+
+                        if (error) throw error;
+
+                        // Reload marketplace data
+                        await loadMarketplaceData();
+
+                        showAlert('Prompt deleted successfully!');
+                    } catch (error) {
+                        console.error('Error deleting prompt:', error);
+                        showAlert('Error deleting prompt: ' + error.message);
+                    }
                 }
             );
         }
 
+        // ═══════════════════════════════════════
+        // CATEGORY MANAGEMENT
+        // ═══════════════════════════════════════
+        async function openManageCategoriesModal() {
+            await loadCategoriesList();
+            openModal('manageCategoriesModal');
+        }
+
+        async function loadCategoriesList() {
+            const categories = [...new Set(
+                allMarketplaceData
+                    .map(p => p.category)
+                    .filter(c => c && c.trim())
+            )].sort();
+
+            const listContainer = document.getElementById('categoriesList');
+
+            if (categories.length === 0) {
+                listContainer.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-muted);">No categories yet. Add one above!</div>';
+                return;
+            }
+
+            listContainer.innerHTML = categories.map(category => `
+                <div class="category-item" style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 8px; background: var(--bg-primary);">
+                    <span class="category-name" style="flex: 1; font-size: 14px; color: var(--text-primary);">${category}</span>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-ghost" onclick="editCategory('${category.replace(/'/g, "\\'")}');" style="padding: 6px 12px; font-size: 12px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+                            </svg>
+                            Edit
+                        </button>
+                        <button class="btn btn-danger" onclick="deleteCategory('${category.replace(/'/g, "\\'")}')" style="padding: 6px 12px; font-size: 12px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                            Delete
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function addCategory() {
+            const input = document.getElementById('newCategoryInput');
+            const categoryName = input.value.trim();
+
+            if (!categoryName) {
+                showAlert('Please enter a category name');
+                return;
+            }
+
+            // Check if category already exists
+            const existingCategories = [...new Set(
+                allMarketplaceData
+                    .map(p => p.category)
+                    .filter(c => c && c.trim())
+            )];
+
+            if (existingCategories.some(c => c.toLowerCase() === categoryName.toLowerCase())) {
+                showAlert('Category already exists');
+                return;
+            }
+
+            // Category will be available when creating/editing prompts
+            // No need to store separately - it's derived from prompts
+            input.value = '';
+            showAlert(`Category "${categoryName}" will be available when you create a prompt with it`);
+
+            // Refresh the list
+            await loadCategoriesList();
+        }
+
+        async function editCategory(oldName) {
+            const newName = prompt(`Rename category "${oldName}" to:`, oldName);
+
+            if (!newName || newName.trim() === '') {
+                return;
+            }
+
+            if (newName.trim() === oldName) {
+                return;
+            }
+
+            try {
+                // Update all prompts with this category
+                const { error } = await supabase
+                    .from('marketplace_prompts')
+                    .update({ category: newName.trim() })
+                    .eq('category', oldName);
+
+                if (error) throw error;
+
+                // Reload data
+                await loadMarketplaceData();
+                await loadCategoriesList();
+
+                showAlert(`Category renamed from "${oldName}" to "${newName.trim()}"`);
+            } catch (error) {
+                console.error('Error renaming category:', error);
+                showAlert('Error renaming category: ' + error.message);
+            }
+        }
+
+        async function deleteCategory(categoryName) {
+            // Count prompts in this category
+            const promptCount = allMarketplaceData.filter(p => p.category === categoryName).length;
+
+            if (promptCount > 0) {
+                showConfirm(
+                    `Delete category "${categoryName}"?`,
+                    `This category has ${promptCount} prompt(s). They will be set to "Uncategorized".`,
+                    async () => {
+                        try {
+                            // Update all prompts in this category to "Uncategorized"
+                            const { error } = await supabase
+                                .from('marketplace_prompts')
+                                .update({ category: 'Uncategorized' })
+                                .eq('category', categoryName);
+
+                            if (error) throw error;
+
+                            // Reload data
+                            await loadMarketplaceData();
+                            await loadCategoriesList();
+
+                            showAlert(`Category "${categoryName}" deleted. ${promptCount} prompt(s) moved to "Uncategorized"`);
+                        } catch (error) {
+                            console.error('Error deleting category:', error);
+                            showAlert('Error deleting category: ' + error.message);
+                        }
+                    }
+                );
+            } else {
+                showAlert(`Category "${categoryName}" has no prompts and will be removed automatically.`);
+                await loadCategoriesList();
+            }
+        }
+
+        // ═══════════════════════════════════════
+        // BULK OPERATIONS
+        // ═══════════════════════════════════════
         function openBulkUploadModal() {
             document.getElementById('bulkUploadFile').value = '';
             document.getElementById('bulkUploadStatus').innerHTML = '';
