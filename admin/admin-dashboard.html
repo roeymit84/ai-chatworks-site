@@ -3702,7 +3702,6 @@
                     if (topPrompts.length > 0) {
                         document.getElementById('topPromptsTable').innerHTML = topPrompts.map(p => {
                             const title = p.title || 'Untitled';
-                            const avatar = title.split(' ').map(w => w[0] || '').slice(0, 2).join('').toUpperCase() || 'UN';
                             const category = p.category || 'Uncategorized';
                             const tier = p.tier || 'free';
                             const downloads = p.downloads_count || 0;
@@ -3711,21 +3710,19 @@
                             <tr>
                                 <td>
                                     <div class="table-prompt">
-                                        <div class="table-avatar">${avatar}</div>
                                         <div>
                                             <div class="table-name">${title}</div>
                                             <div class="table-desc">${category}</div>
                                         </div>
                                     </div>
                                 </td>
-                                <td><span class="badge badge-category">${category}</span></td>
-                                <td class="mono">${downloads.toLocaleString()}</td>
                                 <td><span class="badge badge-${tier}">${tier.toUpperCase()}</span></td>
+                                <td class="mono">${downloads.toLocaleString()}</td>
                             </tr>
                         `;
                         }).join('');
                     } else {
-                        document.getElementById('topPromptsTable').innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No prompts yet</td></tr>';
+                        document.getElementById('topPromptsTable').innerHTML = '<tr><td colspan="3" style="text-align: center; color: var(--text-muted);">No prompts yet</td></tr>';
                     }
                 }
 
