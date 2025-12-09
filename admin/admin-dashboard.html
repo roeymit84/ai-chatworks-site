@@ -1631,13 +1631,56 @@
                             </div>
                         </div>
                     </div>
-                    <div class="card engagement-card">
-                        <div class="engagement-value" id="engagementValue">-</div>
-                        <div class="engagement-label">Active Users This Month</div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="engagementBar" style="width: 0%"></div>
+                    <div class="card stat-card">
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                <circle cx="8.5" cy="7" r="4" />
+                                <line x1="20" y1="8" x2="20" y2="14" />
+                                <line x1="23" y1="11" x2="17" y2="11" />
+                            </svg>
                         </div>
-                        <div class="progress-label"><span id="engagementPercent">0</span>% of total users</div>
+                        <div class="stat-content">
+                            <div class="stat-label">Weekly Signups</div>
+                            <div class="stat-value" id="statWeeklySignups">-</div>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                                <circle cx="8.5" cy="7" r="4" />
+                                <path d="M20 8v6M23 11h-6" />
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">Monthly Signups</div>
+                            <div class="stat-value" id="statMonthlySignups">-</div>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon" style="background: linear-gradient(135deg, #fbbf24 0%, #fbbf24 100%);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                                <path d="M2 17l10 5 10-5M2 12l10 5 10-5" />
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">Pro Tier Users</div>
+                            <div class="stat-value" id="statProUsers">-</div>
+                        </div>
+                    </div>
+                    <div class="card stat-card">
+                        <div class="stat-icon" style="background: var(--bg-tertiary); color: var(--text-secondary);">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                <circle cx="12" cy="7" r="4" />
+                            </svg>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-label">Free Tier Users</div>
+                            <div class="stat-value" id="statFreeUsers">-</div>
+                        </div>
                     </div>
                 </div>
 
@@ -3617,6 +3660,20 @@
 
                 const { data: encryptedData } = await supabase.rpc('get_encrypted_items_count');
                 if (encryptedData !== null) animateValue('statEncrypted', encryptedData);
+
+                // Load user signup metrics
+                const { data: weeklySignups } = await supabase.rpc('get_weekly_signups');
+                if (weeklySignups !== null) animateValue('statWeeklySignups', weeklySignups);
+
+                const { data: monthlySignups } = await supabase.rpc('get_monthly_signups');
+                if (monthlySignups !== null) animateValue('statMonthlySignups', monthlySignups);
+
+                // Load tier distribution
+                const { data: proUsers } = await supabase.rpc('get_pro_users_count');
+                if (proUsers !== null) animateValue('statProUsers', proUsers);
+
+                const { data: freeUsers } = await supabase.rpc('get_free_users_count');
+                if (freeUsers !== null) animateValue('statFreeUsers', freeUsers);
 
                 // Load marketplace stats
                 const { data: allPrompts } = await supabase
