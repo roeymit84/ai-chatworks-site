@@ -840,6 +840,7 @@
             font-size: 10px;
             padding: 2px 8px;
             border: 1px solid var(--border);
+            border-radius: 8px;
         }
 
         /* ═══════════════════════════════════════
@@ -935,7 +936,8 @@
 
         .search-input {
             width: 100%;
-            padding: 10px 12px 10px 38px;
+            height: 40px;
+            padding: 0 12px 0 38px;
             background: var(--bg-primary);
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
@@ -1313,7 +1315,8 @@
 
         .dropdown-trigger {
             width: 100%;
-            padding: 12px 16px;
+            height: 40px;
+            padding: 0 16px;
             background: var(--bg-tertiary);
             border: 1px solid var(--border);
             border-radius: var(--radius-md);
@@ -1435,12 +1438,15 @@
     <!-- LOGIN OVERLAY -->
     <div class="login-overlay" id="loginOverlay">
         <div class="login-card">
-            <div class="login-brand">
-                <img src="/images/AI%20ChatWorks.svg" alt="AI ChatWorks"
-                    style="width: 48px; height: 48px; margin-bottom: 16px;" onerror="this.style.display='none'">
-                <h1>AI ChatWorks</h1>
+            <div class="login-brand" style="display: flex; align-items: center; gap: 12px; margin-bottom: 24px;">
+                <img src="/images/AI%20ChatWorks.svg" alt="AI ChatWorks" style="width: 48px; height: 48px;"
+                    onerror="this.style.display='none'">
+                <div style="display: flex; flex-direction: column; align-items: flex-start;">
+                    <h1 style="margin: 0; line-height: 1;">AI ChatWorks</h1>
+                    <span style="font-size: 14px; color: var(--text-secondary); margin-top: 4px;">Admin Dashboard</span>
+                </div>
             </div>
-            <p class="login-subtitle">Admin Dashboard</p>
+
             <form id="loginForm">
                 <div class="form-group">
                     <label>Email Address</label>
@@ -1474,12 +1480,12 @@
     <div class="app-shell" id="appShell">
         <!-- SIDEBAR -->
         <aside class="sidebar">
-            <div class="sidebar-brand">
+            <div class="sidebar-brand" style="display: flex; align-items: center; gap: 12px;">
                 <img src="/images/AI%20ChatWorks.svg" alt="AI ChatWorks" style="width: 32px; height: 32px;"
                     onerror="this.style.display='none'">
                 <div class="sidebar-brand-text">
-                    <h2>AI ChatWorks</h2>
-                    <span>Admin Dashboard</span>
+                    <h2 style="margin: 0; line-height: 1;">AI ChatWorks</h2>
+                    <span style="font-size: 12px;">Admin Dashboard</span>
                 </div>
             </div>
 
@@ -1567,7 +1573,10 @@
                                 <path d="M1 20v-6h6" />
                                 <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
                             </svg>
-                            Refresh
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path
+                                    d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
+                            </svg>
                         </button>
                     </div>
                 </div>
@@ -1817,7 +1826,10 @@
                                     <path d="M1 20v-6h6" />
                                     <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
                                 </svg>
-                                Refresh
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path
+                                        d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2" />
+                                </svg>
                             </button>
                             <button class="btn btn-accent" onclick="openCreatePromptModal()">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -1882,7 +1894,7 @@
                                     </th>
                                     <th>Prompt Name</th>
                                     <th>Category</th>
-                                    <th>Updated By</th>
+                                    <th>Created By</th>
                                     <th>Downloads</th>
                                     <th>Tier</th>
                                     <th>Status</th>
@@ -1991,14 +2003,14 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label>Tier</label>
-                        <div class="radio-group">
-                            <label class="radio-label">
-                                <input type="radio" name="createTier" value="free" checked> Free
-                            </label>
-                            <label class="radio-label">
-                                <input type="radio" name="createTier" value="pro"> Pro
-                            </label>
+                        <div class="tier-button-group" style="display: flex; gap: 8px;">
+                            <button type="button" class="tier-btn active" data-tier="free"
+                                onclick="selectTier(this, 'free')"
+                                style="flex: 1; padding: 10px; border: 2px solid var(--accent); background: var(--accent); color: white; border-radius: var(--radius-md); cursor: pointer; font-weight: 500; transition: all 0.2s;">FREE</button>
+                            <button type="button" class="tier-btn" data-tier="pro" onclick="selectTier(this, 'pro')"
+                                style="flex: 1; padding: 10px; border: 2px solid var(--border); background: transparent; color: var(--text-primary); border-radius: var(--radius-md); cursor: pointer; font-weight: 500; transition: all 0.2s;">PRO</button>
                         </div>
+                        <input type="hidden" name="createTier" id="createTierValue" value="free">
                     </div>
                     <div class="form-group">
                         <label>Status</label>
@@ -2774,11 +2786,47 @@
             document.getElementById(id).classList.remove('active');
         }
 
+        // Tier selection function
+        function selectTier(btn, tier) {
+            // Remove active class from all tier buttons
+            document.querySelectorAll('.tier-btn').forEach(b => {
+                b.classList.remove('active');
+                b.style.background = 'transparent';
+                b.style.borderColor = 'var(--border)';
+                b.style.color = 'var(--text-primary)';
+            });
+
+            // Add active class to clicked button
+            btn.classList.add('active');
+            btn.style.background = 'var(--accent)';
+            btn.style.borderColor = 'var(--accent)';
+            btn.style.color = 'white';
+
+            // Update hidden input
+            document.getElementById('createTierValue').value = tier;
+        }
+
         async function openCreatePromptModal() {
             document.getElementById('createPromptName').value = '';
             document.getElementById('createPromptDesc').value = '';
             document.getElementById('createPromptContent').value = '';
-            document.querySelector('input[name="createTier"][value="free"]').checked = true;
+
+            // Reset tier to free
+            document.getElementById('createTierValue').value = 'free';
+            document.querySelectorAll('.tier-btn').forEach(b => {
+                if (b.dataset.tier === 'free') {
+                    b.classList.add('active');
+                    b.style.background = 'var(--accent)';
+                    b.style.borderColor = 'var(--accent)';
+                    b.style.color = 'white';
+                } else {
+                    b.classList.remove('active');
+                    b.style.background = 'transparent';
+                    b.style.borderColor = 'var(--border)';
+                    b.style.color = 'var(--text-primary)';
+                }
+            });
+
             document.getElementById('createStatusToggle').classList.add('active');
 
             // Load categories into dropdown
@@ -2792,7 +2840,7 @@
             const category = document.getElementById('createPromptCategory').value;
             const description = document.getElementById('createPromptDesc').value;
             const content = document.getElementById('createPromptContent').value;
-            const tier = document.querySelector('input[name="createTier"]:checked').value;
+            const tier = document.getElementById('createTierValue').value;
             const isActive = document.getElementById('createStatusToggle').classList.contains('active');
 
             if (!title || !content) {
