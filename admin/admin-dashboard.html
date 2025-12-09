@@ -2605,33 +2605,38 @@
             await loadMarketplaceDataReal();
         }
 
-        function populateCategoryFilter() {
-            // Extract unique categories, filtering out null/undefined/empty
-            const categories = [...new Set(
-                allMarketplaceData
-                    .map(p => p.category)
-                    .filter(c => c && c.trim())  // Filter out null, undefined, empty strings
-            )].sort();
+        async function populateCategoryFilter() {
+            try {
+                // Fetch categories from marketplace_categories table
+                const { data: categories, error } = await supabase.rpc('get_marketplace_categories');
 
-            console.log('populateCategoryFilter called');
-            console.log('Extracted categories:', categories);
-            console.log('allMarketplaceData length:', allMarketplaceData.length);
+                if (error) throw error;
 
-            const select = document.getElementById('categoryFilter');
-            console.log('Category select element:', select);
+                console.log('populateCategoryFilter - categories from DB:', categories);
 
-            select.innerHTML = '<option value="">All Categories</option>' +
-                categories.map(c => `<option value="${c}">${c}</option>`).join('');
+                const select = document.getElementById('categoryFilter');
+                console.log('Category select element:', select);
 
-            console.log('Category select innerHTML updated, option count:', select.options.length);
+                // Build options HTML
+                const categoryNames = categories ? categories.map(c => c.name).sort() : [];
+                select.innerHTML = '<option value="">All Categories</option>' +
+                    categoryNames.map(c => `<option value="${c}">${c}</option>`).join('');
 
-            // Update custom dropdown if it exists
-            const wrapper = select.parentElement.querySelector('.custom-dropdown');
-            console.log('Custom dropdown wrapper:', wrapper);
+                console.log('Category select innerHTML updated, option count:', select.options.length);
 
-            if (wrapper && typeof updateDropdownOptions === 'function') {
-                console.log('Updating custom dropdown options');
-                updateDropdownOptions(wrapper);
+                // Update custom dropdown if it exists
+                const wrapper = select.parentElement.querySelector('.custom-dropdown');
+                console.log('Custom dropdown wrapper:', wrapper);
+
+                if (wrapper && typeof updateDropdownOptions === 'function') {
+                    console.log('Updating custom dropdown options');
+                    updateDropdownOptions(wrapper);
+                }
+            } catch (error) {
+                console.error('Error loading category filter:', error);
+                // Fallback to empty state
+                const select = document.getElementById('categoryFilter');
+                select.innerHTML = '<option value="">All Categories</option>';
             }
         }
 
@@ -2878,37 +2883,33 @@
             }
         }
 
-        function populateModalCategories() {
-            // Get unique categories from loaded data
-            const categories = [...new Set(
-                allMarketplaceData
-                    .map(p => p.category)
-                    .filter(c => c && c.trim())
-            )].sort();
+        async function populateModalCategories() {
+            try {
+                // Fetch categories from marketplace_categories table
+                const { data: categories, error } = await supabase.rpc('get_marketplace_categories');
 
-            // Populate both create and edit modals
-            const createSelect = document.getElementById('createPromptCategory');
-            const editSelect = document.getElementById('editPromptCategory');
+                if (error) throw error;
 
-            const optionsHTML = '<option value="">Select Category</option>' +
-                categories.map(c => `<option value="${c}">${c}</option>`).join('');
+                // Extract just the category names and sort
+                const categoryNames = categories ? categories.map(c => c.name).sort() : [];
 
-            if (createSelect) {
-                createSelect.innerHTML = optionsHTML;
-                // Update custom dropdown if it exists
-                const customDropdown = createSelect.parentElement.querySelector('.custom-dropdown');
-                if (customDropdown) {
-                    updateDropdownOptions(customDropdown);
-                }
-            }
+                // Populate both create and edit modals
+                const createSelect = document.getElementById('createPromptCategory');
+                const editSelect = document.getElementById('editPromptCategory');
 
-            if (editSelect) {
-                editSelect.innerHTML = optionsHTML;
-                // Update custom dropdown if it exists
-                const customDropdown = editSelect.parentElement.querySelector('.custom-dropdown');
-                if (customDropdown) {
-                    updateDropdownOptions(customDropdown);
-                }
+                const optionsHTML = '<option value="">Select Category</option>' +
+                    categoryNames.map(c => `<option value="${c}">${c}</option>`).join('');
+
+                if (createSelect) createSelect.innerHTML = optionsHTML;
+                if (editSelect) editSelect.innerHTML = optionsHTML;
+            } catch (error) {
+                console.error('Error loading modal categories:', error);
+                // Fallback to empty state
+                const createSelect = document.getElementById('createPromptCategory');
+                const editSelect = document.getElementById('editPromptCategory');
+                const optionsHTML = '<option value="">Select Category</option>';
+                if (createSelect) createSelect.innerHTML = optionsHTML;
+                if (editSelect) editSelect.innerHTML = optionsHTML;
             }
         }
 
