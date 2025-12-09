@@ -1129,7 +1129,7 @@
             display: block;
             font-size: 11px;
             font-weight: 600;
-            color: var(--text-tertiary);
+            color: #6b7280;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 6px;
@@ -2025,9 +2025,9 @@
                         <div class="tier-button-group" style="display: flex; gap: 8px;">
                             <button type="button" class="tier-btn active" data-tier="free"
                                 onclick="selectTier(this, 'free')"
-                                style="width: 100px; height: 40px; padding: 0; border: 1px solid var(--accent); background: var(--accent); color: white; border-radius: var(--radius-md); cursor: pointer; font-weight: 500; font-size: 13px; transition: all 0.2s;">FREE</button>
+                                style="width: 100px; height: 40px; padding: 0; border: 1px solid var(--accent); background: var(--accent); color: white; border-radius: var(--radius-md); cursor: pointer; font-weight: 600; font-size: 11px; font-family: inherit; letter-spacing: 0.5px; transition: all 0.2s;">FREE</button>
                             <button type="button" class="tier-btn" data-tier="pro" onclick="selectTier(this, 'pro')"
-                                style="width: 100px; height: 40px; padding: 0; border: 1px solid #e0e0e0; background: transparent; color: #666; border-radius: var(--radius-md); cursor: pointer; font-weight: 500; font-size: 13px; transition: all 0.2s;">PRO</button>
+                                style="width: 100px; height: 40px; padding: 0; border: 1px solid #e0e0e0; background: transparent; color: #666; border-radius: var(--radius-md); cursor: pointer; font-weight: 600; font-size: 11px; font-family: inherit; letter-spacing: 0.5px; transition: all 0.2s;">PRO</button>
                         </div>
                         <input type="hidden" name="createTier" id="createTierValue" value="free">
                     </div>
@@ -2871,6 +2871,9 @@
                 b.style.background = 'transparent';
                 b.style.borderColor = '#e0e0e0';
                 b.style.color = '#666';
+                b.style.fontWeight = '600';
+                b.style.fontSize = '11px';
+                b.style.letterSpacing = '0.5px';
             });
 
             // Add active class to clicked button - purple when selected
@@ -2878,6 +2881,9 @@
             btn.style.background = 'var(--accent)';
             btn.style.borderColor = 'var(--accent)';
             btn.style.color = 'white';
+            btn.style.fontWeight = '600';
+            btn.style.fontSize = '11px';
+            btn.style.letterSpacing = '0.5px';
 
             // Update hidden input
             document.getElementById('createTierValue').value = tier;
@@ -2896,11 +2902,17 @@
                     b.style.background = 'var(--accent)';
                     b.style.borderColor = 'var(--accent)';
                     b.style.color = 'white';
+                    b.style.fontWeight = '600';
+                    b.style.fontSize = '11px';
+                    b.style.letterSpacing = '0.5px';
                 } else {
                     b.classList.remove('active');
                     b.style.background = 'transparent';
                     b.style.borderColor = '#e0e0e0';
                     b.style.color = '#666';
+                    b.style.fontWeight = '600';
+                    b.style.fontSize = '11px';
+                    b.style.letterSpacing = '0.5px';
                 }
             });
 
