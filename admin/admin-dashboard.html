@@ -2888,26 +2888,54 @@
         }
 
         async function populateModalCategories() {
+            console.log('[populateModalCategories] Starting...');
             try {
                 // Fetch categories from marketplace_categories table
                 const { data: categories, error } = await supabase.rpc('get_marketplace_categories');
+
+                console.log('[populateModalCategories] RPC response:', { categories, error });
 
                 if (error) throw error;
 
                 // Extract just the category names and sort
                 const categoryNames = categories ? categories.map(c => c.name).sort() : [];
+                console.log('[populateModalCategories] Category names:', categoryNames);
 
                 // Populate both create and edit modals
                 const createSelect = document.getElementById('createPromptCategory');
                 const editSelect = document.getElementById('editPromptCategory');
 
+                console.log('[populateModalCategories] Select elements:', { createSelect, editSelect });
+
                 const optionsHTML = '<option value="">Select Category</option>' +
                     categoryNames.map(c => `<option value="${c}">${c}</option>`).join('');
 
-                if (createSelect) createSelect.innerHTML = optionsHTML;
-                if (editSelect) editSelect.innerHTML = optionsHTML;
+                console.log('[populateModalCategories] Options HTML length:', optionsHTML.length);
+
+                if (createSelect) {
+                    createSelect.innerHTML = optionsHTML;
+                    console.log('[populateModalCategories] Create select populated, options:', createSelect.options.length);
+
+                    // Update custom dropdown if it exists
+                    const customDropdown = createSelect.parentElement.querySelector('.custom-dropdown');
+                    if (customDropdown && typeof updateDropdownOptions === 'function') {
+                        console.log('[populateModalCategories] Updating custom dropdown for create');
+                        updateDropdownOptions(customDropdown);
+                    }
+                }
+                if (editSelect) {
+                    editSelect.innerHTML = optionsHTML;
+                    console.log('[populateModalCategories] Edit select populated, options:', editSelect.options.length);
+
+                    // Update custom dropdown if it exists
+                    const customDropdown = editSelect.parentElement.querySelector('.custom-dropdown');
+                    if (customDropdown && typeof updateDropdownOptions === 'function') {
+                        console.log('[populateModalCategories] Updating custom dropdown for edit');
+                        updateDropdownOptions(customDropdown);
+                    }
+                }
             } catch (error) {
-                console.error('Error loading modal categories:', error);
+                console.error('[populateModalCategories] Error:', error);
                 // Fallback to empty state
                 const createSelect = document.getElementById('createPromptCategory');
                 const editSelect = document.getElementById('editPromptCategory');
