@@ -2774,12 +2774,16 @@
             document.getElementById(id).classList.remove('active');
         }
 
-        function openCreatePromptModal() {
+        async function openCreatePromptModal() {
             document.getElementById('createPromptName').value = '';
             document.getElementById('createPromptDesc').value = '';
             document.getElementById('createPromptContent').value = '';
             document.querySelector('input[name="createTier"][value="free"]').checked = true;
             document.getElementById('createStatusToggle').classList.add('active');
+
+            // Load categories into dropdown
+            await populateModalCategories();
+
             openModal('createPromptModal');
         }
 
