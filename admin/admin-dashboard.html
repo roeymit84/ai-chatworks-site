@@ -2641,13 +2641,17 @@
                 growthChart = new Chart(ctx, {
                     type: 'line',
                     data: {
-                        labels: ['Error loading data'],
+                        labels: [],
                         datasets: [{
-                            data: [0],
+                            data: [],
                             fill: true,
                             backgroundColor: gradient,
                             borderColor: '#8b5cf6',
-                            borderWidth: 2
+                            borderWidth: 2,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            pointHoverRadius: 5,
+                            pointHoverBackgroundColor: '#8b5cf6'
                         }]
                     },
                     options: {
@@ -2655,8 +2659,12 @@
                         maintainAspectRatio: false,
                         plugins: { legend: { display: false } },
                         scales: {
-                            x: { display: false },
-                            y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' }, ticks: { color: '#9ca3af' } }
+                            x: { display: true, grid: { display: false }, ticks: { color: '#9ca3af', font: { size: 10 } } },
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: 'rgba(0,0,0,0.05)' },
+                                ticks: { color: '#9ca3af', font: { size: 11 } }
+                            }
                         }
                     }
                 });
