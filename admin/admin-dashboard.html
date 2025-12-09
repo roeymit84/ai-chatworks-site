@@ -1756,9 +1756,8 @@
                             <thead>
                                 <tr>
                                     <th>Prompt Name</th>
-                                    <th>Category</th>
-                                    <th>Downloads</th>
                                     <th>Tier</th>
+                                    <th>Downloads</th>
                                 </tr>
                             </thead>
                             <tbody id="topPromptsTable">
@@ -2592,6 +2591,8 @@
                 // Load real user growth data from Supabase
                 const { data, error } = await supabase.rpc('get_user_growth_data');
 
+                console.log('Chart data response:', { data, error });
+
                 if (error) throw error;
 
                 let labels, chartData;
@@ -2599,6 +2600,8 @@
                     // Use real data
                     labels = data.map(row => new Date(row.signup_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
                     chartData = data.map(row => row.user_count);
+                    console.log('Chart labels:', labels);
+                    console.log('Chart data:', chartData);
                 } else {
                     // Empty state - show message
                     labels = ['No data'];
@@ -3753,16 +3756,6 @@
                     ...(activePrompts || []).map(p => p.user_id),
                     ...(activeFolders || []).map(f => f.user_id)
                 ]);
-
-                const activeCount = activeUserIds.size;
-                const totalUsers = userData || 1;
-                const engagementPercent = Math.round((activeCount / totalUsers) * 100);
-
-                document.getElementById('engagementValue').textContent = activeCount.toLocaleString();
-                setTimeout(() => {
-                    document.getElementById('engagementBar').style.width = engagementPercent + '%';
-                    document.getElementById('engagementPercent').textContent = engagementPercent;
-                }, 300);
 
                 // Chart
                 initChart();
