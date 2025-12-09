@@ -2190,8 +2190,7 @@
     <div class="modal-overlay" id="alertModal">
         <div class="modal" style="max-width: 400px;">
             <div class="modal-body" style="padding: 24px;">
-                <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 12px;" id="alertTitle">ai-chatworks.com
-                    says</h3>
+                <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 12px;" id="alertTitle">Notification</h3>
                 <p style="color: var(--text-secondary); font-size: 13px;" id="alertMessage"></p>
             </div>
             <div class="modal-footer">
@@ -2204,8 +2203,7 @@
     <div class="modal-overlay" id="promptModal">
         <div class="modal" style="max-width: 450px;">
             <div class="modal-body" style="padding: 24px;">
-                <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 12px;" id="promptTitle">ai-chatworks.com
-                    says</h3>
+                <h3 style="font-size: 15px; font-weight: 600; margin-bottom: 12px;" id="promptTitle">Please Enter</h3>
                 <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 16px;" id="promptMessage"></p>
                 <input type="text" id="promptInput" class="form-input" style="width: 100%; padding: 10px 12px;">
             </div>
@@ -2502,17 +2500,17 @@
         }
 
         function refreshData() {
-            showAlert('Data refreshed successfully!');
+            showAlert('Your dashboard data has been refreshed!', 'Success');
             loadDashboardData();
         }
 
         async function refreshMarketplace() {
             try {
                 await loadMarketplaceData();
-                showAlert('Marketplace data refreshed successfully!');
+                showAlert('Your marketplace data has been refreshed!', 'Success');
             } catch (error) {
                 console.error('Error refreshing marketplace:', error);
-                showAlert('Error refreshing marketplace: ' + error.message);
+                showAlert('Oops! Could not refresh marketplace data. ' + error.message, 'Error');
             }
         }
 
@@ -2819,7 +2817,7 @@
                 await loadMarketplaceData();
 
                 closeModal('createPromptModal');
-                showAlert('Prompt created successfully!');
+                showAlert('Your prompt has been created successfully!', 'Success');
 
                 // Clear form
                 document.getElementById('createPromptName').value = '';
@@ -2828,7 +2826,7 @@
                 document.getElementById('createStatusToggle').classList.add('active');
             } catch (error) {
                 console.error('Error creating prompt:', error);
-                showAlert('Error creating prompt: ' + error.message);
+                showAlert('Could not create prompt. ' + error.message, 'Error');
             }
         }
 
@@ -2954,10 +2952,10 @@
                 await loadMarketplaceData();
 
                 closeModal('editPromptModal');
-                showAlert('Prompt updated successfully!');
+                showAlert('Your prompt has been updated successfully!', 'Success');
             } catch (error) {
                 console.error('Error updating prompt:', error);
-                showAlert('Error updating prompt: ' + error.message);
+                showAlert('Could not update prompt. ' + error.message, 'Error');
             }
         }
 
@@ -2983,10 +2981,10 @@
                         // Reload marketplace data
                         await loadMarketplaceData();
 
-                        showAlert('Prompt deleted successfully!');
+                        showAlert('Prompt has been deleted successfully!', 'Success');
                     } catch (error) {
                         console.error('Error deleting prompt:', error);
-                        showAlert('Error deleting prompt: ' + error.message);
+                        showAlert('Could not delete prompt. ' + error.message, 'Error');
                     }
                 }
             );
@@ -3001,38 +2999,45 @@
         }
 
         async function loadCategoriesList() {
-            const categories = [...new Set(
-                allMarketplaceData
-                    .map(p => p.category)
-                    .filter(c => c && c.trim())
-            )].sort();
+            try {
+                // Fetch categories from the dedicated marketplace_categories table
+                const { data: categories, error } = await supabase.rpc('get_marketplace_categories');
 
-            const listContainer = document.getElementById('categoriesList');
+                if (error) throw error;
 
-            if (categories.length === 0) {
-                listContainer.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-muted);">No categories yet. Add one above!</div>';
-                return;
-            }
+                const listContainer = document.getElementById('categoriesList');
 
-            listContainer.innerHTML = categories.map(category => `
-                <div class="category-item" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 6px; background: var(--bg-primary);">
-                    <span class="category-name" style="flex: 1; font-size: 14px; color: var(--text-primary);">${category}</span>
-                    <div style="display: flex; gap: 6px;">
-                        <button class="btn btn-ghost" onclick="editCategory('${category.replace(/'/g, "\\'")}');" style="padding: 4px 10px; font-size: 12px;">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
-                            </svg>
-                            Edit
-                        </button>
-                        <button class="btn btn-danger" onclick="deleteCategory('${category.replace(/'/g, "\\'")}')" style="padding: 4px 10px; font-size: 12px;">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                            </svg>
-                            Delete
-                        </button>
+                if (!categories || categories.length === 0) {
+                    listContainer.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-muted);">No categories yet. Add one above!</div>';
+                    return;
+                }
+
+                listContainer.innerHTML = categories.map(category => `
+                    <div class="category-item" style="display: flex; align-items: center; justify-content: space-between; padding: 10px 12px; border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 6px; background: var(--bg-primary);">
+                        <div style="flex: 1;">
+                            <span class="category-name" style="font-size: 14px; color: var(--text-primary); font-weight: 500;">${category.name}</span>
+                            <span style="font-size: 12px; color: var(--text-muted); margin-left: 8px;">(${category.prompt_count} prompts)</span>
+                        </div>
+                        <div style="display: flex; gap: 6px;">
+                            <button class="btn btn-ghost" onclick="editCategory('${category.name.replace(/'/g, "\\'")}');" style="padding: 4px 10px; font-size: 12px;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+                                </svg>
+                                Edit
+                            </button>
+                            <button class="btn btn-danger" onclick="deleteCategory('${category.name.replace(/'/g, "\\'")}')" style="padding: 4px 10px; font-size: 12px;">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                </svg>
+                                Delete
+                            </button>
+                        </div>
                     </div>
-                </div>
-            `).join('');
+                `).join('');
+            } catch (error) {
+                console.error('Error loading categories:', error);
+                showAlert('Could not load categories. ' + error.message, 'Error');
+            }
         }
 
         async function addCategory() {
@@ -3040,53 +3045,39 @@
             const categoryName = input.value.trim();
 
             if (!categoryName) {
-                showAlert('Please enter a category name');
-                return;
-            }
-
-            // Check if category already exists
-            const existingCategories = [...new Set(
-                allMarketplaceData
-                    .map(p => p.category)
-                    .filter(c => c && c.trim())
-            )];
-
-            if (existingCategories.some(c => c.toLowerCase() === categoryName.toLowerCase())) {
-                showAlert('Category already exists');
+                showAlert('Please enter a category name', 'Validation Error');
                 return;
             }
 
             try {
-                // Create a placeholder prompt to register the category in the database
-                const { error } = await supabase
-                    .from('marketplace_prompts')
-                    .insert([{
-                        user_id: currentUser.id,
-                        title: `_category_placeholder_${categoryName}`,
-                        content: 'Placeholder',
-                        description: 'Placeholder for category',
-                        category: categoryName,
-                        tier: 'free',
-                        is_active: false
-                    }]);
+                // Add category using the RPC function
+                const { data: categoryId, error } = await supabase.rpc('add_marketplace_category', {
+                    category_name: categoryName
+                });
 
-                if (error) throw error;
+                if (error) {
+                    if (error.message.includes('duplicate') || error.code === '23505') {
+                        showAlert('A category with this name already exists', 'Validation Error');
+                    } else {
+                        throw error;
+                    }
+                    return;
+                }
 
                 input.value = '';
 
-                // Reload marketplace data to include new category
-                await loadMarketplaceData();
+                // Reload categories list
                 await loadCategoriesList();
 
-                showAlert(`Category "${categoryName}" added successfully`);
+                showAlert(`Category "${categoryName}" has been added successfully!`, 'Success');
             } catch (error) {
                 console.error('Error adding category:', error);
-                showAlert('Error adding category: ' + error.message);
+                showAlert('Could not add category. ' + error.message, 'Error');
             }
         }
 
         async function editCategory(oldName) {
-            showPrompt(`Rename category "${oldName}" to:`, oldName, async (newName) => {
+            showPrompt(`Enter a new name for "${oldName}":`, oldName, async (newName) => {
                 if (!newName || newName.trim() === '') {
                     return;
                 }
@@ -3096,11 +3087,11 @@
                 }
 
                 try {
-                    // Update all prompts with this category
-                    const { error } = await supabase
-                        .from('marketplace_prompts')
-                        .update({ category: newName.trim() })
-                        .eq('category', oldName);
+                    // Update category using RPC function
+                    const { error } = await supabase.rpc('update_marketplace_category', {
+                        old_category_name: oldName,
+                        new_category_name: newName.trim()
+                    });
 
                     if (error) throw error;
 
@@ -3108,55 +3099,56 @@
                     await loadMarketplaceData();
                     await loadCategoriesList();
 
-                    showAlert(`Category renamed from "${oldName}" to "${newName.trim()}"`);
+                    showAlert(`Category has been renamed to "${newName.trim()}"!`, 'Success');
                 } catch (error) {
                     console.error('Error renaming category:', error);
-                    showAlert('Error renaming category: ' + error.message);
+                    showAlert('Could not rename category. ' + error.message, 'Error');
                 }
-            });
+            }, 'Rename Category');
         }
 
         async function deleteCategory(categoryName) {
-            console.log('deleteCategory called for:', categoryName);
+            console.log('[DELETE CATEGORY] Starting deletion for:', categoryName);
+
             // Count prompts in this category
-            const promptCount = allMarketplaceData.filter(p => p.category === categoryName).length;
-            console.log('Prompt count in category:', promptCount);
+            const promptsInCategory = allMarketplaceData.filter(p => p.category === categoryName).length;
+            console.log('[DELETE CATEGORY] Prompts in category:', promptsInCategory);
 
-            if (promptCount > 0) {
-                showConfirm(
-                    `Delete category "${categoryName}"?`,
-                    `This category has ${promptCount} prompt(s). They will be set to "Uncategorized".`,
-                    async () => {
-                        console.log('Delete confirmed for category:', categoryName);
-                        try {
-                            // Update all prompts in this category to "Uncategorized"
-                            const { error } = await supabase
-                                .from('marketplace_prompts')
-                                .update({ category: 'Uncategorized' })
-                                .eq('category', categoryName);
+            const warningMessage = promptsInCategory > 0
+                ? `This will move ${promptsInCategory} prompt(s) to "Uncategorized".`
+                : '';
 
-                            if (error) {
-                                console.error('Supabase error deleting category:', error);
-                                throw error;
-                            }
+            showConfirm(
+                `Are you sure you want to delete the category "${categoryName}"?`,
+                warningMessage,
+                async () => {
+                    console.log('[DELETE CATEGORY] User confirmed deletion');
+                    try {
+                        // Delete category using RPC function
+                        const { data: affectedCount, error } = await supabase.rpc('delete_marketplace_category', {
+                            category_name: categoryName,
+                            move_to_category: 'Uncategorized'
+                        });
 
-                            console.log('Category update successful, reloading data');
-                            // Reload data
-                            await loadMarketplaceData();
-                            await loadCategoriesList();
+                        if (error) throw error;
 
-                            showAlert(`Category "${categoryName}" deleted. ${promptCount} prompt(s) moved to "Uncategorized"`);
-                        } catch (error) {
-                            console.error('Error deleting category:', error);
-                            showAlert('Error deleting category: ' + error.message);
-                        }
+                        console.log('[DELETE CATEGORY] Category deleted, prompts moved:', affectedCount);
+
+                        // Reload data
+                        await loadMarketplaceData();
+                        await loadCategoriesList();
+
+                        const message = affectedCount > 0
+                            ? `Category deleted and ${affectedCount} prompt(s) moved to "Uncategorized"`
+                            : 'Category deleted successfully!';
+
+                        showAlert(message, 'Success');
+                    } catch (error) {
+                        console.error('[DELETE CATEGORY] Error:', error);
+                        showAlert('Could not delete category. ' + error.message, 'Error');
                     }
-                );
-            } else {
-                console.log('Category has no prompts');
-                showAlert(`Category "${categoryName}" has no prompts and will be removed automatically.`);
-                await loadCategoriesList();
-            }
+                }
+            );
         }
 
         // ═══════════════════════════════════════
@@ -3214,7 +3206,8 @@
         }
 
         // Alert & Confirm modals
-        function showAlert(message) {
+        function showAlert(message, title = null) {
+            document.getElementById('alertTitle').textContent = title || 'Notification';
             document.getElementById('alertMessage').textContent = message;
             openModal('alertModal');
         }
@@ -3238,7 +3231,8 @@
         }
 
         let promptCallback = null;
-        function showPrompt(message, defaultValue, onSubmit) {
+        function showPrompt(message, defaultValue, onSubmit, title = null) {
+            document.getElementById('promptTitle').textContent = title || 'Please Enter';
             document.getElementById('promptMessage').textContent = message;
             document.getElementById('promptInput').value = defaultValue || '';
             promptCallback = onSubmit;
