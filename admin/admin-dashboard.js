@@ -1029,9 +1029,9 @@
             async () => {
                 try {
                     const { error } = await supabase
-                        .from('marketplace_prompts')
-                        .delete()
-                        .eq('id', promptId);
+                        .rpc('admin_delete_marketplace_prompt', {
+                            prompt_id: promptId
+                        });
 
                     if (error) throw error;
 
