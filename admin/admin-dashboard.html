@@ -3184,9 +3184,9 @@
                     console.log('Delete confirmed, executing delete for id:', id);
                     try {
                         const { error } = await supabase
-                            .from('marketplace_prompts')
-                            .delete()
-                            .eq('id', id);
+                            .rpc('admin_delete_marketplace_prompt', {
+                                prompt_id: id
+                            });
 
                         if (error) {
                             console.error('Supabase delete error:', error);
