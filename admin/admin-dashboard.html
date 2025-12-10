@@ -2884,16 +2884,43 @@
             const checked = document.querySelectorAll('.prompt-checkbox:checked');
             const ids = Array.from(checked).map(cb => cb.dataset.id);
 
+            if (ids.length === 0) {
+                showAlert('Please select at least one prompt to delete.', 'Warning');
+                return;
+            }
+
             showConfirm(
                 `Delete ${ids.length} prompt(s)?`,
                 'This action cannot be undone.',
-                () => {
-                    allMarketplaceData = allMarketplaceData.filter(p => !ids.includes(p.id));
-                    DEMO_DATA.marketplacePrompts = allMarketplaceData;
-                    renderMarketplaceTable(allMarketplaceData);
-                    document.getElementById('selectAll').checked = false;
-                    updateBulkSelection();
-                    showAlert(`${ids.length} prompt(s) deleted successfully!`);
+                async () => {
+                    try {
+                        // Delete each prompt from the database
+                        const deletePromises = ids.map(id => 
+                            supabase.rpc('admin_delete_marketplace_prompt', { prompt_id: id })
+                        );
+
+                        const results = await Promise.all(deletePromises);
+                        
+                        // Check if any deletions failed
+                        const errors = results.filter(r => r.error);
+                        if (errors.length > 0) {
+                            console.error('Some deletions failed:', errors);
+                            showAlert(`Failed to delete ${errors.length} prompt(s). Check console for details.`, 'Error');
+                            return;
+                        }
+
+                        // Reload marketplace data to reflect changes
+                        await loadMarketplaceData();
+                        
+                        // Clear selection
+                        document.getElementById('selectAll').checked = false;
+                        updateBulkSelection();
+                        
+                        showAlert(`${ids.length} prompt(s) deleted successfully!`, 'Success');
+                    } catch (error) {
+                        console.error('Error in bulk delete:', error);
+                        showAlert('Failed to delete prompts. ' + error.message, 'Error');
+                    }
                 }
             );
         }
