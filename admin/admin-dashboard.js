@@ -1098,12 +1098,18 @@
             'This action cannot be undone.',
             async () => {
                 try {
-                    const { error } = await supabase
-                        .from('marketplace_prompts')
-                        .delete()
-                        .in('id', promptIds);
+                    // Delete each prompt using the admin RPC function
+                    const deletePromises = promptIds.map(id =>
+                        supabase.rpc('admin_delete_marketplace_prompt', { prompt_id: id })
+                    );
 
-                    if (error) throw error;
+                    const results = await Promise.all(deletePromises);
+
+                    // Check if any deletions failed
+                    const errors = results.filter(r => r.error);
+                    if (errors.length > 0) {
+                        throw new Error(`Failed to delete ${errors.length} prompt(s)`);
+                    }
 
                     showAlertModal('ai-chatworks.com says', `${count} prompt(s) deleted successfully!`);
                     await loadMarketplaceData();
