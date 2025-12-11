@@ -2227,9 +2227,9 @@
 ]</pre>
                 <div class="form-group">
                     <label>Select JSON File</label>
-                    <input type="file" class="form-input" id="bulkUploadFile" accept=".json" style="padding: 8px;">
+                    <input type="file" class="form-input" id="bulk-upload-file" accept=".json" style="padding: 8px;">
                 </div>
-                <div id="bulkUploadStatus"></div>
+                <div id="bulk-upload-status"></div>
             </div>
             <div class="modal-footer">
                 <button class="btn btn-secondary" onclick="closeModal('bulkUploadModal')">Cancel</button>
@@ -3382,8 +3382,8 @@
         // BULK OPERATIONS
         // ═══════════════════════════════════════
         function openBulkUploadModal() {
-            document.getElementById('bulkUploadFile').value = '';
-            document.getElementById('bulkUploadStatus').innerHTML = '';
+            document.getElementById('bulk-upload-file').value = '';
+            document.getElementById('bulk-upload-status').innerHTML = '';
             openModal('bulkUploadModal');
         }
 
