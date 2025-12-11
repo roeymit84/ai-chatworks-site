@@ -2293,24 +2293,7 @@
         let growthChart = null;
 
         // Demo data for the mockup
-        const DEMO_DATA = {
-            users: 2847,
-            prompts: 14203,
-            folders: 891,
-            activeUsers: 1842,
-            marketplacePrompts: [
-                { id: '1', title: 'SEO Content Writer Pro', category: 'Marketing', description: 'Generate SEO-optimized articles', content: 'You are an SEO expert...', tier: 'pro', is_active: true, downloads_count: 12847, uploader_email: 'admin@aichatworks.com' },
-                { id: '2', title: 'Code Assistant Ultimate', category: 'Coding', description: 'Debug and optimize code', content: 'You are a coding expert...', tier: 'pro', is_active: true, downloads_count: 9523, uploader_email: 'dev@aichatworks.com' },
-                { id: '3', title: 'Email Composer', category: 'Business', description: 'Professional email drafts', content: 'You help write emails...', tier: 'free', is_active: true, downloads_count: 7891, uploader_email: 'admin@aichatworks.com' },
-                { id: '4', title: 'Social Media Manager', category: 'Marketing', description: 'Create viral social posts', content: 'You are a social media expert...', tier: 'pro', is_active: true, downloads_count: 6234, uploader_email: 'marketing@aichatworks.com' },
-                { id: '5', title: 'Data Science Helper', category: 'Coding', description: 'Analyze datasets quickly', content: 'You are a data scientist...', tier: 'pro', is_active: true, downloads_count: 5102, uploader_email: 'data@aichatworks.com' },
-                { id: '6', title: 'Blog Post Generator', category: 'Writing', description: 'Create engaging blog content', content: 'You are a blog writer...', tier: 'pro', is_active: true, downloads_count: 4876, uploader_email: 'content@aichatworks.com' },
-                { id: '7', title: 'Resume Builder', category: 'Business', description: 'Build professional resumes', content: 'You help create resumes...', tier: 'free', is_active: true, downloads_count: 4521, uploader_email: 'hr@aichatworks.com' },
-                { id: '8', title: 'Legal Document Drafter', category: 'Business', description: 'Draft legal documents', content: 'You are a legal assistant...', tier: 'pro', is_active: false, downloads_count: 3987, uploader_email: 'legal@aichatworks.com' },
-                { id: '9', title: 'Customer Support Bot', category: 'Business', description: 'Handle customer queries', content: 'You are a support agent...', tier: 'pro', is_active: true, downloads_count: 3654, uploader_email: 'support@aichatworks.com' },
-                { id: '10', title: 'Product Description Writer', category: 'Marketing', description: 'Write product descriptions', content: 'You write product copy...', tier: 'free', is_active: true, downloads_count: 3210, uploader_email: 'ecom@aichatworks.com' }
-            ]
-        };
+        // Demo data removed - using real database data only
 
         // ═══════════════════════════════════════
         // AUTH
@@ -2896,12 +2879,12 @@
                 async () => {
                     try {
                         // Delete each prompt from the database
-                        const deletePromises = ids.map(id => 
+                        const deletePromises = ids.map(id =>
                             supabase.rpc('admin_delete_marketplace_prompt', { prompt_id: id })
                         );
 
                         const results = await Promise.all(deletePromises);
-                        
+
                         // Check if any deletions failed
                         const errors = results.filter(r => r.error);
                         if (errors.length > 0) {
@@ -2912,11 +2895,11 @@
 
                         // Reload marketplace data to reflect changes
                         await loadMarketplaceData();
-                        
+
                         // Clear selection
                         document.getElementById('selectAll').checked = false;
                         updateBulkSelection();
-                        
+
                         showAlert(`${ids.length} prompt(s) deleted successfully!`, 'Success');
                     } catch (error) {
                         console.error('Error in bulk delete:', error);
@@ -3404,50 +3387,7 @@
             openModal('bulkUploadModal');
         }
 
-        function processBulkUpload() {
-            const fileInput = document.getElementById('bulkUploadFile');
-            const statusDiv = document.getElementById('bulkUploadStatus');
-
-            if (!fileInput.files || !fileInput.files[0]) {
-                showAlert('Please select a JSON file');
-                return;
-            }
-
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const prompts = JSON.parse(e.target.result);
-                    if (!Array.isArray(prompts)) throw new Error('JSON must be an array');
-
-                    let success = 0;
-                    prompts.forEach(p => {
-                        if (p.title && p.content) {
-                            allMarketplaceData.unshift({
-                                id: Date.now().toString() + Math.random(),
-                                title: p.title,
-                                category: p.category || 'Uncategorized',
-                                description: p.description || '',
-                                content: p.content,
-                                tier: (p.tier === 'pro') ? 'pro' : 'free',
-                                is_active: true,
-                                downloads_count: 0,
-                                uploader_email: currentUser.email
-                            });
-                            success++;
-                        }
-                    });
-
-                    DEMO_DATA.marketplacePrompts = allMarketplaceData;
-                    renderMarketplaceTable(allMarketplaceData);
-                    statusDiv.innerHTML = `<p style="color: var(--success);">✓ ${success} prompts uploaded successfully!</p>`;
-
-                    setTimeout(() => closeModal('bulkUploadModal'), 1500);
-                } catch (err) {
-                    statusDiv.innerHTML = `<p style="color: var(--danger);">Error: ${err.message}</p>`;
-                }
-            };
-            reader.readAsText(fileInput.files[0]);
-        }
+        // processBulkUpload function is in admin-dashboard.js - DO NOT duplicate here
 
         // Alert & Confirm modals
         function showAlert(message, title = null) {
