@@ -169,14 +169,17 @@
     }
 
     function showLogin() {
-        document.getElementById('loginOverlay').style.opacity = '1';
-        document.getElementById('loginOverlay').classList.remove('hidden');
-        document.getElementById('appShell').classList.add('hidden');
+        document.getElementById('login-screen').style.opacity = '1';
+        document.getElementById('login-screen').classList.remove('hidden');
+        document.getElementById('app-shell').classList.add('hidden');
     }
 
     function showDashboard() {
-        document.getElementById('loginOverlay').classList.add('hidden');
-        document.getElementById('appShell').classList.remove('hidden');
+        document.getElementById('login-screen').style.opacity = '0';
+        setTimeout(() => {
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('app-shell').classList.remove('hidden');
+        }, 300);
     }
 
     // ============================================
@@ -338,22 +341,20 @@
 
     async function loadMarketplaceStats() {
         try {
-            // Get all marketplace prompts with is_active status
+            // Get all marketplace prompts (removed is_active filter to show all prompts)
             const { data: allPrompts, error: allError } = await supabase
                 .from('marketplace_prompts')
-                .select('tier, downloads_count, title, category, is_active');
+                .select('tier, downloads_count, title, category');
 
             if (allError) throw allError;
 
             const totalPrompts = allPrompts?.length || 0;
             const proPrompts = allPrompts?.filter(p => p.tier === 'pro').length || 0;
             const regularPrompts = allPrompts?.filter(p => p.tier === 'free').length || 0;
-            const inactivePrompts = allPrompts?.filter(p => p.is_active === false).length || 0;
 
             document.getElementById('marketplace-total-prompts').textContent = totalPrompts;
             document.getElementById('marketplace-pro-prompts').textContent = proPrompts;
             document.getElementById('marketplace-regular-prompts').textContent = regularPrompts;
-            document.getElementById('mpInactivePrompts').textContent = inactivePrompts;
 
             // Get top 5 downloaded prompts
             const { data: topDownloads, error: topError } = await supabase
@@ -364,66 +365,41 @@
 
             if (topError) throw topError;
 
-            // Populate the Overview table with name, category, downloads, tier
-            const topPromptsTable = document.getElementById('topPromptsTable');
+            const topDownloadsContainer = document.getElementById('marketplace-top-downloads');
 
             if (!topDownloads || topDownloads.length === 0) {
-                topPromptsTable.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-muted);">No downloads yet</td></tr>';
-            } else {
-                let tableHtml = '';
-                topDownloads.forEach((prompt) => {
-                    const tierBadgeClass = prompt.tier === 'pro' ? 'badge-pro-gold' : 'badge-free';
-                    tableHtml += `
-                        <tr>
-                            <td style="font-weight: 600;">${prompt.title}</td>
-                            <td><span class="badge badge-subtle">${prompt.category}</span></td>
-                            <td><span style="font-weight: 600; color: var(--accent);">${prompt.downloads_count}</span></td>
-                            <td><span class="badge ${tierBadgeClass}">${prompt.tier.toUpperCase()}</span></td>
-                        </tr>
-                    `;
-                });
-                topPromptsTable.innerHTML = tableHtml;
+                topDownloadsContainer.innerHTML = '<p style="color: var(--text-tertiary); text-align: center;">No downloads yet</p>';
+                return;
             }
 
-            // Also update the marketplace-top-downloads container (if it exists, for other views)
-            const topDownloadsContainer = document.getElementById('marketplace-top-downloads');
-            if (topDownloadsContainer) {
-                if (!topDownloads || topDownloads.length === 0) {
-                    topDownloadsContainer.innerHTML = '<p style="color: var(--text-tertiary); text-align: center;">No downloads yet</p>';
-                } else {
-                    let html = '<div style="display: flex; flex-direction: column; gap: 12px;">';
-                    topDownloads.forEach((prompt, index) => {
-                        const tierBadgeClass = prompt.tier === 'pro' ? 'badge-pro-gold' : 'badge-free';
-                        html += `
-                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: var(--bg-secondary); border-radius: 8px;">
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    <div style="font-size: 18px; font-weight: 700; color: var(--text-tertiary); min-width: 24px;">#${index + 1}</div>
-                                    <div>
-                                        <div style="font-weight: 600;">${prompt.title}</div>
-                                        <div style="font-size: 12px; color: var(--text-tertiary);">${prompt.category}</div>
-                                    </div>
-                                </div>
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    <span class="badge ${tierBadgeClass}" style="font-size: 11px;">${prompt.tier.toUpperCase()}</span>
-                                    <div style="font-weight: 600; color: #8b5cf6;">${prompt.downloads_count} downloads</div>
-                                </div>
+            let html = '<div style="display: flex; flex-direction: column; gap: 12px;">';
+            topDownloads.forEach((prompt, index) => {
+                const tierBadgeClass = prompt.tier === 'pro' ? 'badge-pro-gold' : 'badge-free';
+                html += `
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px; background: var(--bg-secondary); border-radius: 8px;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div style="font-size: 18px; font-weight: 700; color: var(--text-tertiary); min-width: 24px;">#${index + 1}</div>
+                            <div>
+                                <div style="font-weight: 600;">${prompt.title}</div>
+                                <div style="font-size: 12px; color: var(--text-tertiary);">${prompt.category}</div>
                             </div>
-                        `;
-                    });
-                    html += '</div>';
-                    topDownloadsContainer.innerHTML = html;
-                }
-            }
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span class="badge ${tierBadgeClass}" style="font-size: 11px;">${prompt.tier.toUpperCase()}</span>
+                            <div style="font-weight: 600; color: #8b5cf6;">${prompt.downloads_count} downloads</div>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+
+            topDownloadsContainer.innerHTML = html;
         } catch (error) {
             console.error('Error loading marketplace stats:', error);
             document.getElementById('marketplace-total-prompts').textContent = '0';
             document.getElementById('marketplace-pro-prompts').textContent = '0';
             document.getElementById('marketplace-regular-prompts').textContent = '0';
-            document.getElementById('mpInactivePrompts').textContent = '0';
-            const topPromptsTable = document.getElementById('topPromptsTable');
-            if (topPromptsTable) {
-                topPromptsTable.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--danger);">Error loading data</td></tr>';
-            }
+            document.getElementById('marketplace-top-downloads').innerHTML = '<p style="color: var(--danger); text-align: center;">Error loading data</p>';
         }
     }
 
@@ -699,13 +675,10 @@
 
     window.editMarketplacePrompt = async function (promptId) {
         try {
-            // Fetch prompt details and categories - JOIN with auth.users to get email
+            // Fetch prompt details and categories
             const { data, error } = await supabase
                 .from('marketplace_prompts')
-                .select(`
-                    *,
-                    user_email:auth.users!marketplace_prompts_user_id_fkey(email)
-                `)
+                .select('*')
                 .eq('id', promptId)
                 .single();
 
@@ -745,7 +718,7 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Created By</label>
-                                <input type="email" value="${data.user_email?.email || data.user_email || currentUser?.email || 'Unknown'}" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-[13px] text-slate-500 cursor-not-allowed" readonly>
+                                <input type="email" value="${data.user_email || 'Unknown'}" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-[13px] text-slate-500 cursor-not-allowed" readonly>
                             </div>
                             <div class="flex gap-4">
                                 <div class="flex-1">
@@ -804,12 +777,6 @@
         const content = document.getElementById('edit-content').value;
         const tier = document.querySelector('input[name="edit-tier"]:checked').value;
         const isActive = document.getElementById('edit-active').checked;
-
-        // Validate category
-        if (!category || category.trim() === '') {
-            showAlertModal('ai-chatworks.com says', 'Please select a category');
-            return;
-        }
 
         try {
             const { error } = await supabase
@@ -1246,7 +1213,6 @@
                         tier = 'free'; // Default to free if invalid
                     }
 
-                    // DO NOT include 'id' from JSON - let PostgreSQL generate UUID
                     const { error } = await supabase
                         .from('marketplace_prompts')
                         .insert({
@@ -1257,7 +1223,6 @@
                             tier: tier,
                             tags: prompt.tags || [],
                             user_id: currentUser.id
-                            // Note: id is intentionally NOT included here - PostgreSQL auto-generates UUID
                         });
 
                     if (error) throw error;
