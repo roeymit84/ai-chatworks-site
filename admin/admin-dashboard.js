@@ -378,22 +378,10 @@
                     const tierBadgeClass = prompt.tier === 'pro' ? 'badge-pro-gold' : 'badge-free';
                     tableHtml += `
                         <tr>
-                            <td>
-                                <div class="table-prompt">
-                                    <div>
-                                        <div class="table-name">${prompt.title}</div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <span class="badge badge-subtle">${prompt.category}</span>
-                            </td>
-                            <td>
-                                <span style="font-weight: 600; color: var(--accent);">${prompt.downloads_count}</span>
-                            </td>
-                            <td>
-                                <span class="badge ${tierBadgeClass}">${prompt.tier.toUpperCase()}</span>
-                            </td>
+                            <td style="font-weight: 600;">${prompt.title}</td>
+                            <td><span class="badge badge-subtle">${prompt.category}</span></td>
+                            <td><span style="font-weight: 600; color: var(--accent);">${prompt.downloads_count}</span></td>
+                            <td><span class="badge ${tierBadgeClass}">${prompt.tier.toUpperCase()}</span></td>
                         </tr>
                     `;
                 });
@@ -714,10 +702,13 @@
 
     window.editMarketplacePrompt = async function (promptId) {
         try {
-            // Fetch prompt details and categories
+            // Fetch prompt details and categories - JOIN with auth.users to get email
             const { data, error } = await supabase
                 .from('marketplace_prompts')
-                .select('*')
+                .select(`
+                    *,
+                    user_email:auth.users!marketplace_prompts_user_id_fkey(email)
+                `)
                 .eq('id', promptId)
                 .single();
 
@@ -757,7 +748,7 @@
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">Created By</label>
-                                <input type="email" value="${data.user_email || 'Unknown'}" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-[13px] text-slate-500 cursor-not-allowed" readonly>
+                                <input type="email" value="${data.user_email?.email || data.user_email || currentUser?.email || 'Unknown'}" class="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-[13px] text-slate-500 cursor-not-allowed" readonly>
                             </div>
                             <div class="flex gap-4">
                                 <div class="flex-1">
@@ -816,6 +807,12 @@
         const content = document.getElementById('edit-content').value;
         const tier = document.querySelector('input[name="edit-tier"]:checked').value;
         const isActive = document.getElementById('edit-active').checked;
+
+        // Validate category
+        if (!category || category.trim() === '') {
+            showAlertModal('ai-chatworks.com says', 'Please select a category');
+            return;
+        }
 
         try {
             const { error } = await supabase
@@ -1252,6 +1249,7 @@
                         tier = 'free'; // Default to free if invalid
                     }
 
+                    // DO NOT include 'id' from JSON - let PostgreSQL generate UUID
                     const { error } = await supabase
                         .from('marketplace_prompts')
                         .insert({
@@ -1262,6 +1260,7 @@
                             tier: tier,
                             tags: prompt.tags || [],
                             user_id: currentUser.id
+                            // Note: id is intentionally NOT included here - PostgreSQL auto-generates UUID
                         });
 
                     if (error) throw error;
