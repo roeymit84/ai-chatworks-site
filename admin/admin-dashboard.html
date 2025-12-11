@@ -3395,34 +3395,61 @@
             }
 
             const reader = new FileReader();
-            reader.onload = (e) => {
+            reader.onload = async (e) => {
                 try {
                     const prompts = JSON.parse(e.target.result);
                     if (!Array.isArray(prompts)) throw new Error('JSON must be an array');
 
-                    let success = 0;
-                    prompts.forEach(p => {
-                        if (p.title && p.content) {
-                            allMarketplaceData.unshift({
-                                id: Date.now().toString() + Math.random(),
-                                title: p.title,
-                                category: p.category || 'Uncategorized',
-                                description: p.description || '',
-                                content: p.content,
-                                tier: (p.tier === 'pro') ? 'pro' : 'free',
-                                is_active: true,
-                                downloads_count: 0,
-                                uploader_email: currentUser.email
-                            });
-                            success++;
+                    statusDiv.innerHTML = '<p style="color: var(--accent);">Uploading prompts...</p>';
+
+                    let successCount = 0;
+                    let errorCount = 0;
+
+                    // Insert each prompt into the database
+                    for (const prompt of prompts) {
+                        if (!prompt.title || !prompt.content) {
+                            errorCount++;
+                            continue;
                         }
-                    });
 
+                        try {
+                            // Validate tier
+                            let tier = 'free';
+                            if (prompt.tier === 'pro' || prompt.tier === 'Pro' || prompt.tier === 'PRO') {
+                                tier = 'pro';
+                            }
 
-                    renderMarketplaceTable(allMarketplaceData);
-                    statusDiv.innerHTML = `<p style="color: var(--success);">✓ ${success} prompts uploaded successfully!</p>`;
+                            // Insert into database - DO NOT include 'id' field
+                            const { error } = await supabase
+                                .from('marketplace_prompts')
+                                .insert({
+                                    title: prompt.title,
+                                    description: prompt.description || '',
+                                    content: prompt.content,
+                                    category: prompt.category || 'Uncategorized',
+                                    tier: tier,
+                                    tags: prompt.tags || [],
+                                    user_id: currentUser.id
+                                });
 
-                    setTimeout(() => closeModal('bulkUploadModal'), 1500);
+                            if (error) throw error;
+                            successCount++;
+                        } catch (error) {
+                            console.error('Error inserting prompt:', prompt.title, error);
+                            errorCount++;
+                        }
+                    }
+
+                    // Reload marketplace data to show new prompts
+                    await loadMarketplaceData();
+
+                    if (errorCount > 0) {
+                        statusDiv.innerHTML = `<p style="color: var(--warning);">⚠ ${successCount} prompts uploaded, ${errorCount} failed</p>`;
+                    } else {
+                        statusDiv.innerHTML = `<p style="color: var(--success);">✓ ${successCount} prompts uploaded successfully!</p>`;
+                    }
+
+                    setTimeout(() => closeModal('bulkUploadModal'), 2000);
                 } catch (err) {
                     statusDiv.innerHTML = `<p style="color: var(--danger);">Error: ${err.message}</p>`;
                 }
