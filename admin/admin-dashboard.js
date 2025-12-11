@@ -169,17 +169,14 @@
     }
 
     function showLogin() {
-        document.getElementById('login-screen').style.opacity = '1';
-        document.getElementById('login-screen').classList.remove('hidden');
-        document.getElementById('app-shell').classList.add('hidden');
+        document.getElementById('loginOverlay').style.opacity = '1';
+        document.getElementById('loginOverlay').classList.remove('hidden');
+        document.getElementById('appShell').classList.add('hidden');
     }
 
     function showDashboard() {
-        document.getElementById('login-screen').style.opacity = '0';
-        setTimeout(() => {
-            document.getElementById('login-screen').classList.add('hidden');
-            document.getElementById('app-shell').classList.remove('hidden');
-        }, 300);
+        document.getElementById('loginOverlay').classList.add('hidden');
+        document.getElementById('appShell').classList.remove('hidden');
     }
 
     // ============================================
