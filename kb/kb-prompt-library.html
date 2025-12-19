@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Base - Prompt Library</title>
+    <style>
+        /* AI ChatWorks Brand System v1.1.1 */
+        :root {
+            --accent-primary: #8b5cf6;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f9fafb;
+            --text-primary: #111827;
+            --text-secondary: #374151;
+            --text-tertiary: #6b7280;
+            --border-color: #e5e7eb;
+            --radius-md: 8px;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Open Sans', -apple-system, sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .kb-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .kb-header {
+            margin-bottom: 32px;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 16px;
+        }
+
+        .kb-title {
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            letter-spacing: -0.01em;
+        }
+
+        .kb-breadcrumb {
+            display: flex;
+            gap: 8px;
+            color: var(--text-tertiary);
+            font-size: 14px;
+            margin-bottom: 24px;
+        }
+
+        .kb-image-box {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            margin: 32px 0;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .kb-screenshot {
+            width: 100%;
+            display: block;
+        }
+
+        .kb-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-top: 32px;
+        }
+
+        .kb-section-title {
+            color: var(--accent-primary);
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .kb-card {
+            background: var(--bg-secondary);
+            padding: 20px;
+            border-radius: var(--radius-md);
+            border-left: 4px solid var(--accent-primary);
+        }
+
+        .kb-feature-tag {
+            display: inline-block;
+            background: #ede9fe;
+            color: var(--accent-primary);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .kb-sync-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: var(--text-tertiary);
+            background: #f3f4f6;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 40px;
+        }
+
+        .dot { height: 8px; width: 8px; background: #10b981; border-radius: 50%; }
+
+        @media (max-width: 600px) {
+            .kb-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="kb-container">
+        <header class="kb-header">
+            <h1 class="kb-title">Prompt Library</h1>
+            <p class="kb-subtitle">Manage, organize, and deploy your AI prompts across ChatGPT, Claude, and Gemini with the industry's most sophisticated library system.</p>
+        </header>
+
+        <div class="kb-image-box">
+            <img src=".../images/kb/prompt-library-main.png" alt="Prompt Library Interface" class="kb-screenshot">
+        </div>
+
+        <section>
+            <h2 class="kb-section-title">The Toolbar</h2>
+            <p>The top toolbar is your primary control center for finding and organizing content:</p>
+            <div class="kb-grid">
+                <div class="kb-card">
+                    <span class="kb-feature-tag">SEARCH</span>
+                    <p>Instant filtering across prompt titles and content bodies. RTL text is detected automatically for proper display.</p>
+                </div>
+                <div class="kb-card">
+                    <span class="kb-feature-tag">SORTING</span>
+                    <p>Organize by <strong>Newest First</strong>, <strong>Most Used</strong>, or <strong>Alphabetical</strong> to keep your favorites at your fingertips.</p>
+                </div>
+            </div>
+        </section>
+
+        <section style="margin-top: 40px;">
+            <h2 class="kb-section-title">Organization & Folders</h2>
+            <p>Use the Sidebar to navigate through your collections:</p>
+            <ul style="color: var(--text-secondary); padding-left: 20px;">
+                <li><strong>Custom Folders:</strong> Create color-coded folders for specific projects or clients.</li>
+                <li><strong>Favorites:</strong> One-click "Star" to move prompts into your high-priority list.</li>
+                <li><strong>Recents:</strong> Your last 10 used prompts are tracked automatically for quick reuse.</li>
+                <li><strong>Recycle Bin:</strong> Deleted prompts are stored here for 7 days before permanent removal.</li>
+            </ul>
+        </section>
+
+        <section style="margin-top: 40px;">
+            <h2 class="kb-section-title">Bulk Actions</h2>
+            <p>Select multiple prompts (Shift + Click) to trigger the <strong>Contextual Action Bar</strong>. From here, you can:</p>
+            <div class="kb-grid">
+                <div class="kb-card" style="border-left-color: #3b82f6;">
+                    <strong>Move To</strong>
+                    <p>Relocate multiple prompts to a new folder simultaneously.</p>
+                </div>
+                <div class="kb-card" style="border-left-color: #ef4444;">
+                    <strong>Delete</strong>
+                    <p>Remove selected prompts with a single confirmation.</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="kb-sync-status">
+            <div class="dot"></div>
+            <span><strong>Cloud Sync:</strong> Your library is currently <strong>Synced</strong>. Changes made here will be available on all your devices.</span>
+        </div>
+    </div>
+</body>
+</html>
