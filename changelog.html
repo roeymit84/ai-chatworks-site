@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Changelog - AI ChatWorks</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: { brand: { purple: '#8b5cf6', purpleDark: '#7c3aed', purpleLight: '#ddd6fe', dark: '#111827', gray: '#374151', slate: '#64748b', bg: '#ffffff', border: '#e5e7eb' } },
+                    fontFamily: { sans: ['Open Sans', 'sans-serif'], display: ['Open Sans', 'sans-serif'] },
+                    animation: { 'fade-in': 'fadeIn 0.5s ease-out forwards' },
+                    keyframes: { fadeIn: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } } }
+                }
+            }
+        }
+    </script>
+    <style> .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(229, 231, 235, 0.5); } </style>
+</head>
+<body class="bg-brand-bg text-brand-dark antialiased font-sans">
+    <nav class="fixed w-full z-50 glass-panel">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-3">
+                <img src="images/AI ChatWorks.svg" alt="AI ChatWorks" class="w-10 h-10" onerror="this.style.display='none'">
+                <span class="font-bold text-2xl tracking-tight">AI ChatWorks</span>
+            </a>
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-brand-gray">
+                <a href="index.html" class="hover:text-brand-purple transition-colors">Home</a>
+                <a href="about.html" class="hover:text-brand-purple transition-colors">About</a>
+                <a href="contact.html" class="hover:text-brand-purple transition-colors">Contact us</a>
+                <div class="h-4 w-px bg-gray-200"></div>
+                <a href="https://chromewebstore.google.com/detail/ai-chatworks/legmkjenpjbcgmmifpdhehgbmbkofmmc" target="_blank" class="flex items-center gap-2 px-5 py-2.5 bg-brand-purple text-white rounded-lg font-semibold hover:bg-brand-purpleDark shadow-lg shadow-brand-purple/25 transition-all">Add to Chrome</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-32 pb-20 px-6">
+        <div class="max-w-4xl mx-auto text-center mb-16 animate-fade-in">
+            <h1 class="text-5xl font-bold mb-4 text-brand-dark">Changelog</h1>
+            <p class="text-xl text-brand-slate">Stay up to date with the latest features and improvements.</p>
+        </div>
+
+        <div class="max-w-4xl mx-auto space-y-6 animate-fade-in">
+            <!-- v1.1.1 (Open by default) -->
+            <div class="bg-white rounded-2xl border border-brand-border overflow-hidden transition-all hover:shadow-lg group">
+                <div class="p-6 cursor-pointer hover:bg-brand-surface transition-colors" onclick="toggleChangelog(this)">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <h2 class="text-2xl font-bold text-brand-dark">Version 1.1.1</h2>
+                            <span class="bg-brand-purple text-white text-xs font-bold px-2 py-1 rounded">LATEST</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-brand-slate">
+                            <svg class="w-4 h-4 transition-transform duration-200 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            <span class="text-sm">November 24, 2025</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 pb-6 border-t border-brand-border bg-gray-50/50 pt-6">
+                    <div class="space-y-4">
+                        <div class="flex gap-4">
+                            <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded text-xs font-bold h-fit border border-emerald-200 flex-shrink-0">✨ New</span>
+                            <p class="text-brand-gray text-sm"><span class="font-semibold text-brand-dark">Ghost Text Autocomplete (Flow):</span> Begin typing a prompt name for instant, Tab-to-accept suggestions. Instant suggestions save you keystrokes and time.</p>
+                        </div>
+                        <div class="flex gap-4">
+                            <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded text-xs font-bold h-fit border border-emerald-200 flex-shrink-0">✨ New</span>
+                            <p class="text-brand-gray text-sm"><span class="font-semibold text-brand-dark">Prompt Enhancer (Flow Action):</span> Automatically re-engineer your current prompt for improved performance, clarity, and structure.</p>
+                        </div>
+                        <div class="flex gap-4">
+                            <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded text-xs font-bold h-fit border border-emerald-200 flex-shrink-0">✨ New</span>
+                            <p class="text-brand-gray text-sm"><span class="font-semibold text-brand-dark">Context Menu Integration:</span> Right-click selected text on any supported site to directly save it as a new prompt in your library.</p>
+                        </div>
+                        <div class="flex gap-4">
+                            <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded text-xs font-bold h-fit border border-emerald-200 flex-shrink-0">✨ New</span>
+                            <p class="text-brand-gray text-sm"><span class="font-semibold text-brand-dark">Bulk Actions:</span> Added multi-select, bulk delete, and bulk move options to the Prompt Library. Manage hundreds of prompts in minutes.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- v1.1.0 -->
+            <div class="bg-white rounded-2xl border border-brand-border overflow-hidden transition-all hover:shadow-lg group">
+                <div class="p-6 cursor-pointer hover:bg-brand-surface transition-colors" onclick="toggleChangelog(this)">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <h2 class="text-2xl font-bold text-brand-dark">Version 1.1.0</h2>
+                        </div>
+                        <div class="flex items-center gap-2 text-brand-slate">
+                            <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            <span class="text-sm">November 04, 2025</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 pb-6 border-t border-brand-border bg-gray-50/50 pt-6 hidden">
+                    <div class="space-y-4">
+                        <div class="flex gap-4">
+                            <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded text-xs font-bold h-fit border border-emerald-200 flex-shrink-0">✨ New</span>
+                            <p class="text-brand-gray text-sm"><span class="font-semibold text-brand-dark">Full Fidelity Chat Summaries:</span> Auto-copies summaries to clipboard using a complete 7-section enhanced structure.</p>
+                        </div>
+                        <div class="flex gap-4">
+                            <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded text-xs font-bold h-fit border border-emerald-200 flex-shrink-0">✨ New</span>
+                            <p class="text-brand-gray text-sm"><span class="font-semibold text-brand-dark">Flow Command Palette:</span> Quick access to actions and prompts with keyboard navigation.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- v1.0.0 -->
+            <div class="bg-white rounded-2xl border border-brand-border overflow-hidden transition-all hover:shadow-lg group">
+                <div class="p-6 cursor-pointer hover:bg-brand-surface transition-colors" onclick="toggleChangelog(this)">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-4">
+                            <h2 class="text-2xl font-bold text-brand-dark">Version 1.0.0</h2>
+                        </div>
+                        <div class="flex items-center gap-2 text-brand-slate">
+                            <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                            <span class="text-sm">October 07, 2025</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-6 pb-6 border-t border-brand-border bg-gray-50/50 pt-6 hidden">
+                    <div class="flex gap-4">
+                        <span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded text-xs font-bold h-fit border border-emerald-200 flex-shrink-0">✨ New</span>
+                        <p class="text-brand-gray text-sm"><span class="font-semibold text-brand-dark">Official public release!</span> Standardized versioning and Chrome Web Store preparation.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-brand-border">
+        <div class="max-w-7xl mx-auto py-16 px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-x-8 gap-y-12">
+            <div class="lg:col-span-2">
+                <div class="flex items-center gap-3 mb-6">
+                    <img src="images/AI ChatWorks.svg" alt="AI ChatWorks" class="w-8 h-8">
+                    <span class="font-bold text-xl">AI ChatWorks</span>
+                </div>
+                <p class="text-brand-slate text-sm max-w-xs leading-relaxed mb-6">The smart productivity layer for modern AI workflows. Stay organized, save time, and master your prompts across ChatGPT, Claude, and Gemini.</p>
+                <p class="text-xs text-brand-slate">© 2025 AI ChatWorks. All rights reserved.</p>
+            </div>
+            <div>
+                <h3 class="text-sm font-bold tracking-wider text-brand-dark uppercase mb-6">Product</h3>
+                <ul class="space-y-4">
+                    <li><a href="changelog.html" class="text-sm text-brand-purple font-bold">Changelog</a></li>
+                    <li><a href="index.html#faq" class="text-sm text-brand-gray hover:text-brand-purple transition-colors">FAQ</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-sm font-bold tracking-wider text-brand-dark uppercase mb-6">Resources</h3>
+                <ul class="space-y-4">
+                    <li><a href="privacy.html" class="text-sm text-brand-gray hover:text-brand-purple transition-colors">Privacy Policy</a></li>
+                    <li><a href="terms.html" class="text-sm text-brand-gray hover:text-brand-purple transition-colors">Terms and Conditions</a></li>
+                    <li><a href="knowledge-base.html" class="text-sm text-brand-gray hover:text-brand-purple transition-colors">Knowledge Base</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-sm font-bold tracking-wider text-brand-dark uppercase mb-6">Company</h3>
+                <ul class="space-y-4">
+                    <li><a href="about.html" class="text-sm text-brand-gray hover:text-brand-purple transition-colors">About us</a></li>
+                    <li><a href="contact.html" class="text-sm text-brand-gray hover:text-brand-purple transition-colors">Contact us</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="text-sm font-bold tracking-wider text-brand-dark uppercase mb-6">Social</h3>
+                <ul class="space-y-4">
+                    <li><a href="https://www.facebook.com/groups/1208608001123842/" target="_blank" class="flex items-center gap-2 text-sm text-brand-gray hover:text-[#1877F2] transition-colors">Facebook</a></li>
+                    <li><a href="https://discord.gg/KhYSWNzJNN" target="_blank" class="flex items-center gap-2 text-sm text-brand-gray hover:text-[#5865F2] transition-colors">Discord</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function toggleChangelog(header) {
+            const content = header.nextElementSibling;
+            content.classList.toggle('hidden');
+            const icon = header.querySelector('svg');
+            if (icon) {
+                icon.classList.toggle('rotate-180');
+            }
+        }
+    </script>
+</body>
+</html>
