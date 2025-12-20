@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - AI ChatWorks</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: { brand: { purple: '#8b5cf6', purpleDark: '#7c3aed', purpleLight: '#ddd6fe', dark: '#111827', gray: '#374151', slate: '#64748b', bg: '#ffffff', surface: '#f9fafb', border: '#e5e7eb' } },
+                    fontFamily: { sans: ['Open Sans', 'sans-serif'], display: ['Open Sans', 'sans-serif'] },
+                    animation: { 'fade-in': 'fadeIn 0.5s ease-out forwards' },
+                    keyframes: { fadeIn: { '0%': { opacity: '0', transform: 'translateY(10px)' }, '100%': { opacity: '1', transform: 'translateY(0)' } } }
+                }
+            }
+        }
+    </script>
+    <style> .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(229, 231, 235, 0.5); } </style>
+</head>
+<body class="bg-brand-bg text-brand-dark antialiased font-sans">
+    <nav class="fixed w-full z-50 glass-panel">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-3"><img src="images/AI ChatWorks.svg" alt="AI ChatWorks" class="w-10 h-10" onerror="this.style.display='none'"><span class="font-bold text-2xl tracking-tight">AI ChatWorks</span></a>
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-brand-gray">
+                <a href="index.html" class="hover:text-brand-purple transition-colors">Home</a>
+                <a href="about.html" class="hover:text-brand-purple transition-colors">About</a>
+                <a href="contact.html" class="text-brand-purple font-bold">Contact us</a>
+                <div class="h-4 w-px bg-gray-200"></div>
+                <a href="https://chromewebstore.google.com/detail/ai-chatworks/legmkjenpjbcgmmifpdhehgbmbkofmmc" target="_blank" class="flex items-center gap-2 px-5 py-2.5 bg-brand-purple text-white rounded-lg font-semibold hover:bg-brand-purpleDark shadow-lg shadow-brand-purple/25">Add to Chrome</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="pt-32 pb-20 px-6 text-center min-h-[70vh]">
+        <div class="animate-fade-in">
+            <h1 class="text-4xl font-bold mb-4 text-brand-dark">Contact Us</h1>
+            <p class="text-brand-slate mb-12">We'd love to hear from you.</p>
+            <div class="max-w-xl mx-auto bg-white p-10 rounded-2xl border border-brand-border shadow-lg">
+                <div class="flex flex-col items-center gap-4">
+                    <div class="w-16 h-16 bg-purple-50 rounded-full flex items-center justify-center text-brand-purple mb-2"><svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg></div>
+                    <h2 class="text-2xl font-bold text-brand-dark">Get in touch via Email</h2>
+                    <p class="text-brand-slate mb-6">For support, feedback, or just to say hi.</p>
+                    <a href="mailto:info@ai-chatworks.com" class="px-8 py-3 bg-brand-purple text-white rounded-lg font-bold hover:bg-brand-purpleDark transition-all">info@ai-chatworks.com</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-brand-border">
+        <div class="max-w-7xl mx-auto py-16 px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-x-8 gap-y-12">
+            <div class="lg:col-span-2">
+                <div class="flex items-center gap-3 mb-6"><img src="images/AI ChatWorks.svg" alt="AI ChatWorks" class="w-8 h-8"><span class="font-bold text-xl">AI ChatWorks</span></div>
+                <p class="text-xs text-brand-slate">© 2025 AI ChatWorks. All rights reserved.</p>
+            </div>
+            <div>
+                <h3 class="text-sm font-bold tracking-wider text-brand-dark uppercase mb-6">Product</h3>
+                <ul class="space-y-4"><li><a href="changelog.html" class="text-sm text-brand-gray">Changelog</a></li><li><a href="index.html#faq" class="text-sm text-brand-gray">FAQ</a></li></ul>
+            </div>
+            <div>
+                <h3 class="text-sm font-bold tracking-wider text-brand-dark uppercase mb-6">Resources</h3>
+                <ul class="space-y-4"><li><a href="privacy.html" class="text-sm text-brand-gray">Privacy Policy</a></li><li><a href="terms.html" class="text-sm text-brand-gray">Terms and Conditions</a></li><li><a href="knowledge-base.html" class="text-sm text-brand-gray">Knowledge Base</a></li></ul>
+            </div>
+            <div>
+                <h3 class="text-sm font-bold tracking-wider text-brand-dark uppercase mb-6">Company</h3>
+                <ul class="space-y-4"><li><a href="about.html" class="text-sm text-brand-gray">About us</a></li><li><a href="contact.html" class="text-sm text-brand-purple font-bold">Contact us</a></li></ul>
+            </div>
+            <div>
+                <h3 class="text-sm font-bold tracking-wider text-brand-dark uppercase mb-6">Social</h3>
+                <ul class="space-y-4">
+                    <li><a href="https://www.facebook.com/groups/1208608001123842/" target="_blank" class="flex items-center gap-2 text-sm text-brand-gray hover:text-[#1877F2] transition-colors">Facebook</a></li>
+                    <li><a href="https://discord.gg/MGuuzxwP8" target="_blank" class="flex items-center gap-2 text-sm text-brand-gray hover:text-[#5865F2] transition-colors">Discord</a></li>
+                </ul>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
