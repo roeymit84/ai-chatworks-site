@@ -4,13 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Terms and Conditions - AI ChatWorks</title>
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
     <script src="https://cdn.tailwindcss.com"></script>
-    
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -32,122 +29,230 @@
                     fontFamily: {
                         sans: ['Open Sans', 'sans-serif'],
                         display: ['Open Sans', 'sans-serif'], 
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
                     }
                 }
             }
         }
     </script>
+    <style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(229, 231, 235, 0.5);
+        }
+    </style>
 </head>
-<body class="font-sans antialiased text-brand-gray bg-brand-surface selection:bg-brand-purpleLight selection:text-brand-purpleDark py-12 px-4 sm:px-6 lg:px-8">
-
-    <main class="max-w-4xl mx-auto bg-white shadow-xl shadow-brand-dark/5 rounded-2xl border border-brand-border overflow-hidden">
-        
-        <!-- Document Header -->
-        <div class="px-8 py-10 border-b border-brand-border bg-gradient-to-r from-brand-surface to-white">
-            <h1 class="text-3xl md:text-4xl font-bold text-brand-dark mb-2">Terms and Conditions</h1>
-            <p class="text-brand-slate">Last Updated: <span class="font-semibold text-brand-purple">December 03, 2025</span></p>
+<body class="bg-brand-bg text-brand-dark antialiased font-sans">
+    <nav class="fixed w-full z-50 glass-panel">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-3">
+                <img src="images/AI ChatWorks.svg" alt="AI ChatWorks" class="w-10 h-10" onerror="this.style.display='none'">
+                <span class="font-bold text-2xl tracking-tight">AI ChatWorks</span>
+            </a>
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-brand-gray">
+                <a href="index.html" class="hover:text-brand-purple transition-colors">Home</a>
+                <a href="about.html" class="hover:text-brand-purple transition-colors">About</a>
+                <a href="contact.html" class="hover:text-brand-purple transition-colors">Contact us</a>
+                <div class="h-4 w-px bg-gray-200"></div>
+                <a href="https://chromewebstore.google.com/detail/ai-chatworks/legmkjenpjbcgmmifpdhehgbmbkofmmc" target="_blank" class="flex items-center gap-2 px-5 py-2.5 bg-brand-purple text-white rounded-lg font-semibold hover:bg-brand-purpleDark hover:scale-105 transition-all duration-300 shadow-lg shadow-brand-purple/25">
+                    Add to Chrome
+                </a>
+            </div>
         </div>
+    </nav>
 
-        <!-- Document Content -->
-        <div class="px-8 py-10 prose prose-lg prose-slate max-w-none prose-headings:text-brand-dark prose-a:text-brand-purple prose-a:no-underline hover:prose-a:text-brand-purpleDark prose-strong:text-brand-dark">
-            
-            <!-- Introduction Section -->
-            <div class="mb-10">
-                <p class="mb-4">Please read these Terms and Conditions ("Terms", "Terms of Service") carefully before using the <strong>AI ChatWorks</strong> browser extension (the "Service") operated by <strong>AI ChatWorks</strong> ("us", "we", or "our").</p>
-
-                <p class="mb-4">Your access to and use of the Service is conditioned on your acceptance of and compliance with these Terms. These Terms apply to all visitors, users, and others who access or use the Service.</p>
-
-                <p>By accessing or using the Service, you agree to be bound by these Terms. If you disagree with any part of the terms, then you may not access the Service.</p>
+    <main class="pt-32 pb-20 px-6">
+        <div class="max-w-4xl mx-auto bg-white shadow-xl shadow-brand-dark/5 rounded-2xl border border-brand-border overflow-hidden animate-fade-in">
+            <!-- Header -->
+            <div class="px-8 py-10 border-b border-brand-border bg-gradient-to-r from-brand-surface to-white">
+                <h1 class="text-3xl md:text-4xl font-bold text-brand-dark mb-2">Terms and Conditions</h1>
+                <p class="text-brand-slate">Last Updated: <span class="font-semibold text-brand-purple">December 03, 2025</span></p>
             </div>
 
-            <hr class="border-brand-border my-8" />
+            <!-- Full Text Content -->
+            <div class="px-8 py-10 space-y-8 text-brand-gray leading-relaxed">
+                <section>
+                    <p class="mb-4">Please read these Terms and Conditions ("Terms", "Terms of Service") carefully before using the <strong>AI ChatWorks</strong> browser extension (the "Service") operated by <strong>AI ChatWorks</strong> ("us", "we", or "our").</p>
+                    <p class="mb-4">Your access to and use of the Service is conditioned on your acceptance of and compliance with these Terms. These Terms apply to all visitors, users, and others who access or use the Service.</p>
+                    <p class="mb-4">By accessing or using the Service, you agree to be bound by these Terms. If you disagree with any part of the terms, then you may not access the Service.</p>
+                </section>
 
-            <h2 class="text-2xl font-bold mt-12 mb-6">1. Description of Service</h2>
-            <p>AI ChatWorks is a browser extension designed to enhance your experience with AI platforms. Key features include a Prompt Library, Cloud Synchronization, Ghost Text (autocompletion), and a Marketplace for sharing resources.</p>
-            <p>The Service acts as an interface and utility layer over third-party AI providers (e.g., OpenAI, Anthropic). We are not affiliated with, endorsed by, or sponsored by these third-party providers.</p>
+                <hr class="border-brand-border" />
 
-            <h2 class="text-2xl font-bold mt-12 mb-6">2. User Accounts</h2>
-            <ul class="list-disc pl-6 mb-6 space-y-2">
-                <li><strong>Registration:</strong> You may need to create an account to access features like Cloud Sync and the Marketplace. You agree to provide accurate and complete information.</li>
-                <li><strong>Security:</strong> You are responsible for safeguarding the password and credentials used to access the Service. You agree not to disclose your password to any third party. You must notify us immediately upon becoming aware of any breach of security or unauthorized use of your account.</li>
-            </ul>
+                <section>
+                    <h2 class="text-2xl font-bold text-brand-dark mb-4">1. Description of Service</h2>
+                    <p>AI ChatWorks is a browser extension designed to enhance your experience with AI platforms. Key features include a Prompt Library, Cloud Synchronization, Ghost Text (autocompletion), and a Marketplace for sharing resources.</p>
+                    <p class="mt-4">The Service acts as an interface and utility layer over third-party AI providers (e.g., OpenAI, Anthropic, Google). We are not affiliated with, endorsed by, or sponsored by these third-party providers.</p>
+                </section>
 
-            <h2 class="text-2xl font-bold mt-12 mb-6">3. Subscriptions and Payments</h2>
-            <ul class="list-disc pl-6 mb-6 space-y-2">
-                <li><strong>Free and Paid Tiers:</strong> The Service may offer both free and paid subscription tiers.</li>
-                <li><strong>Billing:</strong> If you choose a paid subscription, you agree to pay the fees indicated. Payments are processed by third-party payment processors.</li>
-                <li><strong>No Refunds:</strong> Except where required by law, payments are non-refundable. You may cancel your subscription at any time to prevent future billing, but previous payments will not be refunded.</li>
-            </ul>
+                <section>
+                    <h2 class="text-2xl font-bold text-brand-dark mb-4">2. User Accounts</h2>
+                    <ul class="list-disc pl-6 space-y-4">
+                        <li><strong>Registration:</strong> You may need to create an account to access features like Cloud Sync and the Marketplace. You agree to provide accurate and complete information.</li>
+                        <li><strong>Security:</strong> You are responsible for safeguarding the password and credentials used to access the Service. You agree not to disclose your password to any third party. You must notify us immediately upon becoming aware of any breach of security or unauthorized use of your account.</li>
+                    </ul>
+                </section>
 
-            <h2 class="text-2xl font-bold mt-12 mb-6">4. User-Generated Content and Marketplace</h2>
-            <ul class="list-disc pl-6 mb-6 space-y-2">
-                <li><strong>Your Content:</strong> You retain ownership of the prompts, templates, and text you create ("User Content"). We do not claim ownership of your private User Content.</li>
-                <li><strong>Marketplace Usage:</strong> The Marketplace allows you to browse and download content to your personal library. Currently, users cannot upload or publish content to the Marketplace.</li>
-                <li><strong>Downloaded Content:</strong> Once you download content from the Marketplace, you are free to modify and use it within your personal Prompt Library.</li>
-                <li><strong>Responsibility:</strong> You are solely responsible for the content you create or modify in your library. You agree not to use the Service to generate content that is illegal, offensive, or infringing on intellectual property rights.</li>
-            </ul>
+                <section>
+                    <h2 class="text-2xl font-bold text-brand-dark mb-4">3. Subscriptions and Payments</h2>
+                    <ul class="list-disc pl-6 space-y-4">
+                        <li><strong>Free and Paid Tiers:</strong> The Service may offer both free and paid subscription tiers.</li>
+                        <li><strong>Billing:</strong> If you choose a paid subscription, you agree to pay the fees indicated. Payments are processed by third-party payment processors.</li>
+                        <li><strong>No Refunds:</strong> Except where required by law, payments are non-refundable. You may cancel your subscription at any time to prevent future billing, but previous payments will not be refunded.</li>
+                    </ul>
+                </section>
 
-            <h2 class="text-2xl font-bold mt-12 mb-6">5. Intellectual Property</h2>
-            <p>The Service (excluding User Content) and its original content, features, and functionality are and will remain the exclusive property of AI ChatWorks and its licensors. The Service is protected by copyright, trademark, and other laws.</p>
+                <section>
+                    <h2 class="text-2xl font-bold text-brand-dark mb-4">4. User-Generated Content and Marketplace</h2>
+                    <ul class="list-disc pl-6 space-y-4">
+                        <li><strong>Your Content:</strong> You retain ownership of the prompts, templates, and text you create ("User Content"). We do not claim ownership of your private User Content.</li>
+                        <li><strong>Marketplace Usage:</strong> The Marketplace allows you to browse and download content to your personal library. Currently, users cannot upload or publish content to the Marketplace.</li>
+                        <li><strong>Downloaded Content:</strong> Once you download content from the Marketplace, you are free to modify and use it within your personal Prompt Library.</li>
+                        <li><strong>Responsibility:</strong> You are solely responsible for the content you create or modify in your library. You agree not to use the Service to generate content that is illegal, offensive, or infringing on intellectual property rights.</li>
+                    </ul>
+                </section>
 
-            <h2 class="text-2xl font-bold mt-12 mb-6">6. Data Backup and Loss</h2>
-            <ul class="list-disc pl-6 mb-6 space-y-2">
-                <li><strong>User Responsibility:</strong> You are solely responsible for maintaining backups of your data. The Service allows you to export your prompts and settings to a file via <strong>Settings > Local data > Export</strong>.</li>
-                <li><strong>Accidental Deletion:</strong> We are not liable for any loss of data caused by accidental deletion, browser cache clearing, uninstallation of the Extension, or failure to sync.</li>
-                <li><strong>Local Data:</strong> Data stored locally on your device (such as chat history) is not backed up to our servers and is permanently lost if your local storage is cleared.</li>
-            </ul>
+                <section>
+                    <h2 class="text-2xl font-bold text-brand-dark mb-4">5. Intellectual Property</h2>
+                    <p>The Service (excluding User Content) and its original content, features, and functionality are and will remain the exclusive property of AI ChatWorks and its licensors. The Service is protected by copyright, trademark, and other laws.</p>
+                </section>
 
-            <h2 class="text-2xl font-bold mt-12 mb-6">7. Prohibited Uses</h2>
-            <p>You agree not to use the Service:</p>
-            <ul class="list-disc pl-6 mb-6 space-y-2">
-                <li>In any way that violates any applicable national or international law or regulation.</li>
-                <li>To reverse engineer, decompile, or disassemble any aspect of the Extension.</li>
-                <li>To attempt to access any service or data you are not authorized to access.</li>
-                <li>To disrupt or interfere with the security or performance of the Service.</li>
-            </ul>
+                <section>
+                    <h2 class="text-2xl font-bold text-brand-dark mb-4">6. Data Backup and Loss</h2>
+                    <ul class="list-disc pl-6 space-y-4">
+                        <li><strong>User Responsibility:</strong> You are solely responsible for maintaining backups of your data. The Service allows you to export your prompts and settings to a file via <strong>Settings > Local data > Export</strong>.</li>
+                        <li><strong>Accidental Deletion:</strong> We are not liable for any loss of data caused by accidental deletion, browser cache clearing, uninstallation of the Extension, or failure to sync.</li>
+                        <li><strong>Local Data:</strong> Data stored locally on your device (such as chat history) is not backed up to our servers and is permanently lost if your local storage is cleared.</li>
+                    </ul>
+                </section>
 
-            <h2 class="text-2xl font-bold mt-12 mb-6">8. Disclaimer of Warranties ("As Is")</h2>
-            <p>The Service is provided on an "AS IS" and "AS AVAILABLE" basis. We utilize third-party services (such as Supabase and AI Providers) and cannot guarantee their uptime or availability.</p>
-            <p>We make no representations or warranties of any kind, express or implied, regarding:</p>
-            <ul class="list-disc pl-6 mb-6 space-y-2">
-                <li>The accuracy or reliability of AI-generated responses.</li>
-                <li>The availability of the Service at any specific time or location.</li>
-                <li>That the Service is free of viruses or other harmful components.</li>
-            </ul>
-            <div class="bg-brand-surface border-l-4 border-brand-purple p-4 my-6 rounded-r-lg">
-                <p class="m-0 text-sm text-brand-gray"><strong>Use of the "Ghost Text" and AI features is at your own risk.</strong> You are responsible for verifying the accuracy of any text generated or suggested by the Service.</p>
-            </div>
+                <section>
+                    <h2 class="text-2xl font-bold text-brand-dark mb-4">7. Prohibited Uses</h2>
+                    <p>You agree not to use the Service:</p>
+                    <ul class="list-disc pl-6 space-y-2 mt-2">
+                        <li>In any way that violates any applicable national or international law or regulation.</li>
+                        <li>To reverse engineer, decompile, or disassemble any aspect of the Extension.</li>
+                        <li>To attempt to access any service or data you are not authorized to access.</li>
+                        <li>To disrupt or interfere with the security or performance of the Service.</li>
+                    </ul>
+                </section>
 
-            <h2 class="text-2xl font-bold mt-12 mb-6">9. Limitation of Liability</h2>
-            <p>In no event shall AI ChatWorks, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from:</p>
-            <ul class="list-disc pl-6 mb-6 space-y-2">
+                <section>
+                    <h2 class="text-2xl font-bold text-brand-dark mb-4">8. Disclaimer of Warranties ("As Is")</h2>
+                    <p>The Service is provided on an "AS IS" and "AS AVAILABLE" basis. We utilize third-party services (such as Supabase and AI Providers) and cannot guarantee their uptime or availability.</p>
+                    <p class="mt-4">We make no representations or warranties of any kind, express or implied, regarding:</p>
+                    <ul class="list-disc pl-6 space-y-2 mt-2">
+                        <li>The accuracy or reliability of AI-generated responses.</li>
+                        <li>The availability of the Service at any specific time or location.</li>
+                        <li>That the Service is free of viruses or other harmful components.</li>
+                    </ul>
+                    <div class="bg-brand-surface border-l-4 border-brand-purple p-4 mt-6 rounded-r-lg">
+                        <p class="m-0 text-sm"><strong>Use of the "Ghost Text" and AI features is at your own risk.</strong> You are responsible for verifying the accuracy of any text generated or suggested by the Service.</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h2 class="text-2xl font-bold text-brand-dark mb-4">9. Limitation of Liability</h2>
+                    <p>In no event shall AI ChatWorks, nor its directors, employees, partners, agents, suppliers, or affiliates, be liable for any indirect, incidental, special, consequential, or punitive damages, including without limitation, loss of profits, data, use, goodwill, or other intangible losses, resulting from your access to or use of or inability to access or use the Service.</p>
+              <ul class="list-disc pl-6 mb-6 space-y-2">
                 <li>Your access to or use of or inability to access or use the Service;</li>
                 <li>Any conduct or content of any third party on the Service;</li>
                 <li>Any content obtained from the Service; and</li>
                 <li>Unauthorized access, use, or alteration of your transmissions or content.</li>
             </ul>
+                </section>
 
-            <h2 class="text-2xl font-bold mt-12 mb-6">10. Termination</h2>
-            <p>We may terminate or suspend your account immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms. Upon termination, your right to use the Service will immediately cease.</p>
+                <section>
+                    <h2 class="text-2xl font-bold text-brand-dark mb-4">10. Termination</h2>
+                    <p>We may terminate or suspend your account immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms. Upon termination, your right to use the Service will immediately cease.</p>
+                </section>
 
-            <h2 class="text-2xl font-bold mt-12 mb-6">11. Changes to Terms</h2>
-            <p>We reserve the right, at our sole discretion, to modify or replace these Terms at any time. We will try to provide at least 30 days' notice prior to any new material terms taking effect. By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms.</p>
+                <section>
+                    <h2 class="text-2xl font-bold text-brand-dark mb-4">11. Changes to Terms</h2>
+                    <p>We reserve the right, at our sole discretion, to modify or replace these Terms at any time. We will try to provide at least 30 days' notice prior to any new material terms taking effect. By continuing to access or use our Service after those revisions become effective, you agree to be bound by the revised terms.</p>
+                </section>
 
-            <h2 class="text-2xl font-bold mt-12 mb-6">12. Contact Us</h2>
-            <p>If you have any questions about these Terms, please contact us at:</p>
-            <p class="mt-4">
-                <a href="mailto:info@ai-chatworks.com" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-brand-surface border border-brand-border text-brand-purple font-semibold hover:bg-brand-purple hover:text-white transition-all duration-300">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-                    info@ai-chatworks.com
-                </a>
-            </p>
-        </div>
-        
-        <!-- Document Footer -->
-        <div class="px-8 py-6 border-t border-brand-border bg-brand-surface text-center">
-            <p class="text-sm text-brand-slate">© 2025 AI ChatWorks. All rights reserved.</p>
+                <section>
+                    <h2 class="text-2xl font-bold text-brand-dark mb-4">12. Contact Us</h2>
+                    <p>If you have any questions about these Terms, please contact us at:</p>
+                    <p class="mt-4">
+                        <a href="mailto:info@ai-chatworks.com" class="inline-flex items-center gap-2 px-6 py-2 rounded-lg bg-brand-surface border border-brand-border text-brand-purple font-semibold hover:bg-brand-purple hover:text-white transition-all duration-300">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            info@ai-chatworks.com
+                        </a>
+                    </p>
+                </section>
+            </div>
         </div>
     </main>
 
+    <!-- FOOTER -->
+    <footer class="bg-white border-t border-brand-border">
+        <div class="max-w-7xl mx-auto py-16 px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-x-4 gap-y-12">
+            <div class="lg:col-span-2">
+                <div class="flex items-center gap-3 mb-6">
+                    <img src="images/AI ChatWorks.svg" alt="AI ChatWorks" class="w-8 h-8">
+                    <span class="font-bold text-xl">AI ChatWorks</span>
+                </div>
+                <p class="text-brand-slate text-sm max-w-sm leading-relaxed mb-6">
+                    The smart productivity layer for modern AI workflows. Stay organized, save time, and master your prompts across ChatGPT, Claude, and Gemini.
+                </p>
+                <p class="text-xs text-brand-slate">© 2025 AI ChatWorks. All rights reserved.</p>
+            </div>
+            
+            <div>
+                <h3 class="text-sm font-bold tracking-wider text-brand-dark uppercase mb-6">Product</h3>
+                <ul class="space-y-4">
+                    <li><a href="changelog.html" class="text-sm text-brand-gray hover:text-brand-purple transition-colors">Changelog</a></li>
+                    <li><a href="index.html#faq" class="text-sm text-brand-gray hover:text-brand-purple transition-colors">FAQ</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 class="text-sm font-bold tracking-wider text-brand-dark uppercase mb-6">Resources</h3>
+                <ul class="space-y-4">
+                    <li><a href="privacy.html" class="text-sm text-brand-gray hover:text-brand-purple transition-colors">Privacy Policy</a></li>
+                    <li><a href="terms.html" class="text-sm text-brand-purple font-bold">Terms and Conditions</a></li>
+                    <li><a href="knowledge-base.html" class="text-sm text-brand-gray hover:text-brand-purple transition-colors">Knowledge Base</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 class="text-sm font-bold tracking-wider text-brand-dark uppercase mb-6">Company</h3>
+                <ul class="space-y-4">
+                    <li><a href="about.html" class="text-sm text-brand-gray hover:text-brand-purple transition-colors">About us</a></li>
+                    <li><a href="contact.html" class="text-sm text-brand-gray hover:text-brand-purple transition-colors">Contact us</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 class="text-sm font-bold tracking-wider text-brand-dark uppercase mb-6">Social</h3>
+                <ul class="space-y-4">
+                    <li>
+                        <a href="https://www.facebook.com/groups/1208608001123842/" target="_blank" class="flex items-center gap-2 text-sm text-brand-gray hover:text-[#1877F2] transition-colors">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg>
+                            Facebook
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://discord.gg/KhYSWNzJNN" target="_blank" class="flex items-center gap-2 text-sm text-brand-gray hover:text-[#5865F2] transition-colors">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.772-.6083 1.1588a18.2532 18.2532 0 00-5.4968 0C9.083 3.663 8.8495 3.2659 8.6385 2.8916a.0738.0738 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.069.069 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.419-2.1568 2.419zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.419-2.1568 2.419z"/></svg>
+                            Discord
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>
