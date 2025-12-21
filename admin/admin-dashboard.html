@@ -3881,41 +3881,41 @@
                         const limit = parseInt(document.getElementById('paramLimit')?.value) || 10;
                         const { data: users, error: usersError } = await supabase.rpc('admin_get_recent_users', { limit_count: limit });
                         if (usersError) throw usersError;
-                        result = JSON.stringify(users, null, 2);
+                        result = users;
                         break;
 
                     case 'find_user':
                         const searchEmail = document.getElementById('paramEmail')?.value || '';
                         const { data: foundUsers, error: findError } = await supabase.rpc('admin_find_user_by_email', { search_email: searchEmail });
                         if (findError) throw findError;
-                        result = JSON.stringify(foundUsers, null, 2);
+                        result = foundUsers;
                         break;
 
                     case 'heavy_users':
                         const minPrompts = parseInt(document.getElementById('paramMinPrompts')?.value) || 10;
                         const { data: heavyUsers, error: heavyError } = await supabase.rpc('admin_get_heavy_users', { min_prompts: minPrompts });
                         if (heavyError) throw heavyError;
-                        result = JSON.stringify(heavyUsers, null, 2);
+                        result = heavyUsers;
                         break;
 
                     case 'inactive_users':
                         const daysInactive = parseInt(document.getElementById('paramDays')?.value) || 30;
                         const { data: inactiveUsers, error: inactiveError } = await supabase.rpc('admin_get_inactive_users', { days_inactive: daysInactive });
                         if (inactiveError) throw inactiveError;
-                        result = JSON.stringify(inactiveUsers, null, 2);
+                        result = inactiveUsers;
                         break;
 
                     case 'marketplace_prompts':
                         const { data: mpPrompts, error: mpError } = await supabase.rpc('admin_get_marketplace_prompts');
                         if (mpError) throw mpError;
-                        result = JSON.stringify(mpPrompts, null, 2);
+                        result = mpPrompts;
                         break;
 
                     case 'top_downloads':
                         const topLimit = parseInt(document.getElementById('paramLimit')?.value) || 10;
                         const { data: topDownloads, error: topError } = await supabase.rpc('admin_get_top_downloads', { limit_count: topLimit });
                         if (topError) throw topError;
-                        result = JSON.stringify(topDownloads, null, 2);
+                        result = topDownloads;
                         break;
 
                     case 'db_stats':
@@ -3935,7 +3935,7 @@
                             total_downloads: stats[0].total_downloads || 0
                         } : {};
 
-                        result = JSON.stringify(formattedStats, null, 2);
+                        result = formattedStats;
                         break;
 
                     default:
