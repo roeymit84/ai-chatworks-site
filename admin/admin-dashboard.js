@@ -518,7 +518,7 @@
             }
 
             if (!data || data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="8" class="px-4 py-8 text-center text-[13px] text-slate-400">No marketplace prompts yet. Upload your first prompt!</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="9" class="px-4 py-8 text-center text-[13px] text-slate-400">No marketplace prompts yet. Upload your first prompt!</td></tr>';
                 allMarketplaceData = [];
                 updatePaginationControls(0, 0);
                 return;
@@ -548,7 +548,7 @@
             initializeMarketplaceFilters();
         } catch (error) {
             console.error('Error loading marketplace:', error);
-            tbody.innerHTML = `<tr><td colspan="8" class="px-4 py-8 text-center text-[13px] text-red-600">Error: ${error.message}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="9" class="px-4 py-8 text-center text-[13px] text-red-600">Error: ${error.message}</td></tr>`;
             allMarketplaceData = [];
             updatePaginationControls(0, 0);
         }
@@ -1721,7 +1721,7 @@
         const tbody = document.getElementById('marketplace-table-body');
 
         if (!data || data.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="8" class="px-4 py-8 text-center text-[13px] text-slate-400">No prompts match your filters</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="9" class="px-4 py-8 text-center text-[13px] text-slate-400">No prompts match your filters</td></tr>';
             return;
         }
 
