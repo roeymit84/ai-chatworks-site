@@ -4082,7 +4082,10 @@
         async function loadMarketplaceDataReal() {
             console.log('=== loadMarketplaceDataReal START ===');
             try {
+                console.log('[DEBUG] About to call admin_get_marketplace_prompts RPC');
                 const { data, error } = await supabase.rpc('admin_get_marketplace_prompts');
+
+                console.log('[DEBUG] RPC call completed, error:', error, 'data length:', data?.length);
 
                 if (error) {
                     console.error('RPC Error:', error);
@@ -4096,24 +4099,29 @@
                 }
 
                 if (!data || data.length === 0) {
+                    console.log('[DEBUG] No data, returning early');
                     document.getElementById('marketplaceTableBody').innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 40px;">No marketplace prompts yet</td></tr>';
                     allMarketplaceData = [];
                     console.log('No marketplace data, allMarketplaceData set to empty array.');
                     return;
                 }
 
+                console.log('[DEBUG] Setting allMarketplaceData');
                 allMarketplaceData = data || [];
                 console.log('allMarketplaceData set, length:', allMarketplaceData.length);
 
+                console.log('[DEBUG] About to call renderMarketplaceTableWithPagination');
                 // Reset to page 1 and render with pagination
                 currentPage = 1;
                 renderMarketplaceTableWithPagination(allMarketplaceData);
                 console.log('Table rendered with pagination');
 
+                console.log('[DEBUG] About to populate category filter');
                 // Populate category filter
                 populateCategoryFilter();
                 console.log('Category filter populated');
 
+                console.log('[DEBUG] About to populate modal categories');
                 // Populate modal categories
                 await populateModalCategories();
                 console.log('Modal categories populated');
