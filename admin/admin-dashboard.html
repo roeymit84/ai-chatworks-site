@@ -1939,6 +1939,11 @@
                                         <span class="sort-indicator" id="sort-created_by"></span>
                                     </th>
                                     <th style="cursor: pointer; user-select: none;"
+                                        onclick="sortMarketplaceTable('created_at')">
+                                        Created At
+                                        <span class="sort-indicator" id="sort-created_at"></span>
+                                    </th>
+                                    <th style="cursor: pointer; user-select: none;"
                                         onclick="sortMarketplaceTable('downloads')">
                                         Downloads
                                         <span class="sort-indicator" id="sort-downloads"></span>
@@ -1953,7 +1958,21 @@
                                         Status
                                         <span class="sort-indicator" id="sort-status"></span>
                                     </th>
-                                    <th style="width: 80px;">Actions</th>
+                                    <th style="width: 120px;">
+                                        <div
+                                            style="display: flex; align-items: center; justify-content: space-between;">
+                                            <span>Actions</span>
+                                            <button onclick="toggleColumnPicker(event)" class="btn-ghost"
+                                                style="padding: 4px 8px; margin-left: 8px;" title="Column Picker">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                                    stroke="currentColor" stroke-width="2">
+                                                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                                                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                                                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                                                </svg>
+                                            </button>
+                                        </div>
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody id="marketplaceTableBody">
@@ -1965,6 +1984,9 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Pagination Controls -->
+                    <div id="marketplace-pagination"></div>
                 </div>
             </div>
 

@@ -31,6 +31,10 @@
         status: ''
     };
 
+    // Pagination state
+    let currentPage = 1;
+    const ITEMS_PER_PAGE = 50;
+
     // ============================================
     // QUERY CONFIGURATIONS
     // ============================================
@@ -501,8 +505,9 @@
     // MARKETPLACE
     // ============================================
 
-    async function loadMarketplaceData() {
+    async function loadMarketplaceData(page = 1) {
         const tbody = document.getElementById('marketplace-table-body');
+        currentPage = page;
 
         try {
             const { data, error } = await supabase.rpc('admin_get_marketplace_prompts');
@@ -513,16 +518,27 @@
             }
 
             if (!data || data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" class="px-4 py-8 text-center text-[13px] text-slate-400">No marketplace prompts yet. Upload your first prompt!</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="8" class="px-4 py-8 text-center text-[13px] text-slate-400">No marketplace prompts yet. Upload your first prompt!</td></tr>';
                 allMarketplaceData = [];
+                updatePaginationControls(0, 0);
                 return;
             }
 
             // Store data globally for filtering
             allMarketplaceData = data;
 
-            // Render the table
-            renderMarketplaceTable(data);
+            // Apply pagination to data
+            const totalItems = data.length;
+            const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+            const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+            const endIndex = startIndex + ITEMS_PER_PAGE;
+            const paginatedData = data.slice(startIndex, endIndex);
+
+            // Render the table with paginated data
+            renderMarketplaceTable(paginatedData);
+
+            // Update pagination controls
+            updatePaginationControls(currentPage, totalPages, totalItems);
 
             // Load categories for upload form and populate filter dropdown
             await loadCategories();
@@ -532,8 +548,9 @@
             initializeMarketplaceFilters();
         } catch (error) {
             console.error('Error loading marketplace:', error);
-            tbody.innerHTML = `<tr><td colspan="7" class="px-4 py-8 text-center text-[13px] text-red-600">Error: ${error.message}</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="8" class="px-4 py-8 text-center text-[13px] text-red-600">Error: ${error.message}</td></tr>`;
             allMarketplaceData = [];
+            updatePaginationControls(0, 0);
         }
     }
 
@@ -752,8 +769,11 @@
 
                         <div>
                             <label class="block text-[11px] font-semibold text-slate-500 uppercase tracking-wider mb-1">System Prompt</label>
-                            <textarea id="edit-content" rows="6" class="w-full px-3 py-2 bg-slate-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-[13px] font-mono text-slate-600 resize-none">${data.content || ''}</textarea>
-                            <p class="text-xs text-slate-400 mt-1 text-right">Markdown supported</p>
+                            <textarea id="edit-content" rows="6" maxlength="10000" oninput="updateCharCount('edit-content', 'edit-char-count')" class="w-full px-3 py-2 bg-slate-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all text-[13px] font-mono text-slate-600 resize-none">${data.content || ''}</textarea>
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
+                                <p class="text-xs text-slate-400">Markdown supported</p>
+                                <p class="text-xs text-slate-400" id="edit-char-count">${(data.content || '').length}/10000</p>
+                            </div>
                         </div>
                     </div>
 
@@ -1503,6 +1523,7 @@
         if (searchInput) {
             searchInput.addEventListener('input', (e) => {
                 activeFilters.search = e.target.value.toLowerCase();
+                currentPage = 1; // Reset to first page when searching
                 applyMarketplaceFilters();
             });
         }
@@ -1565,8 +1586,135 @@
             );
         }
 
-        // Render filtered data
-        renderMarketplaceTable(filteredData);
+        // Apply pagination to filtered data
+        const totalItems = filteredData.length;
+        const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE);
+        const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+        const endIndex = startIndex + ITEMS_PER_PAGE;
+        const paginatedData = filteredData.slice(startIndex, endIndex);
+
+        // Render filtered and paginated data
+        renderMarketplaceTable(paginatedData);
+        updatePaginationControls(currentPage, totalPages, totalItems);
+    }
+
+    // ============================================
+    // PAGINATION CONTROLS
+    // ============================================
+
+    function updatePaginationControls(currentPage, totalPages, totalItems = 0) {
+        const paginationContainer = document.getElementById('marketplace-pagination');
+
+        if (!paginationContainer) {
+            return;
+        }
+
+        if (totalPages === 0 || totalItems === 0) {
+            paginationContainer.innerHTML = '';
+            return;
+        }
+
+        const startItem = ((currentPage - 1) * ITEMS_PER_PAGE) + 1;
+        const endItem = Math.min(currentPage * ITEMS_PER_PAGE, totalItems);
+
+        let html = `
+            <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-top: 1px solid var(--border); background: var(--bg-secondary);">
+                <div style="font-size: 13px; color: var(--text-tertiary);">
+                    Showing <span style="font-weight: 600; color: var(--text-primary);">${startItem}-${endItem}</span> 
+                    of <span style="font-weight: 600; color: var(--text-primary);">${totalItems}</span> prompts
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+        `;
+
+        // Previous button
+        html += `
+            <button 
+                onclick="goToPage(${currentPage - 1})" 
+                ${currentPage === 1 ? 'disabled' : ''}
+                class="btn-ghost"
+                style="padding: 8px 12px; opacity: ${currentPage === 1 ? '0.5' : '1'}; cursor: ${currentPage === 1 ? 'not-allowed' : 'pointer'};"
+            >
+                ← Previous
+            </button>
+        `;
+
+        // Page numbers
+        const maxVisiblePages = 7;
+        let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+        let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+        if (endPage - startPage < maxVisiblePages - 1) {
+            startPage = Math.max(1, endPage - maxVisiblePages + 1);
+        }
+
+        // First page + ellipsis
+        if (startPage > 1) {
+            html += `<button onclick="goToPage(1)" class="btn-ghost" style="min-width: 36px; height: 36px;">1</button>`;
+            if (startPage > 2) {
+                html += `<span style="color: var(--text-tertiary); padding: 0 4px;">...</span>`;
+            }
+        }
+
+        // Page number buttons
+        for (let i = startPage; i <= endPage; i++) {
+            const isActive = i === currentPage;
+            html += `
+                <button 
+                    onclick="goToPage(${i})" 
+                    class="${isActive ? 'btn-accent' : 'btn-ghost'}"
+                    style="min-width: 36px; height: 36px;"
+                >
+                    ${i}
+                </button>
+            `;
+        }
+
+        // Last page + ellipsis
+        if (endPage < totalPages) {
+            if (endPage < totalPages - 1) {
+                html += `<span style="color: var(--text-tertiary); padding: 0 4px;">...</span>`;
+            }
+            html += `<button onclick="goToPage(${totalPages})" class="btn-ghost" style="min-width: 36px; height: 36px;">${totalPages}</button>`;
+        }
+
+        // Next button
+        html += `
+            <button 
+                onclick="goToPage(${currentPage + 1})" 
+                ${currentPage === totalPages ? 'disabled' : ''}
+                class="btn-ghost"
+                style="padding: 8px 12px; opacity: ${currentPage === totalPages ? '0.5' : '1'}; cursor: ${currentPage === totalPages ? 'not-allowed' : 'pointer'};"
+            >
+                Next →
+            </button>
+        `;
+
+        html += `
+                </div>
+            </div>
+        `;
+
+        paginationContainer.innerHTML = html;
+    }
+
+    window.goToPage = function (page) {
+        if (page < 1) return;
+
+        // If filters are active, apply pagination to filtered data
+        const hasActiveFilters = activeFilters.search || activeFilters.category || activeFilters.tier || activeFilters.status;
+
+        if (hasActiveFilters) {
+            currentPage = page;
+            applyMarketplaceFilters();
+        } else {
+            loadMarketplaceData(page);
+        }
+
+        // Scroll to top of table
+        const tableContainer = document.querySelector('.view-container.active');
+        if (tableContainer) {
+            tableContainer.scrollTop = 0;
+        }
     }
 
     function renderMarketplaceTable(data) {
@@ -1618,6 +1766,9 @@
                         <div class="flex items-center h-full text-xs text-slate-500">${prompt.uploader_email || 'Unknown'}</div>
                     </td>
                     <td class="px-4 py-3 align-middle">
+                        <div class="flex items-center h-full text-xs text-slate-500">${prompt.created_at ? new Date(prompt.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A'}</div>
+                    </td>
+                    <td class="px-4 py-3 align-middle">
                         <div class="flex items-center justify-center h-full text-xs font-medium text-slate-600">${prompt.downloads_count || 0}</div>
                     </td>
                     <td class="px-4 py-3 align-middle">
@@ -1657,7 +1808,8 @@
         if (searchInput) searchInput.value = '';
         if (categoryFilterText) categoryFilterText.textContent = 'All Categories';
 
-        renderMarketplaceTable(allMarketplaceData);
+        currentPage = 1; // Reset to first page
+        loadMarketplaceData(1); // Reload all data
     };
 
     // ============================================
@@ -1696,5 +1848,114 @@
             if (label) label.textContent = 'Light Mode';
         }
     })();
+
+    // ============================================
+    // UTILITY FUNCTIONS
+    // ============================================
+
+    window.updateCharCount = function (textareaId, counterId) {
+        const textarea = document.getElementById(textareaId);
+        const counter = document.getElementById(counterId);
+        if (textarea && counter) {
+            const currentLength = textarea.value.length;
+            const maxLength = textarea.getAttribute('maxlength') || 10000;
+            counter.textContent = `${currentLength}/${maxLength}`;
+
+            // Change color if approaching limit
+            if (currentLength > maxLength * 0.9) {
+                counter.style.color = '#ef4444'; // red
+            } else if (currentLength > maxLength * 0.75) {
+                counter.style.color = '#f59e0b'; // amber
+            } else {
+                counter.style.color = ''; // default
+            }
+        }
+    };
+
+    window.toggleColumnPicker = function (event) {
+        event.stopPropagation();
+
+        // Check if dropdown already exists
+        let dropdown = document.getElementById('column-picker-dropdown');
+        if (dropdown) {
+            dropdown.remove();
+            return;
+        }
+
+        // Create dropdown
+        dropdown = document.createElement('div');
+        dropdown.id = 'column-picker-dropdown';
+        dropdown.style.cssText = `
+            position: absolute;
+            right: 0;
+            top: 100%;
+            margin-top: 8px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 8px;
+            min-width: 200px;
+            z-index: 1000;
+        `;
+
+        const columns = [
+            { id: 'col-name', label: 'Prompt Name', visible: true, required: true },
+            { id: 'col-category', label: 'Category', visible: true },
+            { id: 'col-created-by', label: 'Created By', visible: true },
+            { id: 'col-created-at', label: 'Created At', visible: true },
+            { id: 'col-downloads', label: 'Downloads', visible: true },
+            { id: 'col-tier', label: 'Tier', visible: true },
+            { id: 'col-status', label: 'Status', visible: true }
+        ];
+
+        columns.forEach(col => {
+            const item = document.createElement('label');
+            item.style.cssText = `
+                display: flex;
+                align-items: center;
+                padding: 6px 8px;
+                cursor: ${col.required ? 'not-allowed' : 'pointer'};
+                border-radius: 4px;
+                font-size: 13px;
+                color: var(--text-primary);
+                opacity: ${col.required ? '0.6' : '1'};
+            `;
+            if (!col.required) {
+                item.onmouseover = () => item.style.background = 'var(--bg-tertiary)';
+                item.onmouseout = () => item.style.background = '';
+            }
+
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.checked = col.visible;
+            checkbox.disabled = col.required;
+            checkbox.style.marginRight = '8px';
+            checkbox.onchange = () => console.log(`Toggle column ${col.id}: ${checkbox.checked}`);
+
+            item.appendChild(checkbox);
+            item.appendChild(document.createTextNode(col.label));
+            dropdown.appendChild(item);
+        });
+
+        // Position dropdown relative to button
+        const button = event.currentTarget;
+        const buttonRect = button.getBoundingClientRect();
+        dropdown.style.position = 'fixed';
+        dropdown.style.top = `${buttonRect.bottom + 8}px`;
+        dropdown.style.right = `${window.innerWidth - buttonRect.right}px`;
+
+        document.body.appendChild(dropdown);
+
+        // Close on click outside
+        setTimeout(() => {
+            document.addEventListener('click', function closeDropdown(e) {
+                if (!dropdown.contains(e.target)) {
+                    dropdown.remove();
+                    document.removeEventListener('click', closeDropdown);
+                }
+            });
+        }, 0);
+    };
 
 })();
