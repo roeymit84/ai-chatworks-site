@@ -2451,7 +2451,12 @@
                 }
             });
 
-            console.log(`Column ${columnIndex} ${visible ? 'shown' : 'hidden'}`);
+            // Save column state to localStorage
+            const columnState = JSON.parse(localStorage.getItem('marketplaceColumnState') || '{}');
+            columnState[columnIndex] = visible;
+            localStorage.setItem('marketplaceColumnState', JSON.stringify(columnState));
+
+            console.log(`Column ${columnIndex} ${visible ? 'shown' : 'hidden'}`, columnState);
         }
 
         // ═══════════════════════════════════════
