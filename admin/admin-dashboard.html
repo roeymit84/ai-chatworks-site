@@ -2959,6 +2959,24 @@
             renderMarketplaceTableWithPagination(allMarketplaceData);
         }
 
+        function applyCurrentFilters() {
+            // Apply filters WITHOUT resetting page (for pagination navigation)
+            const search = document.getElementById('marketplaceSearch').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+            const tier = document.getElementById('tierFilter').value;
+
+            let filtered = allMarketplaceData.filter(p => {
+                const promptName = p.prompt_name || p.title || '';
+                const matchSearch = !search || promptName.toLowerCase().includes(search);
+                const matchCategory = !category || p.category === category;
+                const matchTier = !tier || p.tier === tier;
+                return matchSearch && matchCategory && matchTier;
+            });
+
+            // DON'T reset currentPage here - use whatever page is already set
+            renderMarketplaceTableWithPagination(filtered);
+        }
+
         function renderMarketplaceTableWithPagination(data) {
             const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
             const endIndex = startIndex + ITEMS_PER_PAGE;
@@ -3027,8 +3045,9 @@
         }
 
         function goToPage(page) {
+            console.log('[goToPage] Navigating to page:', page, 'from current page:', currentPage);
             currentPage = page;
-            filterMarketplace(); // Re-apply current filters with new page
+            applyCurrentFilters(); // Use applyCurrentFilters instead of filterMarketplace to preserve page
         }
 
         function renderMarketplaceTable(data) {
@@ -3092,6 +3111,12 @@
             `;
             }).join('');
             console.log('[renderMarketplaceTable] Rendered', data.length, 'rows to tbody');
+
+            // Verify actual DOM
+            setTimeout(() => {
+                const actualRows = document.querySelectorAll('#marketplaceTableBody tr').length;
+                console.log('[renderMarketplaceTable] VERIFICATION: Actual rows in DOM:', actualRows);
+            }, 100);
         }
 
         // ═══════════════════════════════════════
