@@ -2175,8 +2175,11 @@
                 </div>
                 <div class="form-group full-width">
                     <label>System Prompt</label>
-                    <textarea class="form-input mono" id="editPromptContent" rows="5"
-                        style="font-size: 12px;"></textarea>
+                    <textarea class="form-input mono" id="editPromptContent" rows="5" style="font-size: 12px;"
+                        oninput="updateCharCount('editPromptContent', 'editCharCount', 10000)"></textarea>
+                    <div id="editCharCount"
+                        style="text-align: right; font-size: 12px; color: var(--text-tertiary); margin-top: 4px;">0 /
+                        10,000</div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -2815,6 +2818,26 @@
         }
 
         // ═══════════════════════════════════════
+        // CHARACTER COUNTER
+        // ═══════════════════════════════════════
+        function updateCharCount(textareaId, counterId, maxChars) {
+            const textarea = document.getElementById(textareaId);
+            const counter = document.getElementById(counterId);
+
+            if (!textarea || !counter) return;
+
+            const currentLength = textarea.value.length;
+            counter.textContent = `${currentLength.toLocaleString()} / ${maxChars.toLocaleString()}`;
+
+            // Change color if over limit
+            if (currentLength > maxChars) {
+                counter.style.color = 'var(--danger, #ef4444)';
+            } else {
+                counter.style.color = 'var(--text-tertiary)';
+            }
+        }
+
+        // ═══════════════════════════════════════
         // MARKETPLACE
         // ═══════════════════════════════════════
         async function loadMarketplaceData() {
@@ -2956,8 +2979,24 @@
 
         function clearFilters() {
             document.getElementById('marketplaceSearch').value = '';
-            document.getElementById('categoryFilter').value = '';
-            document.getElementById('tierFilter').value = '';
+
+            const categorySelect = document.getElementById('categoryFilter');
+            const tierSelect = document.getElementById('tierFilter');
+
+            categorySelect.value = '';
+            tierSelect.value = '';
+
+            // Update custom dropdowns to show "All Categories" and "All Tiers"
+            const categoryDropdown = categorySelect.previousElementSibling;
+            if (categoryDropdown && categoryDropdown.classList.contains('custom-dropdown')) {
+                updateDropdownValue(categoryDropdown);
+            }
+
+            const tierDropdown = tierSelect.previousElementSibling;
+            if (tierDropdown && tierDropdown.classList.contains('custom-dropdown')) {
+                updateDropdownValue(tierDropdown);
+            }
+
             currentPage = 1;
             renderMarketplaceTableWithPagination(allMarketplaceData);
         }
@@ -3350,7 +3389,12 @@
                 }
 
                 document.getElementById('editPromptDesc').value = fullPrompt.description || '';
-                document.getElementById('editPromptContent').value = fullPrompt.content || '';
+
+                const contentTextarea = document.getElementById('editPromptContent');
+                contentTextarea.value = fullPrompt.content || '';
+
+                // Update character counter
+                updateCharCount('editPromptContent', 'editCharCount', 10000);
 
                 const tier = fullPrompt.tier || 'free';
                 const tierRadio = document.querySelector(`input[name="editTier"][value="${tier}"]`);
