@@ -3032,13 +3032,16 @@
         }
 
         function renderMarketplaceTable(data) {
+            console.log('[renderMarketplaceTable] Called with data length:', data?.length);
             const tbody = document.getElementById('marketplaceTableBody');
 
             if (!data || !data.length) {
                 tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: var(--text-muted); padding: 40px;">No prompts found</td></tr>';
+                console.log('[renderMarketplaceTable] No data, showing empty message');
                 return;
             }
 
+            console.log('[renderMarketplaceTable] About to render', data.length, 'rows');
             tbody.innerHTML = data.map(p => {
                 // Map RPC function fields to expected names
                 // RPC returns: prompt_id, prompt_name, category, downloads, tier, created_at, uploader_email
@@ -3088,6 +3091,7 @@
                 </tr>
             `;
             }).join('');
+            console.log('[renderMarketplaceTable] Rendered', data.length, 'rows to tbody');
         }
 
         // ═══════════════════════════════════════
