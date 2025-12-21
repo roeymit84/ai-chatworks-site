@@ -1916,7 +1916,7 @@
 
                 <div class="card">
                     <div class="table-wrapper">
-                        <table class="data-table" id="marketplaceTable">
+                        <table class="data-table" id="marketplaceTable" style="table-layout: auto;">
                             <thead>
                                 <tr>
                                     <th style="width: 40px;">
@@ -2915,15 +2915,21 @@
                         bVal = b.is_active ? 1 : 0;
                         break;
                     default:
-                        return 0;
+                        aVal = '';
+                        bVal = '';
                 }
 
-                if (aVal < bVal) return marketplaceSortState.direction === 'asc' ? -1 : 1;
-                if (aVal > bVal) return marketplaceSortState.direction === 'asc' ? 1 : -1;
-                return 0;
+                if (marketplaceSortState.direction === 'asc') {
+                    return aVal > bVal ? 1 : aVal < bVal ? -1 : 0;
+                } else {
+                    return aVal < bVal ? 1 : aVal > bVal ? -1 : 0;
+                }
             });
 
-            renderMarketplaceTable(sorted);
+            // Update allMarketplaceData with sorted data and re-render with pagination
+            allMarketplaceData = sorted;
+            currentPage = 1; // Reset to page 1 when sorting
+            renderMarketplaceTableWithPagination(allMarketplaceData);
         }
 
         function filterMarketplace() {
