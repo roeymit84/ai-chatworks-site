@@ -611,10 +611,11 @@ window.toggleColumnPicker = function (event) {
     }
 
     // ============================================
-    // MARKETPLACE
+    // MARKETPLACE DATA LOADING (OLD - NOT USED, kept for reference)
+    // Using HTML inline version instead
     // ============================================
 
-    async function loadMarketplaceData(page = 1) {
+    async function loadMarketplaceDataOLD(page = 1) {
         const tbody = document.getElementById('marketplace-table-body');
         currentPage = page;
 
@@ -651,7 +652,7 @@ window.toggleColumnPicker = function (event) {
             const paginatedData = data.slice(startIndex, endIndex);
 
             // Render the table with paginated data
-            renderMarketplaceTable(paginatedData);
+            renderMarketplaceTableOLD(paginatedData);
 
             // Update pagination controls
             updatePaginationControls(currentPage, totalPages, totalItems);
@@ -1841,7 +1842,8 @@ window.toggleColumnPicker = function (event) {
         }
     }
 
-    function renderMarketplaceTable(data) {
+    // OLD VERSION - Using HTML inline version instead
+    function renderMarketplaceTableOLD(data) {
         const tbody = document.getElementById('marketplace-table-body');
 
         if (!data || data.length === 0) {
