@@ -3922,7 +3922,10 @@
                         break;
 
                     case 'marketplace_prompts':
-                        const { data: mpPrompts, error: mpError } = await supabase.rpc('admin_get_marketplace_prompts');
+                        const mpLimit = parseInt(document.getElementById('paramLimit')?.value) || 10;
+                        const { data: mpPrompts, error: mpError } = await supabase
+                            .rpc('admin_get_marketplace_prompts')
+                            .limit(mpLimit);
                         if (mpError) throw mpError;
                         result = mpPrompts;
                         break;
@@ -4013,26 +4016,34 @@
                         break;
 
                     case 'tier_distribution':
-                        // User tier distribution
+                        // User tier distribution - include all users
                         const { data: allUsers, error: tiersError } = await supabase
-                            .from('user_profiles')
-                            .select('tier');
+                            .rpc('admin_get_db_stats');
 
                         if (tiersError) throw tiersError;
 
-                        // Count by tier
+                        // Get actual user profiles with tier info
+                        const { data: userTiers, error: userTiersError } = await supabase
+                            .from('user_profiles')
+                            .select('tier, id');
+
+                        if (userTiersError) throw userTiersError;
+
+                        // Count by tier, treating null/undefined as 'free'
                         const tierCounts = {};
-                        allUsers.forEach(user => {
-                            const tier = user.tier || 'unknown';
+                        userTiers.forEach(user => {
+                            const tier = user.tier || 'free'; // Default to 'free' if null
                             tierCounts[tier] = (tierCounts[tier] || 0) + 1;
                         });
 
-                        const totalUsers = allUsers.length;
+                        const totalUsers = userTiers.length;
                         result = Object.entries(tierCounts).map(([tier, count]) => ({
                             tier: tier,
                             user_count: count,
-                            percentage: ((count / totalUsers) * 100).toFixed(2)
+                            percentage: totalUsers > 0 ? ((count / totalUsers) * 100).toFixed(2) : '0.00'
                         })).sort((a, b) => b.user_count - a.user_count);
+
+                        console.log('Tier distribution:', { totalUsers, tierCounts, result });
                         break;
 
                     case 'active_users':
