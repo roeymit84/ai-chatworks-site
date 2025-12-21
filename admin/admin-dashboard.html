@@ -280,8 +280,10 @@
 
         .btn-ghost {
             background: transparent;
+            border: none;
             color: var(--text-secondary);
             padding: 8px 12px;
+            cursor: pointer;
         }
 
         .btn-ghost:hover {
@@ -2848,21 +2850,15 @@
                 select.innerHTML = optionsHTML;
                 console.log('Category select innerHTML updated, option count:', select.options.length);
 
-                // Trigger change event to update any custom dropdown UI
-                select.dispatchEvent(new Event('change'));
-
                 // Update custom dropdown if it exists
-                const customDropdown = select.parentElement.querySelector('.custom-dropdown');
+                // The custom dropdown is a sibling of the select element, not a child of parent
+                const customDropdown = select.previousElementSibling;
                 console.log('Custom dropdown wrapper:', customDropdown);
-                if (customDropdown) {
-                    console.log('Updating custom dropdown options');
-                    const dropdownOptions = customDropdown.querySelector('.dropdown-options');
-                    if (dropdownOptions) {
-                        // Update dropdown options with left-aligned text
-                        dropdownOptions.innerHTML = Array.from(select.options).map(opt =>
-                            `<div class="dropdown-option" data-value="${opt.value}" style="text-align: left;">${opt.text}</div>`
-                        ).join('');
-                    }
+
+                if (customDropdown && customDropdown.classList.contains('custom-dropdown')) {
+                    console.log('Updating custom dropdown options via updateDropdownOptions');
+                    updateDropdownOptions(customDropdown);
+                    updateDropdownValue(customDropdown);
                 }
             } catch (error) {
                 console.error('Error populating category filter:', error);
