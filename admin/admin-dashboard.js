@@ -2,6 +2,115 @@
 // AI CHATWORKS ADMIN DASHBOARD
 // ============================================
 
+// ============================================
+// UTILITY FUNCTIONS (Global scope for HTML access)
+// ============================================
+
+window.updateCharCount = function (textareaId, counterId) {
+    const textarea = document.getElementById(textareaId);
+    const counter = document.getElementById(counterId);
+    if (textarea && counter) {
+        const currentLength = textarea.value.length;
+        const maxLength = textarea.getAttribute('maxlength') || 10000;
+        counter.textContent = `${currentLength}/${maxLength}`;
+
+        // Change color if approaching limit
+        if (currentLength > maxLength * 0.9) {
+            counter.style.color = '#ef4444'; // red
+        } else if (currentLength > maxLength * 0.75) {
+            counter.style.color = '#f59e0b'; // amber
+        } else {
+            counter.style.color = ''; // default
+        }
+    }
+};
+
+window.toggleColumnPicker = function (event) {
+    event.stopPropagation();
+
+    // Check if dropdown already exists
+    let dropdown = document.getElementById('column-picker-dropdown');
+    if (dropdown) {
+        dropdown.remove();
+        return;
+    }
+
+    // Create dropdown
+    dropdown = document.createElement('div');
+    dropdown.id = 'column-picker-dropdown';
+    dropdown.style.cssText = `
+        position: absolute;
+        right: 0;
+        top: 100%;
+        margin-top: 8px;
+        background: white;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        padding: 8px;
+        min-width: 200px;
+        z-index: 1000;
+    `;
+
+    const columns = [
+        { id: 'col-name', label: 'Prompt Name', visible: true, required: true },
+        { id: 'col-category', label: 'Category', visible: true },
+        { id: 'col-created-by', label: 'Created By', visible: true },
+        { id: 'col-created-at', label: 'Created At', visible: true },
+        { id: 'col-downloads', label: 'Downloads', visible: true },
+        { id: 'col-tier', label: 'Tier', visible: true },
+        { id: 'col-status', label: 'Status', visible: true }
+    ];
+
+    columns.forEach(col => {
+        const item = document.createElement('label');
+        item.style.cssText = `
+            display: flex;
+            align-items: center;
+            padding: 6px 8px;
+            cursor: ${col.required ? 'not-allowed' : 'pointer'};
+            border-radius: 4px;
+            font-size: 13px;
+            color: var(--text-primary);
+            opacity: ${col.required ? '0.6' : '1'};
+        `;
+        if (!col.required) {
+            item.onmouseover = () => item.style.background = 'var(--bg-tertiary)';
+            item.onmouseout = () => item.style.background = '';
+        }
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.checked = col.visible;
+        checkbox.disabled = col.required;
+        checkbox.style.marginRight = '8px';
+        checkbox.onchange = () => console.log(`Toggle column ${col.id}: ${checkbox.checked}`);
+
+        item.appendChild(checkbox);
+        item.appendChild(document.createTextNode(col.label));
+        dropdown.appendChild(item);
+    });
+
+    // Position dropdown relative to button
+    const button = event.currentTarget;
+    const buttonRect = button.getBoundingClientRect();
+    dropdown.style.position = 'fixed';
+    dropdown.style.top = `${buttonRect.bottom + 8}px`;
+    dropdown.style.right = `${window.innerWidth - buttonRect.right}px`;
+
+    document.body.appendChild(dropdown);
+
+    // Close on click outside
+    setTimeout(() => {
+        document.addEventListener('click', function closeDropdown(e) {
+            if (!dropdown.contains(e.target)) {
+                dropdown.remove();
+                document.removeEventListener('click', closeDropdown);
+            }
+        });
+    }, 0);
+};
+
 (function () {
     'use strict';
 
@@ -515,6 +624,13 @@
             if (error) {
                 console.error('Marketplace RPC error:', error);
                 throw error;
+            }
+
+            // DEBUG: Log first item to see field structure
+            if (data && data.length > 0) {
+                console.log('First marketplace item:', data[0]);
+                console.log('created_at value:', data[0].created_at);
+                console.log('downloads value:', data[0].downloads || data[0].downloads_count);
             }
 
             if (!data || data.length === 0) {
