@@ -1795,13 +1795,25 @@
                                 <div class="form-group">
                                     <label>Select Query</label>
                                     <select class="form-select" id="querySelector" onchange="updateQueryParams()">
-                                        <option value="recent_users">Recent Users</option>
-                                        <option value="find_user">Find User by Email</option>
-                                        <option value="heavy_users">Heavy Users (Most Prompts)</option>
-                                        <option value="inactive_users">Inactive Users</option>
-                                        <option value="marketplace_prompts">Marketplace Prompts</option>
-                                        <option value="top_downloads">Top Downloads</option>
-                                        <option value="db_stats">Database Statistics</option>
+                                        <optgroup label="User Queries">
+                                            <option value="recent_users">Recent Users</option>
+                                            <option value="find_user">Find User by Email</option>
+                                            <option value="heavy_users">Heavy Users (Most Prompts)</option>
+                                            <option value="inactive_users">Inactive Users</option>
+                                        </optgroup>
+                                        <optgroup label="Analytics">
+                                            <option value="user_growth">User Growth (Daily)</option>
+                                            <option value="prompt_activity">Prompt Activity (Daily)</option>
+                                            <option value="tier_distribution">Tier Distribution</option>
+                                            <option value="active_users">Active Users (7/30 days)</option>
+                                        </optgroup>
+                                        <optgroup label="Marketplace">
+                                            <option value="marketplace_prompts">Marketplace Prompts</option>
+                                            <option value="top_downloads">Top Downloads</option>
+                                        </optgroup>
+                                        <optgroup label="System">
+                                            <option value="db_stats">Database Statistics</option>
+                                        </optgroup>
                                     </select>
                                 </div>
 
@@ -3859,8 +3871,12 @@
 
             const configs = {
                 find_user: '<div class="form-group"><label>Email</label><input type="text" class="form-input" id="paramEmail" placeholder="user@example.com"></div>',
-                heavy_users: '<div class="form-group"><label>Min Prompts</label><input type="number" class="form-input" id="paramMinPrompts" value="10"></div>',
+                heavy_users: '<div class="form-group"><label>Limit Results</label><input type="number" class="form-input" id="paramLimit" value="10"></div>',
                 inactive_users: '<div class="form-group"><label>Days Inactive</label><input type="number" class="form-input" id="paramDays" value="30"></div>',
+                user_growth: '<div class="form-group"><label>Days Back</label><input type="number" class="form-input" id="paramDays" value="30" min="7" max="365"></div>',
+                prompt_activity: '<div class="form-group"><label>Days Back</label><input type="number" class="form-input" id="paramDays" value="30" min="7" max="365"></div>',
+                tier_distribution: '<div class="form-group"><label>No parameters needed</label><p style="color: var(--text-secondary); font-size: 13px;">Shows all tiers</p></div>',
+                active_users: '<div class="form-group"><label>No parameters needed</label><p style="color: var(--text-secondary); font-size: 13px;">Shows 7 and 30 day active users</p></div>',
                 default: '<div class="form-group"><label>Limit Results</label><input type="number" class="form-input" id="paramLimit" value="10" min="1" max="100"></div>'
             };
 
@@ -3892,8 +3908,8 @@
                         break;
 
                     case 'heavy_users':
-                        const minPrompts = parseInt(document.getElementById('paramMinPrompts')?.value) || 10;
-                        const { data: heavyUsers, error: heavyError } = await supabase.rpc('admin_get_heavy_users', { min_prompts: minPrompts });
+                        const heavyLimit = parseInt(document.getElementById('paramLimit')?.value) || 10;
+                        const { data: heavyUsers, error: heavyError } = await supabase.rpc('admin_get_heavy_users', { limit_count: heavyLimit });
                         if (heavyError) throw heavyError;
                         result = heavyUsers;
                         break;
@@ -3912,10 +3928,16 @@
                         break;
 
                     case 'top_downloads':
+                        // Note: marketplace_downloads table doesn't exist yet
+                        // Return marketplace prompts sorted by downloads column instead
                         const topLimit = parseInt(document.getElementById('paramLimit')?.value) || 10;
-                        const { data: topDownloads, error: topError } = await supabase.rpc('admin_get_top_downloads', { limit_count: topLimit });
+                        const { data: topPrompts, error: topError } = await supabase
+                            .from('marketplace_prompts')
+                            .select('*')
+                            .order('downloads', { ascending: false })
+                            .limit(topLimit);
                         if (topError) throw topError;
-                        result = topDownloads;
+                        result = topPrompts;
                         break;
 
                     case 'db_stats':
@@ -3936,6 +3958,106 @@
                         } : {};
 
                         result = formattedStats;
+                        break;
+
+                    case 'user_growth':
+                        // User growth over time (daily signups)
+                        const growthDays = parseInt(document.getElementById('paramDays')?.value) || 30;
+                        const { data: growthData, error: growthError } = await supabase
+                            .from('user_profiles')
+                            .select('created_at')
+                            .gte('created_at', new Date(Date.now() - growthDays * 24 * 60 * 60 * 1000).toISOString())
+                            .order('created_at', { ascending: false });
+
+                        if (growthError) throw growthError;
+
+                        // Group by date
+                        const groupedByDate = {};
+                        growthData.forEach(user => {
+                            const date = user.created_at.split('T')[0];
+                            groupedByDate[date] = (groupedByDate[date] || 0) + 1;
+                        });
+
+                        result = Object.entries(groupedByDate).map(([date, count]) => ({
+                            signup_date: date,
+                            new_users: count
+                        })).sort((a, b) => b.signup_date.localeCompare(a.signup_date));
+                        break;
+
+                    case 'prompt_activity':
+                        // Prompt creation activity over time
+                        const activityDays = parseInt(document.getElementById('paramDays')?.value) || 30;
+                        const { data: promptsData, error: promptsError } = await supabase
+                            .from('prompts')
+                            .select('created_at, user_id')
+                            .gte('created_at', new Date(Date.now() - activityDays * 24 * 60 * 60 * 1000).toISOString())
+                            .order('created_at', { ascending: false });
+
+                        if (promptsError) throw promptsError;
+
+                        // Group by date
+                        const activityByDate = {};
+                        const creatorsByDate = {};
+                        promptsData.forEach(prompt => {
+                            const date = prompt.created_at.split('T')[0];
+                            activityByDate[date] = (activityByDate[date] || 0) + 1;
+                            if (!creatorsByDate[date]) creatorsByDate[date] = new Set();
+                            creatorsByDate[date].add(prompt.user_id);
+                        });
+
+                        result = Object.entries(activityByDate).map(([date, count]) => ({
+                            creation_date: date,
+                            prompts_created: count,
+                            active_creators: creatorsByDate[date].size
+                        })).sort((a, b) => b.creation_date.localeCompare(a.creation_date));
+                        break;
+
+                    case 'tier_distribution':
+                        // User tier distribution
+                        const { data: allUsers, error: tiersError } = await supabase
+                            .from('user_profiles')
+                            .select('tier');
+
+                        if (tiersError) throw tiersError;
+
+                        // Count by tier
+                        const tierCounts = {};
+                        allUsers.forEach(user => {
+                            const tier = user.tier || 'unknown';
+                            tierCounts[tier] = (tierCounts[tier] || 0) + 1;
+                        });
+
+                        const totalUsers = allUsers.length;
+                        result = Object.entries(tierCounts).map(([tier, count]) => ({
+                            tier: tier,
+                            user_count: count,
+                            percentage: ((count / totalUsers) * 100).toFixed(2)
+                        })).sort((a, b) => b.user_count - a.user_count);
+                        break;
+
+                    case 'active_users':
+                        // Active users in last 7 and 30 days
+                        const now = new Date();
+                        const sevenDaysAgo = new Date(now - 7 * 24 * 60 * 60 * 1000).toISOString();
+                        const thirtyDaysAgo = new Date(now - 30 * 24 * 60 * 60 * 1000).toISOString();
+
+                        const { data: active7, error: active7Error } = await supabase
+                            .from('user_profiles')
+                            .select('id', { count: 'exact', head: true })
+                            .gte('last_sign_in_at', sevenDaysAgo);
+
+                        const { data: active30, error: active30Error } = await supabase
+                            .from('user_profiles')
+                            .select('id', { count: 'exact', head: true })
+                            .gte('last_sign_in_at', thirtyDaysAgo);
+
+                        if (active7Error) throw active7Error;
+                        if (active30Error) throw active30Error;
+
+                        result = [
+                            { period: '7 days', active_users: active7?.length || 0 },
+                            { period: '30 days', active_users: active30?.length || 0 }
+                        ];
                         break;
 
                     default:
