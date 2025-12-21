@@ -2313,6 +2313,8 @@
         // STATE
         // ═══════════════════════════════════════
         let allMarketplaceData = [];
+        let currentPage = 1;
+        const ITEMS_PER_PAGE = 50;
         let currentUser = { email: 'admin@aichatworks.com' };
         let growthChart = null;
 
@@ -2354,23 +2356,23 @@
             dropdown.id = 'column-picker-dropdown';
             dropdown.style.cssText = `
                 position: fixed;
-                background: white;
+                background: var(--bg-primary);
                 border: 1px solid var(--border);
                 border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
                 padding: 8px;
                 min-width: 200px;
                 z-index: 1000;
             `;
 
             const columns = [
-                { id: 'col-name', label: 'Prompt Name', visible: true, required: true },
-                { id: 'col-category', label: 'Category', visible: true },
-                { id: 'col-created-by', label: 'Created By', visible: true },
-                { id: 'col-created-at', label: 'Created At', visible: true },
-                { id: 'col-downloads', label: 'Downloads', visible: true },
-                { id: 'col-tier', label: 'Tier', visible: true },
-                { id: 'col-status', label: 'Status', visible: true }
+                { id: 'col-name', label: 'Prompt Name', index: 1, visible: true, required: true },
+                { id: 'col-category', label: 'Category', index: 2, visible: true },
+                { id: 'col-created-by', label: 'Created By', index: 3, visible: true },
+                { id: 'col-created-at', label: 'Created At', index: 4, visible: true },
+                { id: 'col-downloads', label: 'Downloads', index: 5, visible: true },
+                { id: 'col-tier', label: 'Tier', index: 6, visible: true },
+                { id: 'col-status', label: 'Status', index: 7, visible: true }
             ];
 
             columns.forEach(col => {
@@ -2382,10 +2384,12 @@
                     cursor: ${col.required ? 'not-allowed' : 'pointer'};
                     border-radius: 4px;
                     font-size: 13px;
+                    color: var(--text-primary);
                     opacity: ${col.required ? '0.6' : '1'};
+                    transition: background 0.15s;
                 `;
                 if (!col.required) {
-                    item.onmouseover = () => item.style.background = '#f3f4f6';
+                    item.onmouseover = () => item.style.background = 'var(--bg-tertiary)';
                     item.onmouseout = () => item.style.background = '';
                 }
 
@@ -2394,7 +2398,7 @@
                 checkbox.checked = col.visible;
                 checkbox.disabled = col.required;
                 checkbox.style.marginRight = '8px';
-                checkbox.onchange = () => console.log(`Toggle column ${col.id}: ${checkbox.checked}`);
+                checkbox.onchange = () => toggleColumn(col.index, checkbox.checked);
 
                 item.appendChild(checkbox);
                 item.appendChild(document.createTextNode(col.label));
@@ -2417,6 +2421,29 @@
                 });
             }, 0);
         };
+
+        function toggleColumn(columnIndex, visible) {
+            // Get all table rows (header and body)
+            const table = document.querySelector('#marketplaceTableBody').closest('table');
+            const headerRow = table.querySelector('thead tr');
+            const bodyRows = table.querySelectorAll('tbody tr');
+
+            // Toggle header cell
+            const headerCell = headerRow.children[columnIndex];
+            if (headerCell) {
+                headerCell.style.display = visible ? '' : 'none';
+            }
+
+            // Toggle body cells
+            bodyRows.forEach(row => {
+                const cell = row.children[columnIndex];
+                if (cell) {
+                    cell.style.display = visible ? '' : 'none';
+                }
+            });
+
+            console.log(`Column ${columnIndex} ${visible ? 'shown' : 'hidden'}`);
+        }
 
         // ═══════════════════════════════════════
         // AUTH
@@ -2790,7 +2817,6 @@
 
         async function populateCategoryFilter() {
             try {
-                // Fetch categories from marketplace_categories table
                 const { data: categories, error } = await supabase.rpc('get_marketplace_categories');
 
                 if (error) throw error;
@@ -2800,26 +2826,43 @@
                 const select = document.getElementById('categoryFilter');
                 console.log('Category select element:', select);
 
-                // Build options HTML
-                const categoryNames = categories ? categories.map(c => c.name).sort() : [];
-                select.innerHTML = '<option value="">All Categories</option>' +
-                    categoryNames.map(c => `<option value="${c}">${c}</option>`).join('');
+                if (!select) return;
 
+                // Count prompts per category
+                const categoryCounts = {};
+                allMarketplaceData.forEach(p => {
+                    const cat = p.category || 'Uncategorized';
+                    categoryCounts[cat] = (categoryCounts[cat] || 0) + 1;
+                });
+
+                // Build options with counts
+                let optionsHTML = '<option value="">All Categories</option>';
+                if (categories && categories.length > 0) {
+                    const sortedCategories = categories.map(c => c.name).sort();
+                    optionsHTML += sortedCategories.map(cat => {
+                        const count = categoryCounts[cat] || 0;
+                        return `<option value="${cat}">${cat} (${count})</option>`;
+                    }).join('');
+                }
+
+                select.innerHTML = optionsHTML;
                 console.log('Category select innerHTML updated, option count:', select.options.length);
 
                 // Update custom dropdown if it exists
-                const wrapper = select.parentElement.querySelector('.custom-dropdown');
-                console.log('Custom dropdown wrapper:', wrapper);
-
-                if (wrapper && typeof updateDropdownOptions === 'function') {
+                const customDropdown = select.parentElement.querySelector('.custom-dropdown');
+                console.log('Custom dropdown wrapper:', customDropdown);
+                if (customDropdown) {
                     console.log('Updating custom dropdown options');
-                    updateDropdownOptions(wrapper);
+                    const dropdownOptions = customDropdown.querySelector('.dropdown-options');
+                    if (dropdownOptions) {
+                        // Update dropdown options with left-aligned text
+                        dropdownOptions.innerHTML = Array.from(select.options).map(opt =>
+                            `<div class="dropdown-option" data-value="${opt.value}" style="text-align: left;">${opt.text}</div>`
+                        ).join('');
+                    }
                 }
             } catch (error) {
-                console.error('Error loading category filter:', error);
-                // Fallback to empty state
-                const select = document.getElementById('categoryFilter');
-                select.innerHTML = '<option value="">All Categories</option>';
+                console.error('Error populating category filter:', error);
             }
         }
 
@@ -2889,20 +2932,97 @@
             const tier = document.getElementById('tierFilter').value;
 
             let filtered = allMarketplaceData.filter(p => {
-                const matchSearch = !search || p.title.toLowerCase().includes(search);
+                // Use prompt_name instead of title (from RPC function)
+                const promptName = p.prompt_name || p.title || '';
+                const matchSearch = !search || promptName.toLowerCase().includes(search);
                 const matchCategory = !category || p.category === category;
                 const matchTier = !tier || p.tier === tier;
                 return matchSearch && matchCategory && matchTier;
             });
 
-            renderMarketplaceTable(filtered);
+            // Reset to page 1 when filtering
+            currentPage = 1;
+            renderMarketplaceTableWithPagination(filtered);
         }
 
         function clearFilters() {
             document.getElementById('marketplaceSearch').value = '';
             document.getElementById('categoryFilter').value = '';
             document.getElementById('tierFilter').value = '';
-            renderMarketplaceTable(allMarketplaceData);
+            currentPage = 1;
+            renderMarketplaceTableWithPagination(allMarketplaceData);
+        }
+
+        function renderMarketplaceTableWithPagination(data) {
+            const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+            const endIndex = startIndex + ITEMS_PER_PAGE;
+            const paginatedData = data.slice(startIndex, endIndex);
+
+            renderMarketplaceTable(paginatedData);
+
+            const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+            updatePaginationControls(currentPage, totalPages, data.length);
+        }
+
+        function updatePaginationControls(page, totalPages, totalItems) {
+            const container = document.getElementById('marketplace-pagination');
+            if (!container) return;
+
+            if (totalPages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = `
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-top: 1px solid var(--border);">
+                    <div style="color: var(--text-tertiary); font-size: 13px;">
+                        Showing ${((page - 1) * ITEMS_PER_PAGE) + 1}-${Math.min(page * ITEMS_PER_PAGE, totalItems)} of ${totalItems} prompts
+                    </div>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <button onclick="goToPage(${page - 1})" ${page === 1 ? 'disabled' : ''} 
+                            style="padding: 6px 12px; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-primary); border-radius: 6px; cursor: ${page === 1 ? 'not-allowed' : 'pointer'}; opacity: ${page === 1 ? '0.5' : '1'};">
+                            Previous
+                        </button>
+            `;
+
+            // Page numbers
+            const maxVisible = 5;
+            let startPage = Math.max(1, page - Math.floor(maxVisible / 2));
+            let endPage = Math.min(totalPages, startPage + maxVisible - 1);
+
+            if (endPage - startPage < maxVisible - 1) {
+                startPage = Math.max(1, endPage - maxVisible + 1);
+            }
+
+            if (startPage > 1) {
+                html += `<button onclick="goToPage(1)" style="padding: 6px 12px; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-primary); border-radius: 6px; cursor: pointer;">1</button>`;
+                if (startPage > 2) html += `<span style="color: var(--text-tertiary);">...</span>`;
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                html += `<button onclick="goToPage(${i})" style="padding: 6px 12px; border: 1px solid var(--border); background: ${i === page ? 'var(--accent)' : 'var(--bg-primary)'}; color: ${i === page ? 'white' : 'var(--text-primary)'}; border-radius: 6px; cursor: pointer; font-weight: ${i === page ? '600' : '400'};">${i}</button>`;
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) html += `<span style="color: var(--text-tertiary);">...</span>`;
+                html += `<button onclick="goToPage(${totalPages})" style="padding: 6px 12px; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-primary); border-radius: 6px; cursor: pointer;">${totalPages}</button>`;
+            }
+
+            html += `
+                        <button onclick="goToPage(${page + 1})" ${page === totalPages ? 'disabled' : ''} 
+                            style="padding: 6px 12px; border: 1px solid var(--border); background: var(--bg-primary); color: var(--text-primary); border-radius: 6px; cursor: ${page === totalPages ? 'not-allowed' : 'pointer'}; opacity: ${page === totalPages ? '0.5' : '1'};">
+                            Next
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            currentPage = page;
+            filterMarketplace(); // Re-apply current filters with new page
         }
 
         function renderMarketplaceTable(data) {
@@ -3979,8 +4099,10 @@
                 allMarketplaceData = data || [];
                 console.log('allMarketplaceData set, length:', allMarketplaceData.length);
 
-                renderMarketplaceTable(allMarketplaceData);
-                console.log('Table rendered');
+                // Reset to page 1 and render with pagination
+                currentPage = 1;
+                renderMarketplaceTableWithPagination(allMarketplaceData);
+                console.log('Table rendered with pagination');
 
                 // Populate category filter
                 populateCategoryFilter();
