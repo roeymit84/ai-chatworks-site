@@ -2314,7 +2314,7 @@
         // ═══════════════════════════════════════
         let allMarketplaceData = [];
         let currentPage = 1;
-        const ITEMS_PER_PAGE = 50;
+        const ITEMS_PER_PAGE = 25;
         let currentUser = { email: 'admin@aichatworks.com' };
         let growthChart = null;
 
@@ -2848,6 +2848,9 @@
                 select.innerHTML = optionsHTML;
                 console.log('Category select innerHTML updated, option count:', select.options.length);
 
+                // Trigger change event to update any custom dropdown UI
+                select.dispatchEvent(new Event('change'));
+
                 // Update custom dropdown if it exists
                 const customDropdown = select.parentElement.querySelector('.custom-dropdown');
                 console.log('Custom dropdown wrapper:', customDropdown);
@@ -2998,7 +3001,7 @@
             }
 
             let html = `
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0; border-top: 1px solid var(--border);">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; border-top: 1px solid var(--border);">
                     <div style="color: var(--text-tertiary); font-size: 13px;">
                         Showing ${((page - 1) * ITEMS_PER_PAGE) + 1}-${Math.min(page * ITEMS_PER_PAGE, totalItems)} of ${totalItems} prompts
                     </div>
