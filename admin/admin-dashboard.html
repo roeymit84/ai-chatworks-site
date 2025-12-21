@@ -2319,6 +2319,106 @@
         // Demo data removed - using real database data only
 
         // ═══════════════════════════════════════
+        // UTILITY FUNCTIONS
+        // ═══════════════════════════════════════
+
+        window.updateCharCount = function (textareaId, counterId) {
+            const textarea = document.getElementById(textareaId);
+            const counter = document.getElementById(counterId);
+            if (textarea && counter) {
+                const currentLength = textarea.value.length;
+                const maxLength = textarea.getAttribute('maxlength') || 10000;
+                counter.textContent = `${currentLength}/${maxLength}`;
+
+                // Change color if approaching limit
+                if (currentLength > maxLength * 0.9) {
+                    counter.style.color = '#ef4444'; // red
+                } else if (currentLength > maxLength * 0.75) {
+                    counter.style.color = '#f59e0b'; // amber
+                } else {
+                    counter.style.color = '';
+                }
+            }
+        };
+
+        window.toggleColumnPicker = function (event) {
+            event.stopPropagation();
+
+            let dropdown = document.getElementById('column-picker-dropdown');
+            if (dropdown) {
+                dropdown.remove();
+                return;
+            }
+
+            dropdown = document.createElement('div');
+            dropdown.id = 'column-picker-dropdown';
+            dropdown.style.cssText = `
+                position: fixed;
+                background: white;
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+                padding: 8px;
+                min-width: 200px;
+                z-index: 1000;
+            `;
+
+            const columns = [
+                { id: 'col-name', label: 'Prompt Name', visible: true, required: true },
+                { id: 'col-category', label: 'Category', visible: true },
+                { id: 'col-created-by', label: 'Created By', visible: true },
+                { id: 'col-created-at', label: 'Created At', visible: true },
+                { id: 'col-downloads', label: 'Downloads', visible: true },
+                { id: 'col-tier', label: 'Tier', visible: true },
+                { id: 'col-status', label: 'Status', visible: true }
+            ];
+
+            columns.forEach(col => {
+                const item = document.createElement('label');
+                item.style.cssText = `
+                    display: flex;
+                    align-items: center;
+                    padding: 6px 8px;
+                    cursor: ${col.required ? 'not-allowed' : 'pointer'};
+                    border-radius: 4px;
+                    font-size: 13px;
+                    opacity: ${col.required ? '0.6' : '1'};
+                `;
+                if (!col.required) {
+                    item.onmouseover = () => item.style.background = '#f3f4f6';
+                    item.onmouseout = () => item.style.background = '';
+                }
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = col.visible;
+                checkbox.disabled = col.required;
+                checkbox.style.marginRight = '8px';
+                checkbox.onchange = () => console.log(`Toggle column ${col.id}: ${checkbox.checked}`);
+
+                item.appendChild(checkbox);
+                item.appendChild(document.createTextNode(col.label));
+                dropdown.appendChild(item);
+            });
+
+            const button = event.currentTarget;
+            const buttonRect = button.getBoundingClientRect();
+            dropdown.style.top = `${buttonRect.bottom + 8}px`;
+            dropdown.style.right = `${window.innerWidth - buttonRect.right}px`;
+
+            document.body.appendChild(dropdown);
+
+            setTimeout(() => {
+                document.addEventListener('click', function closeDropdown(e) {
+                    if (!dropdown.contains(e.target)) {
+                        dropdown.remove();
+                        document.removeEventListener('click', closeDropdown);
+                    }
+                });
+            }, 0);
+        };
+
+        // ═══════════════════════════════════════
         // AUTH
         // ═══════════════════════════════════════
         function handleLogout() {
@@ -2809,7 +2909,7 @@
             const tbody = document.getElementById('marketplaceTableBody');
 
             if (!data || !data.length) {
-                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 40px;">No prompts found</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="9" style="text-align: center; color: var(--text-muted); padding: 40px;">No prompts found</td></tr>';
                 return;
             }
 
@@ -2824,6 +2924,7 @@
                 const downloads = p.downloads || p.downloads_count || 0;
                 const tier = p.tier || 'free';
                 const isActive = p.is_active !== undefined ? p.is_active : true;
+                const createdAt = p.created_at ? new Date(p.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' }) : 'N/A';
 
                 return `
                 <tr>
@@ -2838,6 +2939,7 @@
                     </td>
                     <td><span class="badge badge-category" style="border-radius: 8px;">${category}</span></td>
                     <td style="color: var(--text-tertiary); font-size: 12px;">${uploaderEmail}</td>
+                    <td style="color: var(--text-tertiary); font-size: 12px;">${createdAt}</td>
                     <td class="mono">${downloads.toLocaleString()}</td>
                     <td><span class="badge badge-${tier}">${tier.toUpperCase()}</span></td>
                     <td>

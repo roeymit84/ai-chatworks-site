@@ -900,6 +900,14 @@ window.toggleColumnPicker = function (event) {
                 </div>
             `;
             document.body.appendChild(modal);
+
+            // IMPORTANT: Set the category value after modal is in DOM
+            // This ensures the select element properly reflects the selected value
+            const categorySelect = document.getElementById('edit-category');
+            if (categorySelect && data.category) {
+                categorySelect.value = data.category;
+                console.log('Category set to:', data.category, 'Select value:', categorySelect.value);
+            }
         } catch (error) {
             console.error('Error loading prompt:', error);
             showAlertModal('ai-chatworks.com says', 'Error loading prompt: ' + error.message);
