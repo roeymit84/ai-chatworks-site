@@ -3939,20 +3939,213 @@
                         break;
 
                     default:
-                        result = 'Query not found. Available queries: recent_users, find_user, heavy_users, inactive_users, marketplace_prompts, top_downloads, db_stats';
+                        result = { error: 'Query not found' };
                 }
 
-                output.innerHTML = `
-                    <div class="console-line success">✓ Query executed successfully</div>
-                    <pre style="margin-top: 12px; white-space: pre-wrap;">${result}</pre>
-                `;
+                // Render results based on query type
+                renderQueryResults(query, result, output);
+
             } catch (error) {
                 console.error('Query error:', error);
                 output.innerHTML = `
                     <div class="console-line error">✗ Query failed: ${error.message}</div>
-                    <pre style="margin-top: 12px; white-space: pre-wrap; color: var(--error);">${JSON.stringify(error, null, 2)}</pre>
+                    <pre style="margin-top: 12px; white-space: pre-wrap; color: var(--danger);">${JSON.stringify(error, null, 2)}</pre>
                 `;
             }
+        }
+
+        function renderQueryResults(queryType, data, outputElement) {
+            const resultCount = Array.isArray(data) ? data.length : (data && typeof data === 'object' ? Object.keys(data).length : 0);
+
+            let html = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <div class="console-line success">✓ Query executed successfully (${resultCount} ${Array.isArray(data) ? 'rows' : 'stats'})</div>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn btn-secondary" onclick="copyResults('${queryType}')" style="padding: 6px 12px; font-size: 13px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            Copy
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportToCSV('${queryType}')" style="padding: 6px 12px; font-size: 13px;">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                <polyline points="7 10 12 15 17 10"></polyline>
+                                <line x1="12" y1="15" x2="12" y2="3"></line>
+                            </svg>
+                            Export CSV
+                        </button>
+                    </div>
+                </div>
+            `;
+
+            // Store data globally for export functions
+            window.currentQueryData = data;
+            window.currentQueryType = queryType;
+
+            if (queryType === 'db_stats') {
+                html += renderStatsTable(data);
+            } else if (Array.isArray(data) && data.length > 0) {
+                html += renderDataTable(data);
+            } else if (Array.isArray(data)) {
+                html += '<div class="console-line info">No results found</div>';
+            } else {
+                html += `<pre style="white-space: pre-wrap;">${JSON.stringify(data, null, 2)}</pre>`;
+            }
+
+            outputElement.innerHTML = html;
+        }
+
+        function renderStatsTable(stats) {
+            return `
+                <div style="background: var(--bg-secondary); border-radius: 8px; padding: 16px;">
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border);">
+                                <th style="text-align: left; padding: 12px; color: var(--text-secondary); font-weight: 600;">Metric</th>
+                                <th style="text-align: right; padding: 12px; color: var(--text-secondary); font-weight: 600;">Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <td style="padding: 12px; color: var(--text-primary);">Total Users</td>
+                                <td style="padding: 12px; text-align: right; font-weight: 600; color: var(--accent);">${(stats.total_users || 0).toLocaleString()}</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <td style="padding: 12px; color: var(--text-primary);">Total Prompts</td>
+                                <td style="padding: 12px; text-align: right; font-weight: 600; color: var(--accent);">${(stats.total_prompts || 0).toLocaleString()}</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <td style="padding: 12px; color: var(--text-primary);">Total Folders</td>
+                                <td style="padding: 12px; text-align: right; font-weight: 600; color: var(--accent);">${(stats.total_folders || 0).toLocaleString()}</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <td style="padding: 12px; color: var(--text-primary);">Encrypted Prompts</td>
+                                <td style="padding: 12px; text-align: right; font-weight: 600; color: var(--warning);">${(stats.encrypted_prompts || 0).toLocaleString()}</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <td style="padding: 12px; color: var(--text-primary);">Encrypted Folders</td>
+                                <td style="padding: 12px; text-align: right; font-weight: 600; color: var(--warning);">${(stats.encrypted_folders || 0).toLocaleString()}</td>
+                            </tr>
+                            <tr style="border-bottom: 1px solid var(--border);">
+                                <td style="padding: 12px; color: var(--text-primary);">Marketplace Prompts</td>
+                                <td style="padding: 12px; text-align: right; font-weight: 600; color: var(--success);">${(stats.marketplace_prompts || 0).toLocaleString()}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px; color: var(--text-primary);">Total Downloads</td>
+                                <td style="padding: 12px; text-align: right; font-weight: 600; color: var(--success);">${(stats.total_downloads || 0).toLocaleString()}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function renderDataTable(data) {
+            if (!data || data.length === 0) return '<div class="console-line info">No results found</div>';
+
+            const columns = Object.keys(data[0]);
+
+            let html = `
+                <div style="background: var(--bg-secondary); border-radius: 8px; padding: 16px; overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border);">
+            `;
+
+            columns.forEach(col => {
+                html += `<th style="text-align: left; padding: 10px; color: var(--text-secondary); font-weight: 600; white-space: nowrap;">${col.replace(/_/g, ' ').toUpperCase()}</th>`;
+            });
+
+            html += `
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            data.forEach((row, index) => {
+                html += `<tr style="border-bottom: 1px solid var(--border); ${index % 2 === 0 ? 'background: var(--bg-tertiary);' : ''}">`;
+                columns.forEach(col => {
+                    const value = row[col];
+                    const displayValue = value === null || value === undefined ? '-' :
+                        typeof value === 'boolean' ? (value ? '✓' : '✗') :
+                            typeof value === 'number' ? value.toLocaleString() :
+                                value.toString();
+                    html += `<td style="padding: 10px; color: var(--text-primary);">${displayValue}</td>`;
+                });
+                html += `</tr>`;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            return html;
+        }
+
+        function copyResults(queryType) {
+            const data = window.currentQueryData;
+            if (!data) return;
+
+            const text = JSON.stringify(data, null, 2);
+            navigator.clipboard.writeText(text).then(() => {
+                showAlert('Results copied to clipboard!', 'Success');
+            }).catch(err => {
+                console.error('Failed to copy:', err);
+                showAlert('Failed to copy to clipboard', 'Error');
+            });
+        }
+
+        function exportToCSV(queryType) {
+            const data = window.currentQueryData;
+            if (!data) return;
+
+            let csv = '';
+
+            if (queryType === 'db_stats') {
+                // Export stats as CSV
+                csv = 'Metric,Count\n';
+                csv += `Total Users,${data.total_users || 0}\n`;
+                csv += `Total Prompts,${data.total_prompts || 0}\n`;
+                csv += `Total Folders,${data.total_folders || 0}\n`;
+                csv += `Encrypted Prompts,${data.encrypted_prompts || 0}\n`;
+                csv += `Encrypted Folders,${data.encrypted_folders || 0}\n`;
+                csv += `Marketplace Prompts,${data.marketplace_prompts || 0}\n`;
+                csv += `Total Downloads,${data.total_downloads || 0}\n`;
+            } else if (Array.isArray(data) && data.length > 0) {
+                // Export array data as CSV
+                const columns = Object.keys(data[0]);
+                csv = columns.join(',') + '\n';
+
+                data.forEach(row => {
+                    const values = columns.map(col => {
+                        const value = row[col];
+                        if (value === null || value === undefined) return '';
+                        if (typeof value === 'string' && value.includes(',')) return `"${value}"`;
+                        return value;
+                    });
+                    csv += values.join(',') + '\n';
+                });
+            } else {
+                showAlert('No data to export', 'Warning');
+                return;
+            }
+
+            // Download CSV
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${queryType}_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+
+            showAlert('CSV file downloaded!', 'Success');
         }
 
         // ═══════════════════════════════════════
